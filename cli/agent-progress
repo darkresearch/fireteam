@@ -1,0 +1,75 @@
+#!/bin/bash
+# Check Claude Agent System status and progress
+
+SYSTEM_DIR="/home/claude/claude-agent-system"
+PID_FILE="$SYSTEM_DIR/orchestrator.pid"
+STATE_FILE="$SYSTEM_DIR/state/current.json"
+
+echo "==================================="
+echo "Claude Agent System Status"
+echo "==================================="
+echo ""
+
+# Check if running
+if [ -f "$PID_FILE" ]; then
+    PID=$(cat "$PID_FILE")
+    if ps -p "$PID" > /dev/null 2>&1; then
+        echo "Status: RUNNING (PID: $PID)"
+    else
+        echo "Status: STOPPED (stale PID file)"
+        rm -f "$PID_FILE"
+    fi
+else
+    echo "Status: STOPPED"
+fi
+
+echo ""
+
+# Check state
+if [ -f "$STATE_FILE" ]; then
+    echo "Project State:"
+    echo "-----------------------------------"
+
+    # Use python to parse JSON nicely
+    python3 -c "
+import json
+import sys
+
+try:
+    with open('$STATE_FILE', 'r') as f:
+        state = json.load(f)
+
+    print(f\"Project Dir: {state.get('project_dir', 'N/A')}\")
+    print(f\"Goal: {state.get('goal', 'N/A')}\")
+    print(f\"Status: {state.get('status', 'N/A')}\")
+    print(f\"Cycle: {state.get('cycle_number', 0)}\")
+    print(f\"Completion: {state.get('completion_percentage', 0)}%\")
+    print(f\"Git Branch: {state.get('git_branch', 'N/A')}\")
+    print(f\"Started: {state.get('started_at', 'N/A')}\")
+    print(f\"Last Updated: {state.get('updated_at', 'N/A')}\")
+
+    if state.get('completed'):
+        print(f\"\\nProject COMPLETED at: {state.get('completed_at', 'N/A')}\")
+
+except Exception as e:
+    print(f\"Error reading state: {e}\")
+    sys.exit(1)
+"
+else
+    echo "No active project state found"
+fi
+
+echo ""
+echo "==================================="
+
+# Show recent log lines if available
+LOG_DIR="$SYSTEM_DIR/logs"
+if [ -d "$LOG_DIR" ]; then
+    LATEST_LOG=$(ls -t "$LOG_DIR"/orchestrator_*.log 2>/dev/null | head -1)
+    if [ -n "$LATEST_LOG" ]; then
+        echo ""
+        echo "Recent Activity (last 10 lines):"
+        echo "-----------------------------------"
+        tail -10 "$LATEST_LOG"
+    fi
+fi

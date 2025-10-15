@@ -1,0 +1,67 @@
+#!/bin/bash
+# Start the Claude Agent System
+
+set -e
+
+SYSTEM_DIR="/home/claude/claude-agent-system"
+PID_FILE="$SYSTEM_DIR/orchestrator.pid"
+
+# Parse arguments
+PROJECT_DIR=""
+GOAL=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --project-dir)
+            PROJECT_DIR="$2"
+            shift 2
+            ;;
+        --prompt)
+            GOAL="$2"
+            shift 2
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Usage: start-agent --project-dir <dir> --prompt <goal>"
+            exit 1
+            ;;
+    esac
+done
+
+# Validate arguments
+if [ -z "$PROJECT_DIR" ] || [ -z "$GOAL" ]; then
+    echo "Error: Both --project-dir and --prompt are required"
+    echo "Usage: start-agent --project-dir <dir> --prompt <goal>"
+    exit 1
+fi
+
+# Check if already running
+if [ -f "$PID_FILE" ]; then
+    PID=$(cat "$PID_FILE")
+    if ps -p "$PID" > /dev/null 2>&1; then
+        echo "Agent system is already running (PID: $PID)"
+        echo "Use 'stop-agent' to stop it first"
+        exit 1
+    else
+        # Stale PID file
+        rm -f "$PID_FILE"
+    fi
+fi
+
+echo "Starting Claude Agent System..."
+echo "Project: $PROJECT_DIR"
+echo "Goal: $GOAL"
+echo ""
+
+# Start orchestrator in background
+nohup python3 "$SYSTEM_DIR/orchestrator.py" \
+    --project-dir "$PROJECT_DIR" \
+    --goal "$GOAL" \
+    > "$SYSTEM_DIR/logs/system.log" 2>&1 &
+
+ORCHESTRATOR_PID=$!
+echo $ORCHESTRATOR_PID > "$PID_FILE"
+
+echo "Agent system started (PID: $ORCHESTRATOR_PID)"
+echo "Use 'agent-progress' to check status"
+echo "Use 'stop-agent' to stop the system"
