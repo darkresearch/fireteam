@@ -37,8 +37,8 @@ COMPLETION_THRESHOLD = 95  # percentage
 VALIDATION_CHECKS_REQUIRED = 3  # consecutive checks needed
 
 # Git configuration
-GIT_USER_NAME = os.environ.get("GIT_USER_NAME", "Fireteam")
-GIT_USER_EMAIL = os.environ.get("GIT_USER_EMAIL", "agent@fireteam.dev")
+GIT_USER_NAME = os.environ.get("GIT_USER_NAME", "fireteam")
+GIT_USER_EMAIL = os.environ.get("GIT_USER_EMAIL", "fireteam@darkresearch.ai")
 
 # Logging
 LOG_LEVEL = "INFO"
