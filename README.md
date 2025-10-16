@@ -1,10 +1,10 @@
-# FIRETEAM
+# Fireteam
 
 An autonomous multi-agent system for long-running project execution powered by Claude.
 
 ## Overview
 
-The FIRETEAM is a sophisticated orchestration framework that manages three specialized agents in an infinite cycle of planning, execution, and review until project completion:
+The Fireteam is a sophisticated orchestration framework that manages three specialized agents in an infinite cycle of planning, execution, and review until project completion:
 
 - **Planner Agent**: Creates and updates project plans
 - **Executor Agent**: Executes planned tasks

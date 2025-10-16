@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Analyze all test results from FIRETEAM."""
+"""Analyze all test results from Fireteam."""
 
 import json
 import os
@@ -39,7 +39,7 @@ def parse_log_file(log_path):
         data['goal'] = match.group(1).strip()
 
     # Extract start time
-    match = re.search(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).*FIRETEAM Starting", content)
+    match = re.search(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).*Fireteam Starting", content)
     if match:
         data['start_time'] = match.group(1)
 

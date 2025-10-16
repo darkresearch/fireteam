@@ -1,5 +1,5 @@
 """
-State management for FIRETEAM.
+State management for Fireteam.
 Handles persistence and isolation of project state to prevent cross-project contamination.
 """
 

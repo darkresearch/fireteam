@@ -1,10 +1,10 @@
 #!/bin/bash
-# Setup script for FIRETEAM
+# Setup script for Fireteam
 
 set -e
 
 echo "=========================================="
-echo "FIRETEAM Setup"
+echo "Fireteam Setup"
 echo "=========================================="
 echo ""
 
