@@ -44,6 +44,8 @@ class StateManager:
                 "status": "planning",
                 "cycle_number": 0,
                 "completion_percentage": 0,
+                "last_known_completion": 0,  # For parse failure fallback
+                "consecutive_parse_failures": 0,  # Safety counter
                 "validation_checks": 0,
                 "git_branch": None,
                 "current_plan": None,
@@ -146,5 +148,66 @@ class StateManager:
 
                 with open(self.state_file, 'w') as f:
                     json.dump(state, f, indent=2)
+        finally:
+            self._release_lock()
+
+    def update_completion_percentage(self, parsed_percentage: Optional[int], logger=None) -> int:
+        """
+        Update completion percentage with fallback to last known value on parse failure.
+
+        Args:
+            parsed_percentage: Result from parser (may be None if parsing failed)
+            logger: Optional logger for warnings
+
+        Returns:
+            int: Completion percentage to use
+        """
+        self._acquire_lock()
+        try:
+            if self.state_file.exists():
+                with open(self.state_file, 'r') as f:
+                    state = json.load(f)
+            else:
+                state = {}
+
+            if parsed_percentage is not None:
+                # Successful parse - reset failure counter
+                state["consecutive_parse_failures"] = 0
+                state["last_known_completion"] = parsed_percentage
+                state["completion_percentage"] = parsed_percentage
+                if logger:
+                    logger.info(f"Completion: {parsed_percentage}%")
+                result = parsed_percentage
+            else:
+                # Parse failure - use last known value
+                state["consecutive_parse_failures"] = state.get("consecutive_parse_failures", 0) + 1
+                last_known = state.get("last_known_completion", 0)
+
+                if logger:
+                    logger.warning(
+                        f"Could not parse completion percentage "
+                        f"(failure #{state['consecutive_parse_failures']}). "
+                        f"Using last known: {last_known}%"
+                    )
+
+                # Safety valve: stop after 3 consecutive failures
+                if state["consecutive_parse_failures"] >= 3:
+                    if logger:
+                        logger.error(
+                            "3 consecutive parse failures - parser may be broken. "
+                            "Defaulting to 0% to force investigation."
+                        )
+                    state["completion_percentage"] = 0
+                    result = 0
+                else:
+                    state["completion_percentage"] = last_known
+                    result = last_known
+
+            state['updated_at'] = datetime.now().isoformat()
+
+            with open(self.state_file, 'w') as f:
+                json.dump(state, f, indent=2)
+
+            return result
         finally:
             self._release_lock()

@@ -19,6 +19,7 @@ class BaseAgent:
         self.logger = logger or logging.getLogger(f"agent.{agent_type}")
         self.max_retries = config.MAX_RETRIES
         self.retry_delay = config.RETRY_DELAY
+        self.timeout = config.AGENT_TIMEOUTS.get(agent_type, 600)  # Default 10 min if not specified
 
     def _build_command(self, prompt: str, project_dir: str) -> list:
         """Build Claude CLI command with sub-agent prompt."""
@@ -39,7 +40,7 @@ class BaseAgent:
                     cmd,
                     capture_output=True,
                     text=True,
-                    timeout=600,  # 10 minute timeout
+                    timeout=self.timeout,  # Configurable timeout from config.py
                     cwd=project_dir
                 )
 

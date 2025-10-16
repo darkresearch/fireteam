@@ -212,6 +212,15 @@ class Orchestrator:
         self.logger.info(f"CYCLE {cycle_num} - Starting")
         self.logger.info(f"{'=' * 80}\n")
 
+        # Goal alignment check every 3 cycles
+        if cycle_num > 0 and cycle_num % 3 == 0:
+            self.logger.info(f"{'='*60}")
+            self.logger.info(f"GOAL ALIGNMENT CHECK (Cycle {cycle_num})")
+            self.logger.info(f"{'='*60}")
+            self.logger.info(f"Original Goal: {self.goal}")
+            self.logger.info(f"\n⚠️  Reminder: Ensure all work aligns with original goal!")
+            self.logger.info(f"{'='*60}\n")
+
         # PHASE 1: Planning
         self.logger.info("PHASE 1: Planning")
         self.state_manager.update_state({"status": "planning"})
@@ -276,16 +285,21 @@ class Orchestrator:
             return state
 
         review = reviewer_result["review"]
-        completion_pct = reviewer_result["completion_percentage"]
+        parsed_completion = reviewer_result["completion_percentage"]
+
+        # Use StateManager's parse failure handling
+        completion_pct = self.state_manager.update_completion_percentage(
+            parsed_completion,
+            logger=self.logger
+        )
 
         self.logger.info(f"Review completed - Completion: {completion_pct}%")
 
-        # Update state
+        # Update state (completion_percentage already set by update_completion_percentage)
         updated_state = self.state_manager.update_state({
             "current_plan": current_plan,
             "last_execution_result": execution_result,
-            "last_review": review,
-            "completion_percentage": completion_pct
+            "last_review": review
         })
 
         # Commit changes
