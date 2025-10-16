@@ -2,7 +2,7 @@
 # Batch test runner - runs all tests sequentially with auto-progression
 # Runs in background, survives session disconnections
 
-SYSTEM_DIR="/home/claude/claude-agent-system"
+SYSTEM_DIR="/home/claude/fireteam"
 LOG_FILE="$SYSTEM_DIR/logs/batch_test_runner.log"
 COMPLETION_THRESHOLD=90  # Stop test when it reaches this percentage
 

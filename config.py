@@ -1,5 +1,5 @@
 """
-Configuration settings for the Claude agent system.
+Configuration settings for FIRETEAM.
 """
 
 import os
@@ -12,7 +12,7 @@ if env_file.exists():
     load_dotenv(env_file)
 
 # System paths
-SYSTEM_DIR = "/home/claude/claude-agent-system"
+SYSTEM_DIR = "/home/claude/fireteam"
 STATE_DIR = os.path.join(SYSTEM_DIR, "state")
 LOGS_DIR = os.path.join(SYSTEM_DIR, "logs")
 CLI_DIR = os.path.join(SYSTEM_DIR, "cli")
@@ -37,8 +37,8 @@ COMPLETION_THRESHOLD = 95  # percentage
 VALIDATION_CHECKS_REQUIRED = 3  # consecutive checks needed
 
 # Git configuration
-GIT_USER_NAME = os.environ.get("GIT_USER_NAME", "Claude Agent System")
-GIT_USER_EMAIL = os.environ.get("GIT_USER_EMAIL", "agent@claude.system")
+GIT_USER_NAME = os.environ.get("GIT_USER_NAME", "FIRETEAM")
+GIT_USER_EMAIL = os.environ.get("GIT_USER_EMAIL", "agent@fireteam.dev")
 
 # Logging
 LOG_LEVEL = "INFO"

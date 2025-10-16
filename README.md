@@ -1,10 +1,10 @@
-# Claude Agent System
+# FIRETEAM
 
 An autonomous multi-agent system for long-running project execution powered by Claude.
 
 ## Overview
 
-The Claude Agent System is a sophisticated orchestration framework that manages three specialized agents in an infinite cycle of planning, execution, and review until project completion:
+The FIRETEAM is a sophisticated orchestration framework that manages three specialized agents in an infinite cycle of planning, execution, and review until project completion:
 
 - **Planner Agent**: Creates and updates project plans
 - **Executor Agent**: Executes planned tasks
@@ -37,7 +37,7 @@ Orchestrator (Infinite Loop)
 
 2. **Setup**
    ```bash
-   cd /home/claude/claude-agent-system
+   cd /home/claude/fireteam
    bash setup.sh
    source ~/.bashrc  # or restart your shell
    ```
@@ -153,7 +153,7 @@ Logs are stored in `logs/`:
 ## Project Structure
 
 ```
-claude-agent-system/
+fireteam/
 ├── orchestrator.py         # Main orchestration loop
 ├── config.py              # Configuration settings
 ├── agents/

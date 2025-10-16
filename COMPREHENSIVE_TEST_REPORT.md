@@ -1,4 +1,4 @@
-# Claude Agent System - Comprehensive Test Report
+# FIRETEAM - Comprehensive Test Report
 
 **Date**: October 16, 2025
 **Test Duration**: ~18 hours (Oct 15-16)
@@ -508,7 +508,7 @@ The Claude multi-agent system demonstrated **excellent performance** across 11 d
 
 All orchestrator logs available at:
 ```
-/home/claude/claude-agent-system/logs/orchestrator_YYYYMMDD_HHMMSS.log
+/home/claude/fireteam/logs/orchestrator_YYYYMMDD_HHMMSS.log
 ```
 
 Total: 15 log files (some tests ran multiple times)

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Resource monitoring for agent system tests
 
-LOG_FILE="/home/claude/claude-agent-system/logs/resource_monitor.log"
+LOG_FILE="/home/claude/fireteam/logs/resource_monitor.log"
 
 echo "=== Resource Monitor Started at $(date) ===" >> $LOG_FILE
 

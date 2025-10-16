@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Analyze all test results from the Claude Agent System."""
+"""Analyze all test results from FIRETEAM."""
 
 import json
 import os
@@ -39,7 +39,7 @@ def parse_log_file(log_path):
         data['goal'] = match.group(1).strip()
 
     # Extract start time
-    match = re.search(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).*Claude Agent System Starting", content)
+    match = re.search(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).*FIRETEAM Starting", content)
     if match:
         data['start_time'] = match.group(1)
 
@@ -73,7 +73,7 @@ def parse_log_file(log_path):
 
 def analyze_all_tests():
     """Analyze all test projects."""
-    logs_dir = "/home/claude/claude-agent-system/logs"
+    logs_dir = "/home/claude/fireteam/logs"
     log_files = sorted(glob.glob(f"{logs_dir}/orchestrator_*.log"))
 
     print(f"Found {len(log_files)} orchestrator log files\n")

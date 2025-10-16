@@ -1,14 +1,14 @@
 #!/bin/bash
-# Setup script for Claude Agent System
+# Setup script for FIRETEAM
 
 set -e
 
 echo "=========================================="
-echo "Claude Agent System Setup"
+echo "FIRETEAM Setup"
 echo "=========================================="
 echo ""
 
-SYSTEM_DIR="/home/claude/claude-agent-system"
+SYSTEM_DIR="/home/claude/fireteam"
 BIN_DIR="/home/claude/.local/bin"
 
 # Create bin directory if it doesn't exist

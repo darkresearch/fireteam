@@ -1,5 +1,5 @@
 """
-State management for the Claude agent system.
+State management for FIRETEAM.
 Handles persistence and isolation of project state to prevent cross-project contamination.
 """
 
@@ -14,7 +14,7 @@ from pathlib import Path
 class StateManager:
     """Manages agent system state with project isolation."""
 
-    def __init__(self, state_dir: str = "/home/claude/claude-agent-system/state"):
+    def __init__(self, state_dir: str = "/home/claude/fireteam/state"):
         self.state_dir = Path(state_dir)
         self.state_dir.mkdir(parents=True, exist_ok=True)
         self.state_file = self.state_dir / "current.json"

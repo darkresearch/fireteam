@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Progress Monitor - Human-readable updates every 5 minutes
-# Logs to: /home/claude/claude-agent-system/logs/progress_monitor.log
+# Logs to: /home/claude/fireteam/logs/progress_monitor.log
 
-SYSTEM_DIR="/home/claude/claude-agent-system"
+SYSTEM_DIR="/home/claude/fireteam"
 LOG_FILE="$SYSTEM_DIR/logs/progress_monitor.log"
 STATE_FILE="$SYSTEM_DIR/state/current.json"
 CHECK_INTERVAL=300  # 5 minutes in seconds

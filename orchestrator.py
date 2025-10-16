@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Main orchestrator for the Claude agent system.
+Main orchestrator for FIRETEAM.
 Manages infinite cycles of planning → execution → review.
 """
 
@@ -13,7 +13,7 @@ from datetime import datetime
 from pathlib import Path
 
 # Add system directory to path
-sys.path.insert(0, '/home/claude/claude-agent-system')
+sys.path.insert(0, '/home/claude/fireteam')
 
 import config
 from state.manager import StateManager
@@ -60,7 +60,7 @@ class Orchestrator:
 
         self.logger = logging.getLogger("orchestrator")
         self.logger.info("=" * 80)
-        self.logger.info("Claude Agent System Starting")
+        self.logger.info("FIRETEAM Starting")
         self.logger.info(f"Project: {self.project_dir}")
         self.logger.info(f"Goal: {self.goal}")
         self.logger.info("=" * 80)
@@ -367,7 +367,7 @@ def main():
     """Entry point for orchestrator."""
     import argparse
 
-    parser = argparse.ArgumentParser(description="Claude Agent System Orchestrator")
+    parser = argparse.ArgumentParser(description="FIRETEAM Orchestrator")
     parser.add_argument("--project-dir", required=True, help="Project directory")
     parser.add_argument("--goal", required=True, help="Project goal/prompt")
 
