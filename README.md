@@ -31,7 +31,7 @@ Orchestrator (Infinite Loop)
 ## Installation
 
 1. **Prerequisites**
-   - Python 3.7+
+   - Python 3.12+
    - Git
    - Claude CLI ([installation guide](https://docs.claude.com/en/docs/claude-code/installation))
 

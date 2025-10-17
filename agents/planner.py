@@ -3,7 +3,7 @@ Planner Agent - Responsible for creating and updating project plans.
 """
 
 import json
-from typing import Dict, Any, Optional
+from typing import Any
 from .base import BaseAgent
 
 
@@ -18,10 +18,10 @@ class PlannerAgent(BaseAgent):
         project_dir: str,
         goal: str,
         cycle_number: int,
-        previous_plan: Optional[str] = None,
-        last_execution_result: Optional[str] = None,
-        last_review: Optional[str] = None
-    ) -> Dict[str, Any]:
+        previous_plan: str | None = None,
+        last_execution_result: str | None = None,
+        last_review: str | None = None
+    ) -> dict[str, Any]:
         """
         Create or update project plan based on current state.
 
@@ -93,8 +93,8 @@ Be specific and actionable. This plan will guide an Executor Agent."""
         self,
         goal: str,
         previous_plan: str,
-        last_execution_result: Optional[str],
-        last_review: Optional[str],
+        last_execution_result: str | None,
+        last_review: str | None,
         cycle_number: int
     ) -> str:
         """Build prompt for plan updates based on progress."""

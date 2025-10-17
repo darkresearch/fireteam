@@ -3,7 +3,7 @@ Reviewer Agent - Responsible for assessing project status and completion.
 """
 
 import re
-from typing import Dict, Any
+from typing import Any
 from .base import BaseAgent
 
 
@@ -21,7 +21,7 @@ class ReviewerAgent(BaseAgent):
         execution_result: str,
         cycle_number: int,
         is_validation: bool = False
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Review project progress and estimate completion percentage.
 

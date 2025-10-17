@@ -2,7 +2,7 @@
 Executor Agent - Responsible for executing planned tasks.
 """
 
-from typing import Dict, Any
+from typing import Any
 from .base import BaseAgent
 
 
@@ -18,7 +18,7 @@ class ExecutorAgent(BaseAgent):
         goal: str,
         plan: str,
         cycle_number: int
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Execute tasks according to the plan.
 

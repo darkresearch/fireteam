@@ -1,12 +1,12 @@
 #!/bin/bash
-# Check Claude Agent System status and progress
+# Check Fireteam status and progress
 
-SYSTEM_DIR="/home/claude/claude-agent-system"
+SYSTEM_DIR="/home/claude/fireteam"
 PID_FILE="$SYSTEM_DIR/orchestrator.pid"
 STATE_FILE="$SYSTEM_DIR/state/current.json"
 
 echo "==================================="
-echo "Claude Agent System Status"
+echo "Fireteam Status"
 echo "==================================="
 echo ""
 

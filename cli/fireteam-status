@@ -1,0 +1,239 @@
+#!/usr/bin/env python3
+"""
+Fireteam status and monitoring CLI.
+Shows current project status, progress, and system resources.
+"""
+
+import json
+import sys
+import time
+import argparse
+from pathlib import Path
+from datetime import datetime
+
+SYSTEM_DIR = Path("/home/claude/fireteam")
+STATE_FILE = SYSTEM_DIR / "state" / "current.json"
+PID_FILE = SYSTEM_DIR / "orchestrator.pid"
+LOGS_DIR = SYSTEM_DIR / "logs"
+
+
+def check_process_running(pid: int) -> bool:
+    """Check if a process is running."""
+    try:
+        import os
+        os.kill(pid, 0)
+        return True
+    except (OSError, ProcessLookupError):
+        return False
+
+
+def get_process_status() -> dict[str, any]:
+    """Get orchestrator process status."""
+    if not PID_FILE.exists():
+        return {"running": False, "pid": None}
+
+    pid = int(PID_FILE.read_text().strip())
+    running = check_process_running(pid)
+
+    if not running:
+        PID_FILE.unlink()  # Clean up stale PID file
+
+    return {"running": running, "pid": pid if running else None}
+
+
+def load_state() -> dict[str, any] | None:
+    """Load current project state."""
+    if not STATE_FILE.exists():
+        return None
+
+    try:
+        return json.loads(STATE_FILE.read_text())
+    except Exception as e:
+        print(f"Error loading state: {e}", file=sys.stderr)
+        return None
+
+
+def get_system_resources() -> dict[str, str]:
+    """Get system resource usage."""
+    import subprocess
+
+    try:
+        # Memory info
+        mem = subprocess.check_output(['free', '-h'], text=True)
+        mem_lines = mem.strip().split('\n')
+        mem_data = mem_lines[1].split()
+
+        # CPU load
+        uptime = subprocess.check_output(['uptime'], text=True)
+        load = uptime.split('load average:')[1].strip()
+
+        # Disk usage
+        df = subprocess.check_output(['df', '-h', str(SYSTEM_DIR.parent)], text=True)
+        disk_line = df.strip().split('\n')[1]
+        disk_usage = disk_line.split()[4]
+
+        return {
+            "memory_total": mem_data[1],
+            "memory_used": mem_data[2],
+            "memory_free": mem_data[3],
+            "cpu_load": load,
+            "disk_usage": disk_usage
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def format_timestamp(iso_timestamp: str) -> str:
+    """Format ISO timestamp to readable format."""
+    try:
+        dt = datetime.fromisoformat(iso_timestamp)
+        return dt.strftime("%Y-%m-%d %H:%M:%S")
+    except:
+        return iso_timestamp
+
+
+def show_status(watch: bool = False, interval: int = 5):
+    """Show Fireteam status."""
+
+    while True:
+        # Clear screen if watching
+        if watch:
+            print("\033[2J\033[H")  # Clear screen and move cursor to top
+
+        print("=" * 60)
+        print("🔥 FIRETEAM STATUS")
+        print("=" * 60)
+        print()
+
+        # Process status
+        proc_status = get_process_status()
+        if proc_status["running"]:
+            print(f"Status: ✅ RUNNING (PID: {proc_status['pid']})")
+        else:
+            print("Status: ⏹️  STOPPED")
+        print()
+
+        # Project state
+        state = load_state()
+        if state:
+            print("📁 Project State:")
+            print("-" * 60)
+            print(f"  Project: {state.get('project_dir', 'N/A')}")
+            goal = state.get('goal', 'N/A')
+            if len(goal) > 80:
+                goal = goal[:77] + "..."
+            print(f"  Goal: {goal}")
+            print(f"  Status: {state.get('status', 'N/A').upper()}")
+            print(f"  Cycle: {state.get('cycle_number', 0)}")
+            print(f"  Completion: {state.get('completion_percentage', 0)}%")
+            print(f"  Git Branch: {state.get('git_branch', 'N/A')}")
+            print(f"  Started: {format_timestamp(state.get('started_at', 'N/A'))}")
+            print(f"  Updated: {format_timestamp(state.get('updated_at', 'N/A'))}")
+
+            if state.get('completed'):
+                print(f"  ✅ COMPLETED: {format_timestamp(state.get('completed_at', 'N/A'))}")
+        else:
+            print("📁 No active project")
+
+        print()
+        print("=" * 60)
+
+        # System resources (if requested)
+        if watch:
+            resources = get_system_resources()
+            if "error" not in resources:
+                print()
+                print("💻 System Resources:")
+                print("-" * 60)
+                print(f"  Memory: {resources['memory_used']} / {resources['memory_total']} used")
+                print(f"  CPU Load: {resources['cpu_load']}")
+                print(f"  Disk: {resources['disk_usage']} used")
+                print()
+                print("=" * 60)
+                print(f"  Refreshing every {interval}s... (Ctrl+C to stop)")
+
+        if not watch:
+            break
+
+        try:
+            time.sleep(interval)
+        except KeyboardInterrupt:
+            print("\n\n👋 Stopped monitoring")
+            break
+
+
+def show_logs(lines: int = 20, follow: bool = False):
+    """Show recent log entries."""
+    log_files = sorted(LOGS_DIR.glob("orchestrator_*.log"))
+    if not log_files:
+        print("No log files found")
+        return
+
+    latest_log = log_files[-1]
+    print(f"📄 Latest log: {latest_log.name}")
+    print("=" * 60)
+
+    if follow:
+        import subprocess
+        subprocess.run(["tail", "-f", str(latest_log)])
+    else:
+        log_content = latest_log.read_text().split('\n')
+        for line in log_content[-lines:]:
+            print(line)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Fireteam status and monitoring",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  fireteam-status              # Show current status
+  fireteam-status --watch      # Monitor status (refresh every 5s)
+  fireteam-status --logs       # Show recent logs
+  fireteam-status --logs --follow  # Tail logs in real-time
+        """
+    )
+
+    parser.add_argument(
+        "--watch",
+        action="store_true",
+        help="Watch mode - refresh status every N seconds"
+    )
+
+    parser.add_argument(
+        "--interval",
+        type=int,
+        default=5,
+        help="Refresh interval for watch mode (default: 5 seconds)"
+    )
+
+    parser.add_argument(
+        "--logs",
+        action="store_true",
+        help="Show recent log entries"
+    )
+
+    parser.add_argument(
+        "--follow",
+        action="store_true",
+        help="Follow log output (tail -f)"
+    )
+
+    parser.add_argument(
+        "--lines",
+        type=int,
+        default=20,
+        help="Number of log lines to show (default: 20)"
+    )
+
+    args = parser.parse_args()
+
+    if args.logs:
+        show_logs(lines=args.lines, follow=args.follow)
+    else:
+        show_status(watch=args.watch, interval=args.interval)
+
+
+if __name__ == "__main__":
+    main()

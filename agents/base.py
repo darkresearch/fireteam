@@ -7,14 +7,14 @@ import subprocess
 import logging
 import time
 import os
-from typing import Optional, Dict, Any
+from typing import Any
 import config
 
 
 class BaseAgent:
     """Base class for all specialized agents."""
 
-    def __init__(self, agent_type: str, logger: Optional[logging.Logger] = None):
+    def __init__(self, agent_type: str, logger: logging.Logger | None = None):
         self.agent_type = agent_type
         self.logger = logger or logging.getLogger(f"agent.{agent_type}")
         self.max_retries = config.MAX_RETRIES
@@ -30,7 +30,7 @@ class BaseAgent:
             prompt
         ]
 
-    def _execute_command(self, cmd: list, project_dir: str) -> Dict[str, Any]:
+    def _execute_command(self, cmd: list, project_dir: str) -> dict[str, Any]:
         """Execute Claude CLI command with retry logic."""
         for attempt in range(self.max_retries):
             try:
@@ -95,6 +95,6 @@ class BaseAgent:
             "error": f"Failed after {self.max_retries} attempts"
         }
 
-    def execute(self, **kwargs) -> Dict[str, Any]:
+    def execute(self, **kwargs) -> dict[str, Any]:
         """Execute the agent. Must be implemented by subclasses."""
         raise NotImplementedError("Subclasses must implement execute()")

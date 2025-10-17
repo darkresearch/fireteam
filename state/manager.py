@@ -7,7 +7,7 @@ import json
 import os
 import fcntl
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Any
 from pathlib import Path
 
 
@@ -31,7 +31,7 @@ class StateManager:
             fcntl.flock(self.lock_fd, fcntl.LOCK_UN)
             self.lock_fd.close()
 
-    def initialize_project(self, project_dir: str, goal: str) -> Dict[str, Any]:
+    def initialize_project(self, project_dir: str, goal: str) -> dict[str, Any]:
         """
         Initialize fresh state for a new project.
         CRITICAL: Completely clears previous state to avoid cross-project contamination.
@@ -63,7 +63,7 @@ class StateManager:
         finally:
             self._release_lock()
 
-    def load_state(self) -> Optional[Dict[str, Any]]:
+    def load_state(self) -> dict[str, Any] | None:
         """Load current state from disk."""
         self._acquire_lock()
         try:
@@ -75,7 +75,7 @@ class StateManager:
         finally:
             self._release_lock()
 
-    def update_state(self, updates: Dict[str, Any]) -> Dict[str, Any]:
+    def update_state(self, updates: dict[str, Any]) -> dict[str, Any]:
         """
         Update state with new values.
         Always updates the 'updated_at' timestamp.
@@ -99,7 +99,7 @@ class StateManager:
         finally:
             self._release_lock()
 
-    def get_status(self) -> Dict[str, Any]:
+    def get_status(self) -> dict[str, Any]:
         """Get current status for CLI display."""
         state = self.load_state()
         if not state:
@@ -151,7 +151,7 @@ class StateManager:
         finally:
             self._release_lock()
 
-    def update_completion_percentage(self, parsed_percentage: Optional[int], logger=None) -> int:
+    def update_completion_percentage(self, parsed_percentage: int | None, logger=None) -> int:
         """
         Update completion percentage with fallback to last known value on parse failure.
 
