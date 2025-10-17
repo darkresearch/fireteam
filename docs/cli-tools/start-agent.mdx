@@ -1,0 +1,471 @@
+---
+title: "start-agent"
+description: "Launch new Fireteam projects with autonomous development goals"
+---
+
+## Synopsis
+
+```bash
+start-agent --project-dir <directory> --prompt <goal>
+```
+
+## Description
+
+The `start-agent` command launches a new Fireteam project, initializing the multi-agent system to autonomously build software according to your specified goal. The system runs in the background, executing Plan → Execute → Review cycles until the project reaches 95%+ completion with triple validation.
+
+## Options
+
+### Required Arguments
+
+<ParamField path="--project-dir" type="string" required>
+  Absolute path to the project directory. Created if it doesn't exist.
+</ParamField>
+
+<ParamField path="--prompt" type="string" required>
+  The project goal/objective. Should be clear, specific, and actionable.
+</ParamField>
+
+## Basic Usage
+
+### Simple Project
+
+```bash
+start-agent --project-dir ~/calculator --prompt "Build a Python command-line calculator with basic arithmetic operations"
+```
+
+### API Project
+
+```bash
+start-agent \
+  --project-dir ~/api-server \
+  --prompt "Create a REST API with FastAPI for managing a todo list. Include CRUD operations, SQLite database, and proper error handling."
+```
+
+### TypeScript Project
+
+```bash
+start-agent \
+  --project-dir ~/github-analyzer \
+  --prompt "Build a TypeScript CLI tool that analyzes GitHub repositories and shows contributor statistics using the GitHub API"
+```
+
+## Writing Effective Goals
+
+### Goal Structure
+
+A well-written goal should include:
+
+1. **Technology stack** (Python, TypeScript, FastAPI, etc.)
+2. **Project type** (CLI, API, web scraper, etc.)
+3. **Core features** (what it should do)
+4. **Quality requirements** (tests, error handling, documentation)
+
+### Good Goal Examples
+
+<AccordionGroup>
+
+<Accordion title="✅ Excellent: Bitcoin Price Checker">
+
+```
+Build a Python CLI application that checks Bitcoin prices using the CoinGecko API.
+Include:
+- Real-time price fetching
+- Support for multiple currencies (USD, EUR, GBP)
+- Error handling for API failures
+- Formatted output with colors
+- Unit tests
+```
+
+**Why it's good:**
+- Specifies language (Python)
+- Defines type (CLI)
+- Lists specific features
+- Includes quality requirements
+</Accordion>
+
+<Accordion title="✅ Good: REST API Server">
+
+```
+Create a REST API server using FastAPI for a note-taking application.
+Features:
+- CRUD endpoints for notes
+- SQLite database
+- Input validation
+- Error responses
+- Basic tests
+```
+
+**Why it's good:**
+- Clear framework (FastAPI)
+- Specific functionality (note-taking)
+- Technical requirements listed
+</Accordion>
+
+<Accordion title="⚠️ Acceptable: Web Scraper">
+
+```
+Build a web scraper in Python that gets headlines from Hacker News and saves them to a file
+```
+
+**Why it's acceptable:**
+- Basic requirements clear
+- Missing quality requirements
+- Could benefit from more detail
+</Accordion>
+
+<Accordion title="❌ Poor: Generic Request">
+
+```
+Make me an app
+```
+
+**Why it's poor:**
+- No technology specified
+- No feature definition
+- Completely ambiguous
+- Will likely produce unsatisfactory results
+</Accordion>
+
+</AccordionGroup>
+
+### Goal Writing Tips
+
+<Tip>
+**Be specific about the tech stack.** "Build a Python CLI" is better than "Build a CLI" because it prevents the agent from choosing unfamiliar technologies.
+</Tip>
+
+<Tip>
+**Include edge cases and quality requirements.** Mentioning "error handling" and "tests" significantly improves code quality.
+</Tip>
+
+<Warning>
+**Avoid scope creep.** Don't request deployment automation, npm publishing, or Docker containerization unless specifically needed. Focus on core functionality.
+</Warning>
+
+## What Happens When You Start
+
+### 1. Pre-flight Checks
+
+```
+✓ Validate arguments
+✓ Check for running instances
+✓ Ensure project directory accessible
+```
+
+### 2. Initialization
+
+```
+✓ Create project directory (if needed)
+✓ Initialize git repository
+✓ Create timestamped branch (agent-YYYYMMDD-HHMMSS)
+✓ Initialize project state
+```
+
+### 3. Background Execution
+
+```
+✓ Start orchestrator process
+✓ Save PID to orchestrator.pid
+✓ Begin Plan → Execute → Review cycles
+```
+
+### 4. Confirmation
+
+```
+Agent system started (PID: 12345)
+Use 'fireteam-status' to check status
+Use 'stop-agent' to stop the system
+```
+
+## Monitoring Execution
+
+After starting a project, monitor progress:
+
+```bash
+# One-time status check
+fireteam-status
+
+# Live monitoring
+fireteam-status --watch
+
+# View logs
+fireteam-status --logs --follow
+```
+
+See [fireteam-status](/cli-tools/fireteam-status) for detailed monitoring options.
+
+## Project Directory Structure
+
+Fireteam automatically creates and manages:
+
+```
+~/your-project/
+├── .git/                    # Git repository (auto-created)
+│   └── refs/heads/
+│       └── agent-20251017-143022  # Timestamped branch
+├── src/                     # Source code (agent-created)
+├── tests/                   # Test files (agent-created)
+├── requirements.txt         # Python deps (if applicable)
+├── package.json            # Node deps (if applicable)
+└── README.md               # Documentation (agent-created)
+```
+
+## Git Integration
+
+### Automatic Repository Setup
+
+- **New directories**: Git repo initialized automatically
+- **Existing repos**: New branch created from current HEAD
+- **Branch naming**: `agent-YYYYMMDD-HHMMSS` format
+
+### Commit Behavior
+
+Each cycle produces a commit:
+
+```
+Cycle 0: 85% complete
+Cycle 1: 92% complete
+Cycle 2: 96% complete
+```
+
+### Remote Pushing
+
+If a git remote exists, commits are automatically pushed:
+
+```bash
+cd ~/your-project
+git remote add origin git@github.com:user/repo.git
+
+# Subsequent cycles automatically push
+```
+
+## Real-World Examples
+
+### Example 1: Weather CLI (2 cycles, 95% completion)
+
+**Command:**
+```bash
+start-agent \
+  --project-dir ~/weather-cli \
+  --prompt "Build a Python CLI that fetches weather data from OpenWeatherMap API. Include current weather, 5-day forecast, and temperature in Celsius/Fahrenheit."
+```
+
+**Timeline:**
+- Cycle 0: Created project structure, API integration, basic features (88%)
+- Cycle 1: Added error handling, tests, formatting (95%)
+- Validation: Triple-checked, completed
+
+**Result:** Production-ready weather CLI in ~40 minutes
+
+### Example 2: Task Manager (1 cycle, 92% completion)
+
+**Command:**
+```bash
+start-agent \
+  --project-dir ~/task-manager \
+  --prompt "Build a Python CLI task manager with SQLite. Support adding, listing, completing, and deleting tasks. Include due dates and priority levels."
+```
+
+**Timeline:**
+- Cycle 0: Complete implementation with database, CRUD, CLI (92%)
+- Validation: Met threshold, completed
+
+**Result:** Fully functional task manager in ~25 minutes (single cycle!)
+
+### Example 3: REST API Server (1 cycle, 92% completion)
+
+**Command:**
+```bash
+start-agent \
+  --project-dir ~/notes-api \
+  --prompt "Create a FastAPI REST API for note-taking. Include endpoints for creating, reading, updating, and deleting notes. Use SQLite for storage and include input validation."
+```
+
+**Timeline:**
+- Cycle 0: Full API with all CRUD endpoints, database, validation, tests (92%)
+- Validation: Completed
+
+**Result:** Production-ready API in ~30 minutes (single cycle!)
+
+## Advanced Usage
+
+### Continuing Previous Work
+
+To continue from a specific git commit:
+
+```bash
+cd ~/existing-project
+git checkout specific-commit
+
+# Fireteam creates new branch from this point
+start-agent --project-dir ~/existing-project --prompt "Add feature X"
+```
+
+### Template-Based Projects
+
+Start from a template directory:
+
+```bash
+cp -r ~/templates/fastapi-template ~/my-api
+start-agent --project-dir ~/my-api --prompt "Add user authentication to this FastAPI template"
+```
+
+### Multi-Language Projects
+
+```bash
+start-agent \
+  --project-dir ~/fullstack-app \
+  --prompt "Build a full-stack app with Python FastAPI backend and basic HTML/JS frontend for a todo list"
+```
+
+<Info>
+Multi-language projects take longer (typically 5-7 cycles) due to increased complexity.
+</Info>
+
+## Troubleshooting
+
+### "Agent system is already running"
+
+**Cause:** Another project is currently running
+
+**Solution:**
+
+```bash
+# Check what's running
+fireteam-status
+
+# Stop it
+stop-agent
+
+# Try again
+start-agent --project-dir ~/new-project --prompt "Goal"
+```
+
+### "Permission denied" on project directory
+
+**Cause:** Insufficient permissions
+
+**Solution:**
+
+```bash
+# Use directory you own
+start-agent --project-dir ~/projects/myapp --prompt "Goal"
+
+# Or fix permissions
+sudo chown -R $USER:$USER /path/to/project
+```
+
+### Process starts but immediately stops
+
+**Cause:** Likely Python or Claude CLI issues
+
+**Solution:**
+
+```bash
+# Check logs for errors
+fireteam-status --logs
+
+# Verify Python and Claude CLI
+python3 --version
+claude --version
+
+# Check Claude authentication
+claude auth status
+```
+
+### Git initialization fails
+
+**Cause:** Git not configured or not installed
+
+**Solution:**
+
+```bash
+# Configure git
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+
+# Or set in .env
+echo 'GIT_USER_NAME=Your Name' >> /home/claude/fireteam/.env
+echo 'GIT_USER_EMAIL=you@example.com' >> /home/claude/fireteam/.env
+```
+
+## Error Codes
+
+| Code | Meaning | Solution |
+|------|---------|----------|
+| `0` | Success | Project started |
+| `1` | Missing arguments | Provide --project-dir and --prompt |
+| `1` | Already running | Stop existing project first |
+| `1` | Invalid directory | Check path and permissions |
+
+## Best Practices
+
+### 1. Use Descriptive Project Directories
+
+```bash
+# Good - descriptive names
+--project-dir ~/bitcoin-price-checker
+--project-dir ~/fastapi-todo-api
+
+# Avoid - generic names
+--project-dir ~/project1
+--project-dir ~/test
+```
+
+### 2. Write Goals in Active Voice
+
+```bash
+# Good
+"Build a CLI that checks Bitcoin prices"
+
+# Less clear
+"A Bitcoin price checking CLI should be built"
+```
+
+### 3. Specify Testing Requirements
+
+```bash
+# Good - includes testing
+"Build a calculator with unit tests for all operations"
+
+# Basic - no testing mentioned
+"Build a calculator"
+```
+
+### 4. Set Realistic Scopes
+
+<Tip>
+Projects that complete in 1-3 cycles typically have:
+- Clear, focused objectives
+- Single primary function
+- 200-500 lines of code
+- Standard tech stack
+</Tip>
+
+Complex projects (5+ cycles):
+- Multiple integrated features
+- 1000+ lines of code
+- Advanced architectures
+- Novel tech combinations
+
+## Next Steps
+
+<CardGroup cols={2}>
+
+<Card title="Monitor Progress" icon="chart-line" href="/cli-tools/fireteam-status">
+  Learn how to check project status and view logs
+</Card>
+
+<Card title="Stop Projects" icon="stop" href="/cli-tools/stop-agent">
+  Gracefully shutdown running projects
+</Card>
+
+<Card title="Quickstart Guide" icon="rocket" href="/quickstart">
+  Complete walkthrough of your first project
+</Card>
+
+<Card title="Test Results" icon="chart-bar" href="/performance/test-results">
+  See real examples of project completion rates
+</Card>
+
+</CardGroup>

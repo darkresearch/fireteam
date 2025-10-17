@@ -1,0 +1,23 @@
+{
+  "name": "fireteam-docs",
+  "version": "1.0.0",
+  "description": "Official documentation for Fireteam - an autonomous multi-agent software development system",
+  "scripts": {
+    "dev": "mintlify dev",
+    "build": "mintlify build",
+    "preview": "mintlify preview"
+  },
+  "keywords": [
+    "fireteam",
+    "autonomous",
+    "multi-agent",
+    "ai",
+    "claude",
+    "documentation"
+  ],
+  "author": "Dark Research",
+  "license": "MIT",
+  "devDependencies": {
+    "mintlify": "^4.0.0"
+  }
+}

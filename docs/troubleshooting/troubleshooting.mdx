@@ -1,0 +1,563 @@
+---
+title: "Troubleshooting"
+description: "Common issues and solutions for Fireteam"
+---
+
+## Common Issues
+
+### Installation & Setup
+
+<AccordionGroup>
+
+<Accordion title="Command not found: start-agent">
+
+**Symptoms:**
+```bash
+$ start-agent
+bash: start-agent: command not found
+```
+
+**Cause:** CLI tools not in PATH
+
+**Solution:**
+```bash
+# Add to PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+# Make permanent
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+
+# Verify
+which start-agent
+```
+
+</Accordion>
+
+<Accordion title="Claude CLI not found or not authenticated">
+
+**Symptoms:**
+```
+Error: claude: command not found
+Error: Claude CLI not authenticated
+```
+
+**Solution:**
+```bash
+# Install Claude CLI
+curl -fsSL https://claude.ai/install.sh | sh
+
+# Authenticate
+claude auth
+
+# Verify
+claude --version
+claude auth status
+```
+
+</Accordion>
+
+<Accordion title="Python version too old">
+
+**Symptoms:**
+```
+Error: Python 3.12+ required, found 3.10
+```
+
+**Solution:**
+```bash
+# Check version
+python3 --version
+
+# Install Python 3.12+
+sudo apt install python3.12  # Ubuntu/Debian
+brew install python@3.12     # macOS
+
+# Update alias
+alias python3='/usr/bin/python3.12'
+```
+
+</Accordion>
+
+</AccordionGroup>
+
+### Runtime Issues
+
+<AccordionGroup>
+
+<Accordion title="Agent system is already running">
+
+**Symptoms:**
+```
+Agent system is already running (PID: 12345)
+Use 'stop-agent' to stop it first
+```
+
+**Solution:**
+```bash
+# Check what's running
+fireteam-status
+
+# Stop it
+stop-agent
+
+# If stuck, force kill
+kill -9 $(cat /home/claude/fireteam/orchestrator.pid)
+rm /home/claude/fireteam/orchestrator.pid
+
+# Try again
+start-agent --project-dir ~/project --prompt "Goal"
+```
+
+</Accordion>
+
+<Accordion title="Agent timeouts frequently">
+
+**Symptoms:**
+```
+ERROR - Agent timeout after 600 seconds
+ERROR - Planner/Executor/Reviewer exceeded timeout
+```
+
+**Solution:**
+```python
+# Edit /home/claude/fireteam/config.py
+AGENT_TIMEOUTS = {
+    "planner": 1200,    # 20 minutes
+    "executor": 3600,   # 60 minutes
+    "reviewer": 1200    # 20 minutes
+}
+```
+
+**Or check network/resources:**
+```bash
+# Network latency
+ping api.anthropic.com
+
+# System resources
+htop  # Check CPU/memory
+df -h  # Check disk space
+```
+
+</Accordion>
+
+<Accordion title="Permission denied errors">
+
+**Symptoms:**
+```
+Permission denied: apt install nodejs
+Permission denied: /usr/local/bin
+```
+
+**Solution:**
+
+**Option 1: Passwordless sudo (recommended)**
+```bash
+sudo visudo
+# Add: username ALL=(ALL) NOPASSWD: ALL
+```
+
+**Option 2: SUDO_PASSWORD in .env**
+```bash
+echo 'SUDO_PASSWORD=your_password' >> /home/claude/fireteam/.env
+chmod 600 /home/claude/fireteam/.env
+```
+
+See [Sudo Setup](/configuration/sudo-setup) for details.
+
+</Accordion>
+
+<Accordion title="State corruption or parse errors">
+
+**Symptoms:**
+```
+Error loading state: Expecting property name
+fireteam-status shows incorrect data
+```
+
+**Solution:**
+```bash
+# Backup corrupted state
+cp /home/claude/fireteam/state/current.json ~/corrupted-state.json
+
+# Validate JSON
+cat /home/claude/fireteam/state/current.json | python3 -m json.tool
+
+# If invalid, remove and restart
+rm /home/claude/fireteam/state/current.json
+stop-agent
+start-agent --project-dir ~/project --prompt "Goal"
+```
+
+</Accordion>
+
+<Accordion title="Git errors during initialization">
+
+**Symptoms:**
+```
+Git initialization error
+fatal: unable to auto-detect email address
+```
+
+**Solution:**
+```bash
+# Configure git
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+
+# Or use .env
+echo 'GIT_USER_NAME=Your Name' >> /home/claude/fireteam/.env
+echo 'GIT_USER_EMAIL=you@example.com' >> /home/claude/fireteam/.env
+```
+
+</Accordion>
+
+</AccordionGroup>
+
+### Performance Issues
+
+<AccordionGroup>
+
+<Accordion title="Project stuck at same completion %">
+
+**Symptoms:**
+```
+Cycle 5: 88%
+Cycle 6: 88%
+Cycle 7: 88%
+```
+
+**Diagnosis:**
+```bash
+# Check logs for errors
+fireteam-status --logs --lines 100 | grep ERROR
+
+# View recent activity
+fireteam-status --logs --lines 50
+```
+
+**Solutions:**
+
+1. **Environment issue:** Install missing dependencies
+2. **Scope issue:** Goal too vague, stop and restart with clearer goal
+3. **Blocker:** Agent stuck on unsolvable problem, review and manually fix
+4. **Stop and inspect:**
+```bash
+stop-agent
+cd ~/project
+git log --oneline
+# Review what was accomplished
+```
+
+</Accordion>
+
+<Accordion title="Agent drift / working on wrong features">
+
+**Symptoms:**
+- Building features not requested
+- Creating deployment automation for simple CLI
+- Adding unnecessary complexity
+
+**Solution:**
+
+**Immediate:**
+```bash
+# Stop agent
+stop-agent
+
+# Check git commits
+cd ~/project && git log --oneline
+
+# Revert unwanted changes
+git reset --hard <last-good-commit>
+```
+
+**Prevention:**
+- Write more specific goals
+- Monitor goal alignment logs (every 3 cycles)
+- Stop early if drift detected
+
+</Accordion>
+
+<Accordion title="Very slow cycles (30+ minutes each)">
+
+**Causes:**
+- Large codebase (10k+ lines)
+- Extensive dependencies
+- Slow network
+- Resource constraints
+
+**Solutions:**
+
+1. **Increase timeouts:**
+```python
+AGENT_TIMEOUTS = {
+    "executor": 3600  # 60 minutes
+}
+```
+
+2. **Pre-install dependencies:**
+```bash
+cd ~/project
+npm install  # or pip install -r requirements.txt
+```
+
+3. **Check resources:**
+```bash
+htop  # CPU/memory
+iostat  # Disk I/O
+```
+
+</Accordion>
+
+</AccordionGroup>
+
+### Project-Specific Issues
+
+<AccordionGroup>
+
+<Accordion title="TypeScript/Node.js projects failing">
+
+**Symptoms:**
+```
+tsc: command not found
+npm: command not found
+Multiple cycles trying to install Node.js
+```
+
+**Solution:**
+
+**Pre-install Node.js:**
+```bash
+# Via nvm (recommended)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+nvm install 18
+nvm use 18
+
+# Or system package
+sudo apt install nodejs npm  # Ubuntu
+brew install node           # macOS
+```
+
+**Or configure sudo:**
+See [Sudo Setup](/configuration/sudo-setup)
+
+</Accordion>
+
+<Accordion title="Tests failing but agent marks complete">
+
+**Symptoms:**
+- Reviewer says 95% complete
+- Tests actually fail when you run them
+
+**Investigation:**
+```bash
+cd ~/project
+
+# Run tests manually
+pytest  # or npm test, etc.
+
+# Check what reviewer saw
+fireteam-status --logs | grep -A 10 "Review completed"
+```
+
+**Solution:**
+- Fix failing tests manually
+- Or restart with goal: "Fix all failing tests"
+
+</Accordion>
+
+<Accordion title="Missing dependencies or imports">
+
+**Symptoms:**
+```
+ModuleNotFoundError: No module named 'requests'
+ImportError: cannot import name 'FastAPI'
+```
+
+**Solution:**
+```bash
+cd ~/project
+
+# Check requirements file
+cat requirements.txt  # or package.json
+
+# Install manually
+pip install -r requirements.txt
+# or
+npm install
+
+# Or let agent fix it
+start-agent --project-dir ~/project --prompt "Fix all missing dependencies and imports"
+```
+
+</Accordion>
+
+</AccordionGroup>
+
+## Debugging Strategies
+
+### 1. Check Logs First
+
+```bash
+# Recent activity
+fireteam-status --logs --lines 50
+
+# Error messages
+fireteam-status --logs | grep ERROR
+
+# Full context
+fireteam-status --logs --lines 500 > debug.log
+```
+
+### 2. Inspect State
+
+```bash
+# Current state
+cat /home/claude/fireteam/state/current.json | python3 -m json.tool
+
+# Key fields
+jq '{cycle: .cycle_number, completion: .completion_percentage, status: .status}' state/current.json
+```
+
+### 3. Review Git History
+
+```bash
+cd ~/project
+
+# See what was done
+git log --oneline
+
+# Detailed diff
+git show HEAD  # Latest commit
+git diff HEAD~3..HEAD  # Last 3 cycles
+```
+
+### 4. Test Manually
+
+```bash
+cd ~/project
+
+# Run the project
+python main.py  # or node index.js, etc.
+
+# Run tests
+pytest  # or npm test
+
+# Check for issues
+```
+
+### 5. Incremental Debugging
+
+```bash
+# Stop agent
+stop-agent
+
+# Fix issue manually
+# ... make changes ...
+
+# Restart to continue
+start-agent --project-dir ~/project --prompt "Continue and complete remaining work"
+```
+
+## Error Messages Reference
+
+### Common Error Patterns
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| `timeout after N seconds` | Agent exceeded time limit | Increase timeout in config.py |
+| `command not found` | Missing CLI tool or PATH issue | Install tool or add to PATH |
+| `Permission denied` | Sudo required | Configure sudo access |
+| `No module named X` | Missing Python package | `pip install X` |
+| `ENOENT: no such file` | Missing file/directory | Check project structure |
+| `Parse error` | Invalid JSON/code | Check state file or recent changes |
+| `Git error` | Git not configured | Configure git user/email |
+
+## Getting Help
+
+### Information to Provide
+
+When seeking help, include:
+
+1. **Error message:**
+```bash
+fireteam-status --logs --lines 100 > error.log
+```
+
+2. **State:**
+```bash
+cat /home/claude/fireteam/state/current.json > state.json
+```
+
+3. **Configuration:**
+```bash
+cat /home/claude/fireteam/config.py > config.txt
+```
+
+4. **Environment:**
+```bash
+python3 --version
+claude --version
+git --version
+uname -a
+```
+
+5. **Project goal:**
+```
+Goal: "Build a Python CLI calculator"
+Cycle: 8
+Completion: 75% (stuck)
+```
+
+### Where to Get Help
+
+- **GitHub Issues:** https://github.com/darkresearch/fireteam/issues
+- **Documentation:** https://docs.fireteam.dev
+- **Claude Code Docs:** https://docs.claude.com/en/docs/claude-code
+
+## Preventive Measures
+
+### Before Starting Projects
+
+✅ Verify all requirements installed
+✅ Configure sudo access if needed
+✅ Check disk space (1GB+ free)
+✅ Test Claude CLI authentication
+✅ Write clear, specific goals
+
+### During Execution
+
+✅ Monitor first 1-2 cycles closely
+✅ Check for environment errors early
+✅ Watch for agent drift (goal alignment)
+✅ Review git commits periodically
+
+### After Completion
+
+✅ Test the project manually
+✅ Review all git commits
+✅ Check for missing tests
+✅ Validate error handling
+
+## Next Steps
+
+<CardGroup cols={2}>
+
+<Card title="Configuration" icon="sliders" href="/configuration/config-file">
+  Optimize settings to prevent issues
+</Card>
+
+<Card title="Test Results" icon="chart-bar" href="/performance/test-results">
+  Learn from real-world examples
+</Card>
+
+<Card title="Sudo Setup" icon="lock" href="/configuration/sudo-setup">
+  Fix permission issues
+</Card>
+
+<Card title="GitHub Issues" icon="github" href="https://github.com/darkresearch/fireteam/issues">
+  Report bugs and request features
+</Card>
+
+</CardGroup>

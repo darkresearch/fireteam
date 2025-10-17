@@ -1,0 +1,581 @@
+---
+title: "Cycles"
+description: "Understanding Fireteam's cycle-based execution model and completion validation system"
+---
+
+## What is a Cycle?
+
+A **cycle** is one complete iteration through all three agent phases: **Plan → Execute → Review**. Fireteam runs in an infinite loop, executing cycles continuously until the project reaches validated completion.
+
+```
+Cycle 0:  Plan → Execute → Review → Git Commit → 88% complete
+Cycle 1:  Plan → Execute → Review → Git Commit → 95% complete ✓ (1/3)
+Cycle 2:  Plan → Execute → Review → Git Commit → 98% complete ✓ (2/3)
+Cycle 3:  Plan → Execute → Review → Git Commit → 98% complete ✓ (3/3)
+          → PROJECT COMPLETE! 🎉
+```
+
+Each cycle builds on the previous one, incrementally improving the codebase until it meets production-ready standards.
+
+## Cycle Anatomy
+
+### Phase 1: Planning
+
+**Duration**: Typically 2-5 minutes (timeout: 10 minutes)
+
+**What Happens**:
+1. Planner Agent receives project goal and previous cycle outputs
+2. Analyzes current state of the codebase
+3. Reviews feedback from last Review phase
+4. Creates or updates the project plan
+5. Outputs structured task breakdown
+
+**Input**:
+- Project goal (constant)
+- Previous plan (if cycle > 0)
+- Last execution result (if cycle > 0)
+- Last review feedback (if cycle > 0)
+
+**Output**:
+- Updated project plan with task priorities
+
+**State Update**:
+```json
+{
+  "status": "planning",
+  "current_plan": "new_plan_content"
+}
+```
+
+### Phase 2: Execution
+
+**Duration**: Typically 10-20 minutes (timeout: 30 minutes)
+
+**What Happens**:
+1. Executor Agent reads the current plan
+2. Implements the next actionable tasks
+3. Writes production-ready code (no placeholders)
+4. Creates or updates test files
+5. Runs tests to verify functionality
+6. Documents changes
+7. Outputs summary of work completed
+
+**Input**:
+- Project goal
+- Current plan from Planner
+- Project directory path
+
+**Output**:
+- Execution summary
+- List of files created/modified
+- Issues encountered
+- Remaining work
+
+**State Update**:
+```json
+{
+  "status": "executing",
+  "last_execution_result": "execution_summary"
+}
+```
+
+<Info>
+The Executor has the longest timeout (30 minutes) because implementation includes writing code, installing dependencies, running tests, and debugging.
+</Info>
+
+### Phase 3: Review
+
+**Duration**: Typically 3-7 minutes (timeout: 10 minutes)
+
+**What Happens**:
+1. Reviewer Agent scans the entire codebase
+2. Runs tests and checks functionality
+3. Compares implementation against goal
+4. Identifies gaps, bugs, or incomplete features
+5. Estimates completion percentage (0-100%)
+6. Provides detailed feedback
+
+**Input**:
+- Project goal
+- Current plan
+- Execution result summary
+- Validation mode flag (true if previous completion ≥95%)
+
+**Output**:
+- Review summary
+- **Completion percentage (0-100%)**
+- What's working
+- What's incomplete
+- Next steps
+
+**State Update**:
+```json
+{
+  "status": "reviewing",
+  "last_review": "review_content",
+  "completion_percentage": 95
+}
+```
+
+### Phase 4: Git Commit
+
+**Duration**: Typically &lt;30 seconds
+
+**What Happens**:
+1. Check for file changes with `git status --porcelain`
+2. Stage all changes with `git add .`
+3. Create commit with descriptive message
+4. Push to remote origin (if exists)
+
+**Commit Message Format**:
+```
+Cycle N: XX% complete
+
+- Summary of changes made in this cycle
+- Key features implemented
+- Tests added
+```
+
+**Example**:
+```
+Cycle 2: 95% complete
+
+- Added comprehensive error handling
+- Implemented retry logic with exponential backoff
+- Expanded test suite (18 tests passing)
+- Updated README with usage examples
+```
+
+<Tip>
+Every cycle creates a Git commit, providing a complete audit trail of the project's development. You can `git log` to see the entire history.
+</Tip>
+
+## Cycle Progression
+
+### Cycle 0 - Initial Build
+
+The first cycle starts from scratch:
+
+**Planning**:
+- Receives only the project goal (no previous context)
+- Creates comprehensive initial plan
+- Breaks down all requirements
+
+**Execution**:
+- Creates project structure
+- Implements core functionality
+- Writes initial tests
+- Adds basic documentation
+
+**Review**:
+- Assesses what was built
+- Typically estimates 70-90% completion
+- Identifies remaining work
+
+**Typical Result**: 70-90% completion
+
+### Cycle 1+ - Refinement
+
+Subsequent cycles build on existing work:
+
+**Planning**:
+- Reviews previous plan, execution, and review
+- Focuses on gaps identified by Reviewer
+- Adjusts priorities based on feedback
+
+**Execution**:
+- Implements missing features
+- Improves error handling
+- Expands test coverage
+- Polishes documentation
+
+**Review**:
+- Re-evaluates entire codebase
+- Updates completion percentage
+- May enter validation mode (if ≥95%)
+
+**Typical Result**: Incremental improvement toward 95%+
+
+## Completion Validation System
+
+Fireteam uses a **triple-validation system** to ensure genuine quality before marking projects complete.
+
+### Why Triple Validation?
+
+A single high score could be:
+- A false positive
+- Based on incomplete testing
+- Missing edge cases
+- Overly optimistic
+
+**Solution**: Require **3 consecutive reviews ≥95%** to confirm completion.
+
+### Validation Logic
+
+```python
+def check_completion(completion_pct, validation_checks):
+    if completion_pct >= 95:
+        validation_checks += 1
+
+        if validation_checks >= 3:
+            return True  # Project complete!
+    else:
+        validation_checks = 0  # Reset if percentage drops
+
+    return False  # Continue cycling
+```
+
+### Validation States
+
+<Steps>
+  <Step title="Normal Mode (completion < 95%)">
+    Reviewer performs standard assessment. Validation counter stays at 0.
+  </Step>
+
+  <Step title="Validation Mode (completion ≥ 95%)">
+    Reviewer enters **critical validation mode** with extra scrutiny:
+    - Checks for edge cases
+    - Verifies error handling
+    - Confirms testing completeness
+    - Validates production readiness
+  </Step>
+
+  <Step title="Completion (3 consecutive ≥95%)">
+    After 3 consecutive validations, project is marked complete and system stops.
+  </Step>
+</Steps>
+
+### Example Validation Flow
+
+```
+Cycle 0: 88% → validation_checks = 0
+Cycle 1: 95% → validation_checks = 1 (enters validation mode)
+Cycle 2: 93% → validation_checks = 0 (dropped below 95%, reset!)
+Cycle 3: 96% → validation_checks = 1 (restart validation)
+Cycle 4: 97% → validation_checks = 2
+Cycle 5: 98% → validation_checks = 3 → COMPLETE! ✓
+```
+
+<Warning>
+If completion percentage drops below 95% during validation, the counter **resets to 0**. This prevents premature completion if issues are discovered.
+</Warning>
+
+## Validation Mode Details
+
+When `completion_percentage >= 95%`, the Reviewer receives special instructions:
+
+```
+VALIDATION MODE:
+This is a validation check. The system believes the project is >95%
+complete.
+
+Be CRITICAL and thorough. Check for:
+- Edge cases that might not be handled
+- Missing error handling
+- Incomplete features
+- Testing gaps
+- Production-readiness issues
+
+Only confirm high completion if truly production-ready.
+```
+
+This ensures each validation is a **fresh, critical look** rather than rubber-stamping previous assessments.
+
+## Goal Alignment Checks
+
+Every 3 cycles, Fireteam performs an automatic **goal alignment check**:
+
+```
+════════════════════════════════════════════════════════
+GOAL ALIGNMENT CHECK (Cycle 3)
+════════════════════════════════════════════════════════
+Original Goal: Build a Python CLI tool that fetches the
+current Bitcoin price from CoinGecko API...
+
+⚠️  Reminder: Ensure all work aligns with original goal!
+════════════════════════════════════════════════════════
+```
+
+This prevents **scope creep** where agents might add features beyond the original goal.
+
+## State Persistence
+
+After each phase, state is saved to `state/current.json`:
+
+```json
+{
+  "project_dir": "/path/to/project",
+  "goal": "Build a Bitcoin price checker...",
+  "status": "reviewing",
+  "cycle_number": 2,
+  "completion_percentage": 95,
+  "validation_checks": 1,
+  "git_branch": "agent-20251017-143022",
+  "current_plan": "# Updated Plan\n...",
+  "last_execution_result": "Execution Summary...",
+  "last_review": "COMPLETION: 95%\n...",
+  "created_at": "2025-10-17T14:30:22Z",
+  "updated_at": "2025-10-17T15:45:33Z"
+}
+```
+
+This enables:
+- **Crash recovery**: Resume from last saved state
+- **Progress monitoring**: External tools read state
+- **Debugging**: Examine state history
+
+## Cycle Performance
+
+Based on real test data across 11 projects:
+
+### Cycle Count Distribution
+
+| Cycles | Projects | Percentage | Notes |
+|--------|----------|------------|-------|
+| 1 | 3 | 27.3% | Single-cycle completions (REST API, Task Manager, Web Scraper) |
+| 2 | 2 | 18.2% | Fast completions (Weather CLI, Calculator) |
+| 3 | 5 | 45.5% | Most common (typical projects) |
+| 4-5 | 0 | 0% | None in test set |
+| 6+ | 1 | 9.1% | GitHub Analyzer (TypeScript, had Node.js install blocker) |
+
+**Average**: 3.7 cycles per project
+
+**Median**: 3 cycles
+
+### Time Per Cycle
+
+**Typical cycle duration**:
+- **Cycle 0**: 20-30 minutes (initial build)
+- **Cycle 1+**: 15-25 minutes (refinement)
+
+**Total project time**:
+- **1-cycle projects**: 20-30 minutes
+- **2-3 cycle projects**: 45-90 minutes
+- **Average**: ~50 minutes per project
+
+### Completion Progression
+
+Typical completion percentage progression:
+
+```
+Cycle 0: 70-90% (initial implementation)
+Cycle 1: 85-95% (refinement)
+Cycle 2: 92-98% (polish + validation 1)
+Cycle 3: 95-100% (validation 2-3)
+```
+
+<Info>
+Well-defined projects with familiar tech stacks (Python, common libraries) tend to complete in fewer cycles than projects requiring environment setup (TypeScript, Node.js).
+</Info>
+
+## Cycle Interruption & Recovery
+
+### Graceful Shutdown
+
+Use `stop-agent` to gracefully stop between cycles:
+
+```bash
+stop-agent
+```
+
+This:
+1. Sends `SIGTERM` signal to orchestrator
+2. Waits for current agent to complete
+3. Saves state to disk
+4. Commits any pending changes
+5. Exits cleanly
+
+<Warning>
+Never kill the process manually (`kill -9`, `Ctrl+C`). Always use `stop-agent` to preserve state.
+</Warning>
+
+### Mid-Cycle Interruption
+
+If an agent times out or fails mid-cycle:
+
+**Retry Logic**:
+1. First attempt fails → wait 5 seconds → retry
+2. Second attempt fails → wait 10 seconds → retry
+3. Third attempt fails → mark cycle as failed, stop gracefully
+
+**State Preservation**:
+- State is saved before each phase
+- Partial work is committed to Git
+- Logs capture error details
+
+### Recovery from Crash
+
+If the system crashes unexpectedly:
+
+1. **Check state**: `cat /home/claude/fireteam/state/current.json`
+2. **Check Git**: All committed work is preserved
+3. **Restart**: Run `start-agent` with same goal
+4. **State recovery**: System loads last saved state and resumes
+
+## Advanced Cycle Concepts
+
+### Parse Failure Handling
+
+If the Reviewer's output can't be parsed (missing "COMPLETION: XX%" marker):
+
+**Old Behavior** (problematic):
+- Default to 0% completion
+- Reset validation progress incorrectly
+
+**New Behavior** (improved):
+- Use **last known completion percentage**
+- Log warning but don't crash
+- Allow system to self-correct in next cycle
+
+```python
+# StateManager handles parse failures gracefully
+if parsed_completion == 0:
+    logger.warning("Parse failure detected, using last known completion")
+    return last_known_completion  # Prevents regression
+```
+
+### Completion Percentage Regression
+
+What if completion percentage drops?
+
+**Example**:
+```
+Cycle 0: 93%
+Cycle 1: 96%
+Cycle 2: 92% ← Dropped!
+```
+
+**System Response**:
+- Reset validation counter to 0
+- Log warning about regression
+- Continue cycling normally
+- Agents should investigate why quality dropped
+
+This can happen if:
+- Tests break due to refactoring
+- New features introduce bugs
+- Reviewer becomes more critical
+
+### Infinite Loop Protection
+
+**Question**: What if the project never reaches 95%?
+
+**Answer**: Manual intervention required.
+
+**Monitoring**:
+```bash
+fireteam-status --watch
+```
+
+If stuck at 85-90% for 5+ cycles, consider:
+1. Checking logs for blockers
+2. Reviewing the goal (too ambitious?)
+3. Stopping and examining code manually
+4. Adjusting the goal for next run
+
+## Configuration Options
+
+All cycle-related settings in `config.py`:
+
+```python
+# Completion thresholds
+COMPLETION_THRESHOLD = 95  # Percentage to trigger validation
+VALIDATION_CHECKS_REQUIRED = 3  # Consecutive checks needed
+
+# Agent timeouts (in seconds)
+AGENT_TIMEOUTS = {
+    "planner": 600,      # 10 minutes
+    "executor": 1800,    # 30 minutes
+    "reviewer": 600      # 10 minutes
+}
+
+# Retry logic
+MAX_RETRIES = 3
+RETRY_DELAY = 5  # seconds (with exponential backoff)
+```
+
+## Monitoring Cycles
+
+### Real-Time Monitoring
+
+```bash
+fireteam-status --watch
+```
+
+Output:
+```
+╔══════════════════════════════════════════════════════════════╗
+║                    🔥 FIRETEAM STATUS 🔥                     ║
+╚══════════════════════════════════════════════════════════════╝
+
+Status: ⚡ RUNNING
+
+Current Progress:
+  Cycle: 2
+  Phase: Reviewing
+  Completion: 95%
+  Validation: 1/3 checks
+
+Last Updated: 2025-10-17 14:35:42
+```
+
+### Log Examination
+
+View detailed cycle logs:
+
+```bash
+tail -f /home/claude/fireteam/logs/orchestrator_*.log
+```
+
+Look for:
+- Phase transitions
+- Completion percentages
+- Validation check counts
+- Error messages
+- Git commit confirmations
+
+## Best Practices
+
+### For Faster Cycles
+
+✅ **Write specific goals**: Clear requirements → faster implementation
+
+✅ **Choose familiar tech stacks**: Python projects complete faster than TypeScript
+
+✅ **Start medium-sized**: 100-300 line projects are the sweet spot
+
+### For Better Quality
+
+✅ **Trust validation**: Let the triple-check system work
+
+✅ **Monitor validation mode**: Pay attention when completion ≥95%
+
+✅ **Review Git history**: Check commits to understand progression
+
+### For Debugging
+
+✅ **Watch logs**: Use `fireteam-status --follow` for real-time logs
+
+✅ **Check state**: Examine `state/current.json` for current status
+
+✅ **Review commits**: `git log` shows work completed each cycle
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Agent Details" icon="robot" href="/core-concepts/agents">
+    Learn what each agent does in each cycle phase
+  </Card>
+
+  <Card title="Configure Timeouts" icon="clock" href="/configuration/timeouts">
+    Optimize cycle timing for your projects
+  </Card>
+
+  <Card title="Monitor Progress" icon="chart-line" href="/cli-tools/fireteam-status">
+    Track cycles in real-time
+  </Card>
+
+  <Card title="State Management" icon="database" href="/advanced/state-management">
+    Understand state persistence and recovery
+  </Card>
+</CardGroup>

@@ -1,0 +1,548 @@
+---
+title: "fireteam-status"
+description: "Monitor running Fireteam projects, view logs, and check system resources"
+---
+
+## Synopsis
+
+```bash
+fireteam-status [OPTIONS]
+```
+
+## Description
+
+The `fireteam-status` command provides real-time monitoring of Fireteam projects. It shows project state, completion progress, cycle information, and system resource usage. Supports one-time status checks, live monitoring, and log viewing.
+
+## Options
+
+<ParamField path="--watch" type="flag">
+  Enable watch mode - refresh status every N seconds
+</ParamField>
+
+<ParamField path="--interval" type="integer" default="5">
+  Refresh interval for watch mode (seconds)
+</ParamField>
+
+<ParamField path="--logs" type="flag">
+  Show recent log entries instead of status
+</ParamField>
+
+<ParamField path="--follow" type="flag">
+  Follow log output in real-time (like `tail -f`)
+</ParamField>
+
+<ParamField path="--lines" type="integer" default="20">
+  Number of log lines to display
+</ParamField>
+
+## Basic Usage
+
+### One-Time Status Check
+
+```bash
+fireteam-status
+```
+
+**Output:**
+```
+============================================================
+🔥 FIRETEAM STATUS
+============================================================
+
+Status: ✅ RUNNING (PID: 12345)
+
+📁 Project State:
+------------------------------------------------------------
+  Project: /home/claude/bitcoin-cli
+  Goal: Build a Bitcoin price checker CLI using Python
+  Status: EXECUTING
+  Cycle: 2
+  Completion: 92%
+  Git Branch: agent-20251017-143022
+  Started: 2025-10-17 14:30:22
+  Updated: 2025-10-17 14:45:18
+
+============================================================
+```
+
+### Live Monitoring
+
+```bash
+fireteam-status --watch
+```
+
+Updates screen every 5 seconds with latest status.
+
+**Custom refresh interval:**
+```bash
+fireteam-status --watch --interval 10
+```
+
+### View Logs
+
+```bash
+# Show last 20 lines
+fireteam-status --logs
+
+# Show last 50 lines
+fireteam-status --logs --lines 50
+
+# Follow logs in real-time
+fireteam-status --logs --follow
+```
+
+## Status Information
+
+### Process Status
+
+Indicates if Fireteam orchestrator is running:
+
+- **✅ RUNNING**: Active project execution
+- **⏹️ STOPPED**: No active project
+
+### Project State
+
+When a project is running, displays:
+
+| Field | Description |
+|-------|-------------|
+| **Project** | Absolute path to project directory |
+| **Goal** | Project objective (truncated if >80 chars) |
+| **Status** | Current phase (PLANNING, EXECUTING, REVIEWING) |
+| **Cycle** | Current cycle number (0-indexed) |
+| **Completion** | Latest reviewer estimate (0-100%) |
+| **Git Branch** | Active git branch name |
+| **Started** | Project start timestamp |
+| **Updated** | Last state update timestamp |
+
+### System Resources (Watch Mode)
+
+In watch mode, shows resource usage:
+
+```
+💻 System Resources:
+------------------------------------------------------------
+  Memory: 4.2G / 16G used
+  CPU Load: 1.23, 1.45, 1.67
+  Disk: 45% used
+```
+
+## Watch Mode
+
+### Starting Watch Mode
+
+```bash
+fireteam-status --watch
+```
+
+**Features:**
+- Screen clears and refreshes automatically
+- Shows system resources
+- Updates at configurable interval
+- Exit with `Ctrl+C`
+
+### Optimal Use Cases
+
+**Long-running projects:**
+```bash
+# Terminal 1: Start project
+start-agent --project-dir ~/complex-app --prompt "Goal"
+
+# Terminal 2: Monitor continuously
+fireteam-status --watch --interval 3
+```
+
+**Quick checks:**
+```bash
+# Check every 30 seconds
+fireteam-status --watch --interval 30
+```
+
+### Watch Mode Tips
+
+<Tip>
+Use `tmux` or `screen` to keep watch mode running in background:
+
+```bash
+tmux new -s fireteam-monitor
+fireteam-status --watch
+# Detach: Ctrl+B, D
+```
+</Tip>
+
+## Log Viewing
+
+### Show Recent Logs
+
+```bash
+fireteam-status --logs
+```
+
+Shows last 20 lines from latest orchestrator log.
+
+### Follow Logs
+
+```bash
+fireteam-status --logs --follow
+```
+
+Continuously streams new log entries (like `tail -f`).
+
+### Custom Line Count
+
+```bash
+# Show last 100 lines
+fireteam-status --logs --lines 100
+
+# Show last 5 lines
+fireteam-status --logs --lines 5
+```
+
+### Log Analysis
+
+**Find errors:**
+```bash
+fireteam-status --logs --lines 500 | grep ERROR
+```
+
+**Check completion progress:**
+```bash
+fireteam-status --logs --lines 200 | grep "Completion:"
+```
+
+**View cycle starts:**
+```bash
+fireteam-status --logs --lines 300 | grep "CYCLE"
+```
+
+## Understanding Output
+
+### Completion Percentage
+
+The completion percentage comes from the Reviewer agent:
+
+- **0-50%**: Early stages, basic structure
+- **50-75%**: Core functionality implemented
+- **75-90%**: Most features complete, refinement needed
+- **90-95%**: Nearly complete, minor polish
+- **95-100%**: Validation mode, triple-checking
+
+<Info>
+When completion reaches ≥95%, Fireteam enters validation mode requiring 3 consecutive high reviews before completing.
+</Info>
+
+### Cycle Progression
+
+**Normal pattern:**
+
+```
+Cycle 0: 85% → 88% → 92%
+Cycle 1: 92% → 95% → 95%
+Cycle 2: 95% → 96% → 98%
+Validation: 98% → 98% → 98% ✅ Complete
+```
+
+**Issue indicators:**
+
+```
+Cycle 5: 92% → 88% ⚠️  Regression
+Cycle 6: 88% → 88% ⚠️  Stagnation
+```
+
+### Status Phases
+
+| Phase | Meaning | Typical Duration |
+|-------|---------|------------------|
+| **PLANNING** | Creating/updating project plan | 2-10 minutes |
+| **EXECUTING** | Implementing tasks from plan | 5-30 minutes |
+| **REVIEWING** | Analyzing code, running tests | 3-10 minutes |
+
+## Real-World Examples
+
+### Example 1: Monitoring Simple Project
+
+```bash
+$ fireteam-status
+
+============================================================
+🔥 FIRETEAM STATUS
+============================================================
+
+Status: ✅ RUNNING (PID: 54321)
+
+📁 Project State:
+------------------------------------------------------------
+  Project: /home/claude/weather-cli
+  Goal: Build a Python CLI that fetches weather data
+  Status: REVIEWING
+  Cycle: 1
+  Completion: 95%
+  Git Branch: agent-20251017-140000
+  Started: 2025-10-17 14:00:00
+  Updated: 2025-10-17 14:35:12
+
+============================================================
+```
+
+**Interpretation:**
+- Cycle 1 (likely near completion)
+- 95% complete (in validation range)
+- Currently reviewing
+- Total runtime: ~35 minutes
+
+### Example 2: Watch Mode During Complex Build
+
+```bash
+$ fireteam-status --watch --interval 10
+```
+
+**Updates every 10 seconds:**
+
+```
+[Screen refreshes automatically]
+
+============================================================
+🔥 FIRETEAM STATUS
+============================================================
+
+Status: ✅ RUNNING (PID: 67890)
+
+📁 Project State:
+------------------------------------------------------------
+  Project: /home/claude/github-analyzer
+  Goal: Build a TypeScript CLI tool that analyzes GitHub...
+  Status: EXECUTING
+  Cycle: 8
+  Completion: 78%
+  Git Branch: agent-20251017-120000
+  Started: 2025-10-17 12:00:00
+  Updated: 2025-10-17 14:22:45
+
+💻 System Resources:
+------------------------------------------------------------
+  Memory: 6.8G / 16G used
+  CPU Load: 2.34, 1.98, 1.76
+  Disk: 52% used
+
+============================================================
+  Refreshing every 10s... (Ctrl+C to stop)
+```
+
+### Example 3: Following Logs
+
+```bash
+$ fireteam-status --logs --follow
+```
+
+**Live output:**
+```
+📄 Latest log: orchestrator_20251017_140000.log
+============================================================
+2025-10-17 14:30:22 - orchestrator - INFO - CYCLE 2 - Starting
+2025-10-17 14:30:22 - orchestrator - INFO - PHASE 1: Planning
+2025-10-17 14:33:15 - orchestrator - INFO - Planning completed
+2025-10-17 14:33:15 - orchestrator - INFO - PHASE 2: Execution
+2025-10-17 14:48:22 - orchestrator - INFO - Execution completed
+2025-10-17 14:48:22 - orchestrator - INFO - PHASE 3: Review
+2025-10-17 14:52:10 - orchestrator - INFO - Review completed - Completion: 96%
+[waiting for new entries...]
+```
+
+## Troubleshooting
+
+### "No active project" shown but agent is running
+
+**Cause:** State file missing or corrupted
+
+**Solution:**
+```bash
+# Check for state file
+ls -la /home/claude/fireteam/state/current.json
+
+# If missing, might be early initialization
+# Wait a few seconds and check again
+sleep 5
+fireteam-status
+```
+
+### Watch mode not updating
+
+**Cause:** Process might have crashed
+
+**Solution:**
+```bash
+# Exit watch mode (Ctrl+C)
+# Check process status
+ps aux | grep orchestrator
+
+# View logs for errors
+fireteam-status --logs --lines 50 | grep ERROR
+```
+
+### "Error loading state" message
+
+**Cause:** Malformed JSON in state file
+
+**Solution:**
+```bash
+# View state file
+cat /home/claude/fireteam/state/current.json | python3 -m json.tool
+
+# If corrupted, stop and restart
+stop-agent
+start-agent --project-dir ~/project --prompt "Goal"
+```
+
+### Logs not showing
+
+**Cause:** No log files or wrong directory
+
+**Solution:**
+```bash
+# Check log directory
+ls -la /home/claude/fireteam/logs/
+
+# Verify orchestrator logs exist
+ls -la /home/claude/fireteam/logs/orchestrator_*.log
+
+# If missing, check if Fireteam is actually running
+ps aux | grep orchestrator
+```
+
+## Advanced Usage
+
+### Scripting with fireteam-status
+
+**Wait for completion:**
+```bash
+#!/bin/bash
+while fireteam-status | grep -q "RUNNING"; do
+    echo "Still running... $(date)"
+    sleep 60
+done
+echo "Project complete!"
+```
+
+**Alert on high completion:**
+```bash
+#!/bin/bash
+while true; do
+    COMPLETION=$(fireteam-status | grep "Completion:" | awk '{print $2}' | tr -d '%')
+    if [ "$COMPLETION" -ge 95 ]; then
+        notify-send "Fireteam" "Project at ${COMPLETION}% - nearing completion!"
+        break
+    fi
+    sleep 30
+done
+```
+
+**Extract cycle number:**
+```bash
+CYCLE=$(fireteam-status | grep "Cycle:" | awk '{print $2}')
+echo "Current cycle: $CYCLE"
+```
+
+### Combining with Other Tools
+
+**Monitor with tmux:**
+```bash
+tmux new-session -d -s fireteam 'fireteam-status --watch'
+tmux attach -t fireteam
+```
+
+**Log to file:**
+```bash
+fireteam-status --logs --follow > fireteam-monitor.log &
+```
+
+**Parse JSON state directly:**
+```bash
+python3 << EOF
+import json
+with open('/home/claude/fireteam/state/current.json') as f:
+    state = json.load(f)
+    print(f"Cycle: {state['cycle_number']}")
+    print(f"Completion: {state['completion_percentage']}%")
+EOF
+```
+
+## Output Formats
+
+### Exit Codes
+
+| Code | Condition |
+|------|-----------|
+| `0` | Success, status displayed |
+| `1` | Error (invalid arguments, etc.) |
+
+### JSON Output (Not Yet Supported)
+
+Future enhancement to support:
+```bash
+fireteam-status --json
+```
+
+Would output:
+```json
+{
+  "running": true,
+  "pid": 12345,
+  "project": "/home/claude/project",
+  "cycle": 2,
+  "completion": 95,
+  "status": "reviewing"
+}
+```
+
+## Best Practices
+
+### 1. Monitor Long-Running Projects
+
+<Tip>
+For projects expected to take >1 hour, use watch mode in a separate terminal or tmux session.
+</Tip>
+
+### 2. Check Logs on Failures
+
+If completion percentage doesn't increase for 2+ cycles:
+```bash
+fireteam-status --logs --lines 100 | grep ERROR
+```
+
+### 3. Use Appropriate Refresh Intervals
+
+- **Fast iteration** (simple projects): `--interval 3`
+- **Normal monitoring**: `--interval 5` (default)
+- **Background checks**: `--interval 30`
+- **Minimal overhead**: `--interval 60`
+
+### 4. Understand Completion Trends
+
+Track completion over time:
+```bash
+fireteam-status --logs | grep "Completion:" | tail -10
+```
+
+Look for steady increases vs. stagnation.
+
+## Next Steps
+
+<CardGroup cols={2}>
+
+<Card title="Start Projects" icon="play" href="/cli-tools/start-agent">
+  Learn how to launch new Fireteam projects
+</Card>
+
+<Card title="Stop Projects" icon="stop" href="/cli-tools/stop-agent">
+  Gracefully shutdown running projects
+</Card>
+
+<Card title="Troubleshooting" icon="wrench" href="/troubleshooting/troubleshooting">
+  Resolve common issues with monitoring
+</Card>
+
+<Card title="State Management" icon="database" href="/advanced/state-management">
+  Deep dive into state files and persistence
+</Card>
+
+</CardGroup>

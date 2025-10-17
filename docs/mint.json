@@ -1,0 +1,133 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Fireteam",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#FF4500",
+    "light": "#FF6347",
+    "dark": "#DC143C",
+    "background": {
+      "dark": "#0D1117"
+    },
+    "anchors": {
+      "from": "#FF4500",
+      "to": "#DC143C"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/darkresearch/fireteam"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "/quickstart"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/darkresearch/fireteam"
+    },
+    {
+      "name": "Report Issue",
+      "icon": "flag",
+      "url": "https://github.com/darkresearch/fireteam/issues"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "introduction",
+        "quickstart"
+      ]
+    },
+    {
+      "group": "Core Concepts",
+      "pages": [
+        "core-concepts/architecture",
+        "core-concepts/agents",
+        "core-concepts/cycles"
+      ]
+    },
+    {
+      "group": "Installation & Setup",
+      "pages": [
+        "installation/installation",
+        "installation/environment",
+        "installation/requirements"
+      ]
+    },
+    {
+      "group": "Configuration",
+      "pages": [
+        "configuration/config-file",
+        "configuration/timeouts",
+        "configuration/sudo-setup"
+      ]
+    },
+    {
+      "group": "CLI Tools",
+      "pages": [
+        "cli-tools/overview",
+        "cli-tools/start-agent",
+        "cli-tools/fireteam-status",
+        "cli-tools/stop-agent"
+      ]
+    },
+    {
+      "group": "Performance & Testing",
+      "pages": [
+        "performance/test-results",
+        "performance/benchmarks"
+      ]
+    },
+    {
+      "group": "Advanced Topics",
+      "pages": [
+        "advanced/state-management",
+        "advanced/improvements",
+        "troubleshooting/troubleshooting"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api/overview",
+        "api/state-manager",
+        "api/agents",
+        "api/configuration"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/darkresearch/fireteam"
+  },
+  "theme": "quill",
+  "layout": "sidenav",
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true,
+    "raiseIssue": true
+  },
+  "search": {
+    "prompt": "Search Fireteam docs..."
+  },
+  "analytics": {
+    "posthog": {
+      "apiKey": "phc_placeholder_key_fireteam_docs"
+    }
+  }
+}

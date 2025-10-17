@@ -1,0 +1,522 @@
+---
+title: "State Management"
+description: "Understanding Fireteam's state isolation, persistence, and recovery mechanisms"
+---
+
+## Overview
+
+Fireteam uses a sophisticated state management system to maintain project continuity across cycles while ensuring complete isolation between different projects. State is stored in JSON format and includes all information needed to resume or analyze project progress.
+
+## State File Location
+
+```bash
+/home/claude/fireteam/state/current.json
+```
+
+<Warning>
+This file is **gitignored** and local to the Fireteam installation. It is **not** stored in your project directory.
+</Warning>
+
+## State Structure
+
+### Complete State Schema
+
+```json
+{
+  "project_dir": "/home/claude/my-project",
+  "goal": "Build a Python CLI calculator",
+  "status": "executing",
+  "cycle_number": 2,
+  "completion_percentage": 92,
+  "validation_checks": 0,
+  "git_branch": "agent-20251017-143022",
+  "current_plan": "...",
+  "last_execution_result": "...",
+  "last_review": "...",
+  "started_at": "2025-10-17T14:30:22.123456",
+  "updated_at": "2025-10-17T14:45:18.789012",
+  "completed": false,
+  "completed_at": null
+}
+```
+
+### Field Descriptions
+
+<ParamField path="project_dir" type="string">
+  Absolute path to the project directory
+</ParamField>
+
+<ParamField path="goal" type="string">
+  Original project objective/prompt
+</ParamField>
+
+<ParamField path="status" type="string">
+  Current phase: `planning`, `executing`, `reviewing`
+</ParamField>
+
+<ParamField path="cycle_number" type="integer">
+  Current cycle number (0-indexed)
+</ParamField>
+
+<ParamField path="completion_percentage" type="integer">
+  Latest reviewer estimate (0-100)
+</ParamField>
+
+<ParamField path="validation_checks" type="integer">
+  Consecutive high reviews (≥95%) for completion validation
+</ParamField>
+
+<ParamField path="git_branch" type="string">
+  Active git branch name (e.g., `agent-20251017-143022`)
+</ParamField>
+
+<ParamField path="current_plan" type="string">
+  Latest plan from Planner agent
+</ParamField>
+
+<ParamField path="last_execution_result" type="string">
+  Latest execution output from Executor agent
+</ParamField>
+
+<ParamField path="last_review" type="string">
+  Latest review from Reviewer agent
+</ParamField>
+
+<ParamField path="started_at" type="timestamp">
+  ISO 8601 timestamp when project started
+</ParamField>
+
+<ParamField path="updated_at" type="timestamp">
+  ISO 8601 timestamp of last state update
+</ParamField>
+
+<ParamField path="completed" type="boolean">
+  Whether project has completed
+</ParamField>
+
+<ParamField path="completed_at" type="timestamp">
+  ISO 8601 timestamp when project completed (null if not completed)
+</ParamField>
+
+## State Lifecycle
+
+### 1. Initialization
+
+When `start-agent` is called:
+
+```python
+state = {
+    "project_dir": "/home/claude/project",
+    "goal": "Build a CLI app",
+    "status": "planning",
+    "cycle_number": 0,
+    "completion_percentage": 0,
+    "validation_checks": 0,
+    "git_branch": "agent-20251017-143022",
+    "started_at": "2025-10-17T14:30:22",
+    # Other fields initialized to empty/null
+}
+```
+
+### 2. Cycle Updates
+
+During each cycle phase:
+
+**Planning:**
+```python
+state["status"] = "planning"
+state["current_plan"] = planner_result
+```
+
+**Execution:**
+```python
+state["status"] = "executing"
+state["last_execution_result"] = executor_result
+```
+
+**Review:**
+```python
+state["status"] = "reviewing"
+state["last_review"] = reviewer_result
+state["completion_percentage"] = completion_pct
+state["updated_at"] = current_timestamp
+```
+
+**Cycle increment:**
+```python
+state["cycle_number"] += 1
+```
+
+### 3. Completion
+
+When project completes:
+
+```python
+state["completed"] = True
+state["completed_at"] = "2025-10-17T15:45:30"
+state["status"] = "completed"
+```
+
+### 4. Reset (New Project)
+
+When starting a new project:
+
+```python
+# Previous state completely wiped
+state = new_state_for_new_project()
+```
+
+<Info>
+State isolation ensures no cross-contamination between projects. Each run starts with a clean slate.
+</Info>
+
+## State Persistence
+
+### When State is Saved
+
+State is saved at critical points:
+
+1. **After planning** - `current_plan` updated
+2. **After execution** - `last_execution_result` updated
+3. **After review** - `completion_percentage`, `last_review` updated
+4. **On shutdown** - Final state persisted
+5. **On error** - Last known good state preserved
+
+### Atomic Writes
+
+State writes are atomic:
+
+```python
+# Write to temporary file
+temp_file.write(json.dumps(state))
+
+# Atomic move
+os.replace(temp_file, state_file)
+```
+
+This prevents corruption from crashes during writes.
+
+### Backup Strategy
+
+**Fireteam doesn't backup state**, but you can:
+
+```bash
+# Manual backup
+cp /home/claude/fireteam/state/current.json ~/state-backup-$(date +%s).json
+
+# Automated backup script
+#!/bin/bash
+while true; do
+    if [ -f /home/claude/fireteam/state/current.json ]; then
+        cp /home/claude/fireteam/state/current.json \
+           ~/fireteam-backups/state-$(date +%Y%m%d-%H%M%S).json
+    fi
+    sleep 300  # Every 5 minutes
+done
+```
+
+## Parse Failure Handling
+
+### The Problem
+
+Sometimes reviewer output can't be parsed to extract completion %:
+
+```
+Review text without clear percentage...
+```
+
+**Previous behavior:**
+- Parse failure → `completion_percentage = 0`
+- Triggered unnecessary cycles
+
+### The Solution
+
+**Improved parse failure handling:**
+
+```python
+def update_completion_percentage(parsed_value, logger):
+    if parsed_value is None:
+        # Parse failure - use last known value
+        last_known = state.get("completion_percentage", 0)
+        logger.warning(f"Parse failure, using last known: {last_known}%")
+        return last_known
+    else:
+        # Valid parse - use new value
+        return parsed_value
+```
+
+**Safety valve:** If multiple consecutive parse failures (3+), reset to 0 to prevent infinite loops.
+
+<Tip>
+This improvement prevents wasted cycles from benign parse errors while maintaining safety.
+</Tip>
+
+## State Inspection
+
+### View Current State
+
+```bash
+# Pretty-print JSON
+cat /home/claude/fireteam/state/current.json | python3 -m json.tool
+
+# Or use jq
+cat /home/claude/fireteam/state/current.json | jq .
+```
+
+### Extract Specific Fields
+
+```bash
+# Get completion percentage
+jq '.completion_percentage' /home/claude/fireteam/state/current.json
+
+# Get cycle number
+jq '.cycle_number' /home/claude/fireteam/state/current.json
+
+# Get goal
+jq '.goal' /home/claude/fireteam/state/current.json
+```
+
+### Monitor State Changes
+
+```bash
+# Watch state file
+watch -n 5 'cat /home/claude/fireteam/state/current.json | jq "{cycle: .cycle_number, completion: .completion_percentage, status: .status}"'
+```
+
+## State Isolation
+
+### How Isolation Works
+
+**Between projects:**
+
+```bash
+# Project 1
+start-agent --project-dir ~/app1 --prompt "Goal 1"
+# State: { project_dir: "~/app1", goal: "Goal 1", ... }
+
+stop-agent
+
+# Project 2 - COMPLETELY FRESH STATE
+start-agent --project-dir ~/app2 --prompt "Goal 2"
+# State: { project_dir: "~/app2", goal: "Goal 2", ... }
+# Previous state completely wiped
+```
+
+**Why isolation matters:**
+- Prevents plan contamination
+- Avoids execution context bleed
+- Ensures clean git history per project
+- Eliminates cross-project bugs
+
+### State Reset on Start
+
+```python
+def initialize_project(project_dir, goal):
+    # Completely wipe previous state
+    if state_file.exists():
+        state_file.unlink()
+
+    # Create fresh state
+    return {
+        "project_dir": project_dir,
+        "goal": goal,
+        "cycle_number": 0,
+        # All other fields fresh
+    }
+```
+
+## Troubleshooting State Issues
+
+### Corrupted State File
+
+**Symptoms:**
+- `fireteam-status` shows "Error loading state"
+- JSON parse errors
+- Unexpected behavior
+
+**Diagnosis:**
+```bash
+# Validate JSON
+cat /home/claude/fireteam/state/current.json | python3 -m json.tool
+```
+
+**Fix:**
+```bash
+# Backup corrupted state
+mv /home/claude/fireteam/state/current.json ~/corrupted-state.json
+
+# Stop agent (will fail gracefully)
+stop-agent
+
+# Start fresh (state recreated)
+start-agent --project-dir ~/project --prompt "Goal"
+```
+
+### Stale State
+
+**Symptoms:**
+- `fireteam-status` shows old project
+- No orchestrator running
+
+**Fix:**
+```bash
+# Verify no process
+ps aux | grep orchestrator
+
+# Remove stale state
+rm -f /home/claude/fireteam/state/current.json
+rm -f /home/claude/fireteam/orchestrator.pid
+```
+
+### State-Git Mismatch
+
+**Problem:** State shows cycle 5, but git only has 3 commits
+
+**Cause:** Commits failed or state advanced without commits
+
+**Investigation:**
+```bash
+# Check state
+jq '.cycle_number' state/current.json
+
+# Check git commits
+cd ~/project && git log --oneline | wc -l
+
+# View logs for commit errors
+grep "commit" /home/claude/fireteam/logs/orchestrator_*.log
+```
+
+## Advanced State Management
+
+### Reading State Programmatically
+
+```python
+import json
+
+with open('/home/claude/fireteam/state/current.json') as f:
+    state = json.load(f)
+
+print(f"Project: {state['project_dir']}")
+print(f"Cycle: {state['cycle_number']}")
+print(f"Completion: {state['completion_percentage']}%")
+print(f"Status: {state['status']}")
+```
+
+### Monitoring State Changes
+
+```python
+import json
+import time
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+
+class StateMonitor(FileSystemEventHandler):
+    def on_modified(self, event):
+        if event.src_path.endswith('current.json'):
+            with open(event.src_path) as f:
+                state = json.load(f)
+            print(f"Cycle {state['cycle_number']}: {state['completion_percentage']}%")
+
+observer = Observer()
+observer.schedule(StateMonitor(), '/home/claude/fireteam/state')
+observer.start()
+```
+
+### State-Based Alerts
+
+```bash
+#!/bin/bash
+# alert-on-completion.sh
+
+while true; do
+    if [ -f /home/claude/fireteam/state/current.json ]; then
+        COMPLETION=$(jq '.completion_percentage' /home/claude/fireteam/state/current.json)
+        if [ "$COMPLETION" -ge 95 ]; then
+            notify-send "Fireteam" "Project at ${COMPLETION}%!"
+            break
+        fi
+    fi
+    sleep 30
+done
+```
+
+## State Directory Structure
+
+```
+/home/claude/fireteam/state/
+├── current.json          # Active project state
+└── .gitignore           # Ensures current.json never committed
+```
+
+**Note:** Only one state file at a time (current project).
+
+## State vs. Git History
+
+### State: Runtime Information
+
+- Current cycle, phase, completion
+- Agent outputs (plan, execution, review)
+- Transient, wiped between projects
+
+### Git: Persistent Project History
+
+- Code changes per cycle
+- Commit messages with completion %
+- Permanent, survives state resets
+
+<Info>
+Think of state as "RAM" (temporary) and git history as "disk" (permanent) for your project.
+</Info>
+
+## Best Practices
+
+### 1. Don't Manually Edit State
+
+<Warning>
+Manually editing `current.json` can cause undefined behavior. Let Fireteam manage state.
+</Warning>
+
+### 2. Backup State for Analysis
+
+```bash
+# After interesting runs
+cp /home/claude/fireteam/state/current.json ~/analysis/project-X-state.json
+```
+
+### 3. Inspect State on Failures
+
+```bash
+# When something goes wrong
+fireteam-status  # Quick view
+cat state/current.json | jq .  # Detailed view
+```
+
+### 4. Use Git for History
+
+```bash
+# Don't rely on state for history
+cd ~/project
+git log --oneline  # Permanent record
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+
+<Card title="Improvements" icon="chart-line" href="/advanced/improvements">
+  See state management enhancements
+</Card>
+
+<Card title="fireteam-status" icon="gauge" href="/cli-tools/fireteam-status">
+  Monitor state in real-time
+</Card>
+
+<Card title="Troubleshooting" icon="wrench" href="/troubleshooting/troubleshooting">
+  Resolve state-related issues
+</Card>
+
+<Card title="Architecture" icon="diagram-project" href="/core-concepts/architecture">
+  Understand Fireteam's overall design
+</Card>
+
+</CardGroup>

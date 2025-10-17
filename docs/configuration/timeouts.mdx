@@ -1,0 +1,489 @@
+---
+title: "Timeout Configuration"
+description: "Understanding and optimizing agent timeout values for optimal performance"
+---
+
+## Overview
+
+Agent timeouts are critical to Fireteam's performance. They determine how long each agent (Planner, Executor, Reviewer) can run before being terminated. Properly configured timeouts ensure efficient operation while preventing hung processes.
+
+## Default Timeout Values
+
+```python
+AGENT_TIMEOUTS = {
+    "planner": 600,      # 10 minutes
+    "reviewer": 600,     # 10 minutes
+    "executor": 1800     # 30 minutes
+}
+```
+
+These values are configured in `/home/claude/fireteam/config.py` and were optimized based on comprehensive testing across 11 diverse projects.
+
+## Why These Specific Values?
+
+### Test-Driven Optimization
+
+The current timeout values were determined through empirical testing:
+
+<Info>
+**Test Data:** 11 projects, 41 total cycles, 100% success rate with current timeouts.
+See [Test Results](/performance/test-results) for complete analysis.
+</Info>
+
+| Agent | Timeout | Rationale |
+|-------|---------|-----------|
+| **Planner** | 10 min | Complex codebase analysis, plan creation, task breakdown |
+| **Executor** | 30 min | Package installation, builds, test suites, code implementation |
+| **Reviewer** | 10 min | Code review, test execution, completion analysis |
+
+## Planner Timeout: 10 Minutes
+
+### Why 10 Minutes?
+
+The Planner agent performs:
+- Complete codebase analysis
+- Git history examination
+- Plan creation/updates
+- Task breakdown and prioritization
+
+**Test findings:**
+- Most planning cycles: 2-5 minutes
+- Complex projects: 7-9 minutes
+- Edge cases: Up to 10 minutes
+
+<Tip>
+Original timeout was 5 minutes but was increased to 10 minutes after observing occasional timeouts on complex projects during testing.
+</Tip>
+
+### When to Increase Planner Timeout
+
+Increase to **15-20 minutes** if:
+- Very large codebases (10,000+ lines)
+- Monorepo architecture
+- Complex dependency graphs
+- Multiple interrelated modules
+
+```python
+AGENT_TIMEOUTS = {
+    "planner": 1200,  # 20 minutes for large projects
+    # ...
+}
+```
+
+### When to Decrease Planner Timeout
+
+Decrease to **5-7 minutes** if:
+- Small, focused projects
+- Simple architectures
+- Rapid iteration needs
+- Testing/debugging cycles
+
+## Executor Timeout: 30 Minutes
+
+### Why 30 Minutes?
+
+The Executor agent handles:
+- Package/dependency installation
+- Code implementation
+- Build processes
+- Test suite execution
+- Documentation generation
+
+**Test findings:**
+- Simple implementations: 5-10 minutes
+- Medium complexity: 15-20 minutes
+- Complex builds: 25-30 minutes
+- TypeScript/Node.js setup: Up to 30 minutes (including environment setup)
+
+<Warning>
+The GitHub Analyzer project (TypeScript) initially failed with a 10-minute timeout. After increasing to 30 minutes, it completed successfully in 19 cycles with 94% completion.
+</Warning>
+
+### When to Increase Executor Timeout
+
+Increase to **45-60 minutes** if:
+- Docker builds (multi-stage builds)
+- Extensive test suites (>1000 tests)
+- Large package installations (ML libraries, etc.)
+- Cross-compilation tasks
+- Database migrations
+
+```python
+AGENT_TIMEOUTS = {
+    "executor": 3600,  # 60 minutes for complex builds
+    # ...
+}
+```
+
+**Example scenarios:**
+- Installing TensorFlow, PyTorch: 15-30 minutes
+- Building Rust projects: 20-40 minutes
+- Running Selenium/E2E tests: 10-30 minutes
+- Docker image builds: 20-60 minutes
+
+### When to Decrease Executor Timeout
+
+Decrease to **15-20 minutes** if:
+- Pure Python projects (no compilation)
+- Minimal dependencies
+- No build step required
+- Unit tests only (< 5 minutes)
+
+## Reviewer Timeout: 10 Minutes
+
+### Why 10 Minutes?
+
+The Reviewer agent performs:
+- Complete code review
+- Test execution
+- Functionality verification
+- Completion percentage calculation
+- Gap/issue identification
+
+**Test findings:**
+- Most review cycles: 3-7 minutes
+- Complex reviews: 8-10 minutes
+- With test execution: Up to 10 minutes
+
+### When to Increase Reviewer Timeout
+
+Increase to **15-20 minutes** if:
+- Running comprehensive test suites during review
+- Performance benchmarking
+- Security scanning
+- Large codebase reviews (10,000+ lines)
+
+```python
+AGENT_TIMEOUTS = {
+    "reviewer": 1200,  # 20 minutes for thorough reviews
+    # ...
+}
+```
+
+### When to Decrease Reviewer Timeout
+
+Decrease to **5-7 minutes** if:
+- Small projects
+- No test execution required
+- Quick validation cycles
+- Documentation-only changes
+
+## Real-World Timeout Examples
+
+### Example 1: Simple Python CLI (Weather App)
+
+**Project characteristics:**
+- 200 lines of code
+- 2 dependencies (requests, python-dotenv)
+- Basic API integration
+- Unit tests (< 1 minute)
+
+**Optimal timeouts:**
+
+```python
+AGENT_TIMEOUTS = {
+    "planner": 300,     # 5 minutes
+    "executor": 900,    # 15 minutes
+    "reviewer": 300     # 5 minutes
+}
+```
+
+**Result:** Completed in 2 cycles, ~30 minutes total
+
+### Example 2: REST API Server (FastAPI)
+
+**Project characteristics:**
+- 500 lines of code
+- 5-10 dependencies
+- Database integration (SQLite)
+- API endpoint tests
+
+**Optimal timeouts (defaults work well):**
+
+```python
+AGENT_TIMEOUTS = {
+    "planner": 600,     # 10 minutes
+    "executor": 1800,   # 30 minutes
+    "reviewer": 600     # 10 minutes
+}
+```
+
+**Result:** Completed in 1 cycle with 92% completion ⚡
+
+### Example 3: TypeScript CLI (GitHub Analyzer)
+
+**Project characteristics:**
+- 1000+ lines of TypeScript
+- Node.js + npm setup
+- 15+ dependencies
+- 206 tests
+- Complex build process
+
+**Optimal timeouts:**
+
+```python
+AGENT_TIMEOUTS = {
+    "planner": 900,     # 15 minutes
+    "executor": 3600,   # 60 minutes (build + test suite)
+    "reviewer": 1200    # 20 minutes (run all tests)
+}
+```
+
+**Result:** Completed in 19 cycles with 94% completion
+(Note: 8 cycles wasted on Node.js installation due to sudo issues)
+
+### Example 4: Machine Learning Project
+
+**Project characteristics:**
+- Large dependencies (TensorFlow, pandas, numpy)
+- Model training code
+- Data preprocessing pipeline
+- Notebook integration
+
+**Optimal timeouts:**
+
+```python
+AGENT_TIMEOUTS = {
+    "planner": 1200,    # 20 minutes (complex planning)
+    "executor": 5400,   # 90 minutes (dependency install + training)
+    "reviewer": 1800    # 30 minutes (validation runs)
+}
+```
+
+## Timeout Behavior
+
+### What Happens on Timeout?
+
+1. **Agent process terminated** after timeout duration
+2. **Retry logic triggered** (up to 3 attempts by default)
+3. **Exponential backoff** between retries (5 seconds delay)
+4. **Cycle failure** if all retries exhausted
+5. **Error logged** to orchestrator log
+
+<Warning>
+Timeouts **do not** corrupt project state. The state file is only updated on successful cycle completion.
+</Warning>
+
+### Timeout vs. Completion Time
+
+**Important distinction:**
+- **Timeout**: Maximum allowed time
+- **Actual completion**: Usually much shorter
+
+**Example:** Executor with 30-minute timeout typically completes in 15-20 minutes.
+
+## Performance Impact
+
+### Timeout Too Short
+
+**Symptoms:**
+- Frequent agent timeouts
+- Repeated retry cycles
+- Failed installations/builds
+- Incomplete implementations
+
+**Impact:**
+- Wasted cycles (each timeout wastes full timeout duration)
+- Project delays
+- Potential project failure
+
+**Example:** GitHub Analyzer with 10-minute executor timeout:
+- 8 wasted cycles trying to install Node.js
+- Each timeout = 10 minutes wasted
+- Total waste: ~80 minutes
+
+### Timeout Too Long
+
+**Symptoms:**
+- Hung processes not killed promptly
+- Excessive waiting on failures
+- Resource waste on dead agents
+
+**Impact:**
+- Delayed failure detection
+- Wasted computational resources
+- Longer time to recovery
+
+**Example:** Planner with 60-minute timeout:
+- Normal planning: 5 minutes
+- On failure: Wait 60 minutes to detect
+- Waste: 55 minutes per failed cycle
+
+## Adaptive Timeout Strategy
+
+### Context-Based Timeouts
+
+Consider adjusting timeouts based on:
+
+**Project type:**
+- Python CLI: Shorter timeouts (5-15-5)
+- TypeScript/Build: Longer timeouts (15-60-20)
+- ML/Data: Extended timeouts (20-90-30)
+
+**Cycle number:**
+- Early cycles (0-2): Full timeouts (more uncertainty)
+- Later cycles (3+): Can reduce by 20-30% (smaller changes)
+
+**Current example (not yet implemented):**
+
+```python
+def get_timeout(agent: str, cycle: int) -> int:
+    """Get adaptive timeout based on cycle number."""
+    base = AGENT_TIMEOUTS[agent]
+
+    # Reduce timeout for later cycles
+    if cycle > 3:
+        return int(base * 0.7)  # 30% reduction
+    return base
+```
+
+## Monitoring Timeout Efficiency
+
+### Check Logs for Timing Data
+
+Orchestrator logs show actual agent execution times:
+
+```bash
+grep "completed" /home/claude/fireteam/logs/orchestrator_*.log
+```
+
+**Example output:**
+
+```
+2025-10-15 14:32:10 - Planning completed (4m 23s)
+2025-10-15 14:48:35 - Execution completed (16m 25s)
+2025-10-15 14:55:12 - Review completed (6m 37s)
+```
+
+### Optimization Process
+
+1. **Baseline**: Run project with default timeouts
+2. **Analyze**: Check logs for actual completion times
+3. **Adjust**: Set timeouts to 1.5x-2x actual times
+4. **Test**: Verify no timeouts occur
+5. **Iterate**: Fine-tune based on results
+
+## Timeout Configuration Checklist
+
+<Accordion title="Timeout Optimization Checklist">
+
+**Initial Setup:**
+- [ ] Start with default timeouts (10-30-10)
+- [ ] Run a test project to completion
+- [ ] Analyze orchestrator logs for actual times
+
+**For Your Project:**
+- [ ] Identify project type (Python/TypeScript/ML/etc.)
+- [ ] Estimate build complexity (simple/medium/complex)
+- [ ] Consider dependency installation time
+- [ ] Factor in test suite duration
+
+**Adjustment:**
+- [ ] Set timeouts to 1.5-2x expected duration
+- [ ] Add buffer for network variability
+- [ ] Test with a similar project
+- [ ] Monitor for timeout errors
+
+**Validation:**
+- [ ] Zero timeout errors in logs
+- [ ] Reasonable completion times
+- [ ] No excessive waiting on failures
+- [ ] Consistent cycle duration
+
+</Accordion>
+
+## Best Practices
+
+### 1. Start Conservative
+
+<Tip>
+Begin with default or slightly higher timeouts. You can always decrease them after observing actual performance.
+</Tip>
+
+### 2. Account for Network Latency
+
+Claude API calls vary with network conditions. Add 10-20% buffer for network variability.
+
+### 3. Consider CI/CD Environments
+
+If running Fireteam in CI/CD:
+- Shared resources may slow agents
+- Network may be throttled
+- Increase timeouts by 25-50%
+
+### 4. Document Custom Timeouts
+
+Always comment why you changed timeouts:
+
+```python
+# Increased for large ML dependencies (TensorFlow = 20min install)
+AGENT_TIMEOUTS = {
+    "executor": 3600  # 60 minutes
+}
+```
+
+### 5. Test After Changes
+
+Validate timeout changes with a representative project before production use.
+
+## Troubleshooting Timeouts
+
+### Frequent Planner Timeouts
+
+**Possible causes:**
+- Very large codebase (10k+ lines)
+- Complex git history
+- Network latency to Claude API
+
+**Solutions:**
+- Increase planner timeout to 15-20 minutes
+- Simplify project structure
+- Check network connectivity
+
+### Frequent Executor Timeouts
+
+**Possible causes:**
+- Long package installations
+- Complex build processes
+- Extensive test suites
+- System package install blocked (no sudo)
+
+**Solutions:**
+- Increase executor timeout to 45-60 minutes
+- Configure sudo access ([Sudo Setup](/configuration/sudo-setup))
+- Pre-install system dependencies
+- Optimize build process
+
+### Frequent Reviewer Timeouts
+
+**Possible causes:**
+- Running full test suite in review
+- Performance benchmarks
+- Large codebase review
+
+**Solutions:**
+- Increase reviewer timeout to 15-20 minutes
+- Optimize test execution
+- Consider parallel test execution
+
+## Next Steps
+
+<CardGroup cols={2}>
+
+<Card title="Config File Reference" icon="file" href="/configuration/config-file">
+  Complete configuration file documentation
+</Card>
+
+<Card title="Test Results" icon="chart-bar" href="/performance/test-results">
+  See timeout performance across 11 projects
+</Card>
+
+<Card title="Benchmarks" icon="gauge" href="/performance/benchmarks">
+  Cycle duration and efficiency metrics
+</Card>
+
+<Card title="Troubleshooting" icon="wrench" href="/troubleshooting/troubleshooting">
+  Resolve timeout-related issues
+</Card>
+
+</CardGroup>

@@ -1,0 +1,447 @@
+---
+title: "Configuration File Reference"
+description: "Complete guide to config.py settings and customization options"
+---
+
+## Overview
+
+Fireteam's behavior is controlled through `config.py`, located in the root of the Fireteam installation directory (`/home/claude/fireteam/config.py`). This file contains all system-wide settings for agent timeouts, completion thresholds, git configuration, and more.
+
+## Configuration File Location
+
+```bash
+/home/claude/fireteam/config.py
+```
+
+<Tip>
+Changes to `config.py` require restarting any running Fireteam instances to take effect.
+</Tip>
+
+## Core Settings
+
+### System Paths
+
+```python
+SYSTEM_DIR = "/home/claude/fireteam"
+STATE_DIR = os.path.join(SYSTEM_DIR, "state")
+LOGS_DIR = os.path.join(SYSTEM_DIR, "logs")
+CLI_DIR = os.path.join(SYSTEM_DIR, "cli")
+```
+
+**Description:**
+- `SYSTEM_DIR`: Root directory for Fireteam installation
+- `STATE_DIR`: Where project state files are stored (`state/current.json`)
+- `LOGS_DIR`: Location for orchestrator and system logs
+- `CLI_DIR`: Directory containing CLI executables (`start-agent`, `stop-agent`, etc.)
+
+<Warning>
+**Do not modify these paths** unless you've relocated the Fireteam installation. Changing these can break CLI tools and state management.
+</Warning>
+
+## Claude CLI Configuration
+
+```python
+CLAUDE_CLI = "claude"
+DANGEROUSLY_SKIP_PERMISSIONS = "--dangerously-skip-permissions"
+```
+
+**Description:**
+- `CLAUDE_CLI`: Command to invoke Claude CLI (assumes `claude` is in PATH)
+- `DANGEROUSLY_SKIP_PERMISSIONS`: Flag enabling fully autonomous operation without permission prompts
+
+<Info>
+The `--dangerously-skip-permissions` flag allows agents to execute file operations, install packages, and run commands without manual approval. This is essential for autonomous operation but should only be used in controlled environments.
+</Info>
+
+## Agent Timeouts
+
+```python
+AGENT_TIMEOUTS = {
+    "planner": 600,      # 10 minutes
+    "reviewer": 600,     # 10 minutes
+    "executor": 1800     # 30 minutes
+}
+```
+
+**Description:**
+- `planner`: Maximum time (seconds) for planning phase
+- `reviewer`: Maximum time (seconds) for review phase
+- `executor`: Maximum time (seconds) for execution phase
+
+### Why These Values?
+
+These timeout values were determined through extensive testing across 11 diverse projects:
+
+- **Planner (10 min)**: Complex planning, codebase analysis, and task breakdown
+- **Executor (30 min)**: Handles installations, builds, test suites, and complex implementations
+- **Reviewer (10 min)**: Code review, test execution, and completion analysis
+
+<Tip>
+See [Timeout Configuration](/configuration/timeouts) for detailed rationale and guidance on adjusting these values.
+</Tip>
+
+### Customizing Timeouts
+
+**Increase timeouts for:**
+- Large codebases (10,000+ lines)
+- Complex build processes
+- Extensive test suites
+- Slow network environments
+
+**Example:**
+
+```python
+AGENT_TIMEOUTS = {
+    "planner": 900,      # 15 minutes for large projects
+    "reviewer": 900,     # 15 minutes
+    "executor": 3600     # 60 minutes for complex builds
+}
+```
+
+**Decrease timeouts for:**
+- Simple projects
+- Fast iteration cycles
+- Time-constrained testing
+
+## Retry Configuration
+
+```python
+MAX_RETRIES = 3
+RETRY_DELAY = 5  # seconds
+```
+
+**Description:**
+- `MAX_RETRIES`: Number of retry attempts for failed agent calls
+- `RETRY_DELAY`: Delay (seconds) between retry attempts
+
+**Behavior:**
+- On timeout or API error, Fireteam retries up to 3 times
+- 5-second delay between attempts prevents API rate limiting
+- After 3 failures, the cycle is aborted and logged
+
+**Customization:**
+
+```python
+# More aggressive retries
+MAX_RETRIES = 5
+RETRY_DELAY = 3
+
+# Conservative retries
+MAX_RETRIES = 2
+RETRY_DELAY = 10
+```
+
+## Completion Thresholds
+
+```python
+COMPLETION_THRESHOLD = 95  # percentage
+VALIDATION_CHECKS_REQUIRED = 3  # consecutive checks needed
+```
+
+**Description:**
+- `COMPLETION_THRESHOLD`: Minimum completion percentage to trigger validation mode (default: 95%)
+- `VALIDATION_CHECKS_REQUIRED`: Number of consecutive reviews at ≥95% needed to complete project (default: 3)
+
+### How Validation Works
+
+1. **Normal cycles**: Reviewer estimates completion percentage
+2. **Threshold reached**: When completion ≥ 95%, enter validation mode
+3. **Validation cycles**: Reviewer performs critical re-examination
+4. **Triple confirmation**: 3 consecutive reviews at ≥95% required
+5. **Project complete**: System stops and logs success
+
+<Info>
+This triple-check validation ensures high-quality deliverables. Test data shows 94.1% average completion across 11 projects with this configuration.
+</Info>
+
+**Adjusting thresholds:**
+
+```python
+# Stricter completion (higher quality, more cycles)
+COMPLETION_THRESHOLD = 98
+VALIDATION_CHECKS_REQUIRED = 5
+
+# Faster completion (lower quality, fewer cycles)
+COMPLETION_THRESHOLD = 90
+VALIDATION_CHECKS_REQUIRED = 2
+```
+
+<Warning>
+Lowering `COMPLETION_THRESHOLD` below 90% may result in incomplete projects. The 95% threshold is battle-tested across diverse project types.
+</Warning>
+
+## Git Configuration
+
+```python
+GIT_USER_NAME = os.environ.get("GIT_USER_NAME", "fireteam")
+GIT_USER_EMAIL = os.environ.get("GIT_USER_EMAIL", "fireteam@darkresearch.ai")
+```
+
+**Description:**
+- `GIT_USER_NAME`: Git committer name (overrideable via `.env`)
+- `GIT_USER_EMAIL`: Git committer email (overrideable via `.env`)
+
+**Priority order:**
+1. Environment variables in `.env` file (highest priority)
+2. Default values in `config.py`
+3. Global git config (not used by Fireteam)
+
+**Example `.env` override:**
+
+```bash
+GIT_USER_NAME="Jane Developer"
+GIT_USER_EMAIL="jane@company.com"
+```
+
+See [Environment Setup](/installation/environment) for `.env` configuration.
+
+## Logging Configuration
+
+```python
+LOG_LEVEL = "INFO"
+LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+```
+
+**Description:**
+- `LOG_LEVEL`: Logging verbosity (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+- `LOG_FORMAT`: Log message format string
+
+**Available log levels:**
+
+| Level | Description | When to use |
+|-------|-------------|-------------|
+| `DEBUG` | Detailed diagnostic info | Debugging agent behavior, state changes |
+| `INFO` | General informational messages | Default, normal operation |
+| `WARNING` | Warning messages | Non-critical issues |
+| `ERROR` | Error messages | Failures and exceptions |
+| `CRITICAL` | Critical errors | System-level failures |
+
+**Example for debugging:**
+
+```python
+LOG_LEVEL = "DEBUG"  # Verbose output for troubleshooting
+```
+
+<Tip>
+Use `DEBUG` level when troubleshooting agent failures or unexpected behavior. Logs are stored in `/home/claude/fireteam/logs/`.
+</Tip>
+
+## Sudo Password Configuration
+
+```python
+SUDO_PASSWORD = os.getenv("SUDO_PASSWORD", None)
+
+def has_sudo_access():
+    """Check if sudo password is available."""
+    return SUDO_PASSWORD is not None
+```
+
+**Description:**
+- `SUDO_PASSWORD`: Optional sudo password for system operations (from `.env`)
+- `has_sudo_access()`: Helper function to check if sudo is configured
+
+**Usage:**
+
+Add to `.env` file:
+
+```bash
+SUDO_PASSWORD=your_secure_password_here
+```
+
+<Warning>
+**Security considerations:**
+- Store `.env` file outside version control (already in `.gitignore`)
+- Use file permissions: `chmod 600 .env`
+- Prefer passwordless sudo over storing passwords
+</Warning>
+
+See [Sudo Setup](/configuration/sudo-setup) for configuration details.
+
+## Environment Variable Loading
+
+```python
+from pathlib import Path
+from dotenv import load_dotenv
+
+env_file = Path(__file__).parent / ".env"
+if env_file.exists():
+    load_dotenv(env_file)
+```
+
+**Behavior:**
+- Loads `.env` file from Fireteam root directory
+- Environment variables override config.py defaults
+- Missing `.env` file is non-fatal (uses defaults)
+
+**Supported environment variables:**
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `GIT_USER_NAME` | Git committer name | `"fireteam"` |
+| `GIT_USER_EMAIL` | Git committer email | `"fireteam@darkresearch.ai"` |
+| `SUDO_PASSWORD` | Sudo password for system ops | `None` |
+
+## Complete Configuration Example
+
+Here's a fully customized `config.py` for a large-scale project:
+
+```python
+"""
+Configuration settings for Fireteam - Large Project Setup
+"""
+
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables
+env_file = Path(__file__).parent / ".env"
+if env_file.exists():
+    load_dotenv(env_file)
+
+# System paths
+SYSTEM_DIR = "/home/claude/fireteam"
+STATE_DIR = os.path.join(SYSTEM_DIR, "state")
+LOGS_DIR = os.path.join(SYSTEM_DIR, "logs")
+CLI_DIR = os.path.join(SYSTEM_DIR, "cli")
+
+# Claude CLI configuration
+CLAUDE_CLI = "claude"
+DANGEROUSLY_SKIP_PERMISSIONS = "--dangerously-skip-permissions"
+
+# Agent configuration - Extended for large projects
+MAX_RETRIES = 5
+RETRY_DELAY = 10  # seconds
+
+# Agent timeouts (extended for complex builds)
+AGENT_TIMEOUTS = {
+    "planner": 900,      # 15 minutes
+    "reviewer": 900,     # 15 minutes
+    "executor": 3600     # 60 minutes
+}
+
+# Completion thresholds - Stricter for production
+COMPLETION_THRESHOLD = 98  # percentage
+VALIDATION_CHECKS_REQUIRED = 5  # consecutive checks
+
+# Git configuration
+GIT_USER_NAME = os.environ.get("GIT_USER_NAME", "fireteam")
+GIT_USER_EMAIL = os.environ.get("GIT_USER_EMAIL", "fireteam@darkresearch.ai")
+
+# Logging - Debug mode
+LOG_LEVEL = "DEBUG"
+LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# Sudo password
+SUDO_PASSWORD = os.getenv("SUDO_PASSWORD", None)
+
+def has_sudo_access():
+    """Check if sudo password is available."""
+    return SUDO_PASSWORD is not None
+```
+
+## Configuration Best Practices
+
+### 1. Start with Defaults
+
+<Tip>
+The default configuration is battle-tested across 11 diverse projects with a 100% success rate. Only modify settings when you have a specific need.
+</Tip>
+
+### 2. Document Custom Changes
+
+Add comments explaining why you modified values:
+
+```python
+# Extended executor timeout for Docker builds (typically 45+ minutes)
+AGENT_TIMEOUTS = {
+    "executor": 3600  # 60 minutes
+}
+```
+
+### 3. Test Configuration Changes
+
+After modifying `config.py`, test with a simple project:
+
+```bash
+start-agent --project-dir ~/test-config --prompt "Build a simple Hello World Python app"
+```
+
+### 4. Version Control Config
+
+Keep your customized `config.py` in version control, but **exclude `.env`**:
+
+```bash
+# .gitignore already includes
+.env
+state/current.json
+logs/
+```
+
+### 5. Environment-Specific Settings
+
+Use `.env` for environment-specific values (passwords, credentials), keep shared settings in `config.py`.
+
+## Troubleshooting Configuration
+
+### Changes Not Taking Effect
+
+**Problem:** Modified `config.py` but behavior unchanged
+
+**Solution:** Restart Fireteam:
+
+```bash
+stop-agent
+start-agent --project-dir ~/project --prompt "Your goal"
+```
+
+### Import Errors
+
+**Problem:** `ModuleNotFoundError` or import issues
+
+**Solution:** Ensure `python-dotenv` is installed:
+
+```bash
+cd /home/claude/fireteam
+pip install python-dotenv
+```
+
+### Timeout Issues
+
+**Problem:** Agents timing out frequently
+
+**Solution:** Increase timeout values in `AGENT_TIMEOUTS`. See [Timeout Configuration](/configuration/timeouts).
+
+### State Corruption
+
+**Problem:** Invalid state after config changes
+
+**Solution:** Reset state:
+
+```bash
+stop-agent
+rm /home/claude/fireteam/state/current.json
+start-agent # Fresh state
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+
+<Card title="Timeout Configuration" icon="clock" href="/configuration/timeouts">
+  Deep dive on timeout values and optimization
+</Card>
+
+<Card title="Sudo Setup" icon="lock" href="/configuration/sudo-setup">
+  Configure passwordless sudo or SUDO_PASSWORD
+</Card>
+
+<Card title="Environment Setup" icon="gear" href="/installation/environment">
+  Configure your .env file
+</Card>
+
+<Card title="Troubleshooting" icon="wrench" href="/troubleshooting/troubleshooting">
+  Resolve common configuration issues
+</Card>
+
+</CardGroup>

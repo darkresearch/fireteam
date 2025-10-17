@@ -1,0 +1,483 @@
+---
+title: "Sudo Access Configuration"
+description: "Configure passwordless sudo or SUDO_PASSWORD for system-level operations"
+---
+
+## Overview
+
+Fireteam may require sudo access for system-level operations during project execution, such as:
+- Installing system packages (apt, yum, brew)
+- Configuring system services
+- Modifying system files
+- Setting up development environments (Node.js, Ruby, etc.)
+
+This guide covers two approaches: **passwordless sudo** (recommended) and **SUDO_PASSWORD** environment variable.
+
+## Why Sudo Access Matters
+
+### Real-World Impact
+
+<Warning>
+**Test Case:** GitHub Analyzer (TypeScript project) wasted **8 cycles** (approximately 2 hours) attempting to install Node.js because sudo access was blocked by password requirement.
+</Warning>
+
+**Without sudo access:**
+- Agents cannot install system packages
+- Repeated failed installation attempts
+- Wasted cycles and time
+- Agents forced to find workarounds (downloading binaries, etc.)
+
+**With sudo access:**
+- Seamless system package installation
+- Faster environment setup
+- Fewer wasted cycles
+- More reliable project completion
+
+## Option 1: Passwordless Sudo (Recommended)
+
+Passwordless sudo allows your user to run `sudo` commands without entering a password. This is the most secure and efficient approach for Fireteam.
+
+### Benefits
+
+✅ **Most secure**: No passwords stored in files
+✅ **Most efficient**: No password prompt delays
+✅ **Audit trail**: All sudo commands logged to system logs
+✅ **Granular control**: Can limit to specific commands (optional)
+
+### Setup Instructions
+
+#### Step 1: Edit sudoers File
+
+<Warning>
+**CRITICAL:** Always use `visudo` to edit the sudoers file. Syntax errors can lock you out of sudo access!
+</Warning>
+
+```bash
+sudo visudo
+```
+
+#### Step 2: Add Passwordless Rule
+
+Add one of the following lines to the sudoers file:
+
+<CodeGroup>
+
+```bash Full Sudo Access (Simplest)
+# Replace 'username' with your actual username
+username ALL=(ALL) NOPASSWD: ALL
+```
+
+```bash Limited to Package Managers (More Secure)
+# Ubuntu/Debian
+username ALL=(ALL) NOPASSWD: /usr/bin/apt, /usr/bin/apt-get, /usr/bin/dpkg
+
+# CentOS/RHEL
+username ALL=(ALL) NOPASSWD: /usr/bin/yum, /usr/bin/dnf, /usr/bin/rpm
+
+# macOS
+username ALL=(ALL) NOPASSWD: /usr/local/bin/brew
+```
+
+```bash Limited to Specific Commands (Most Secure)
+# Allow only specific installations
+username ALL=(ALL) NOPASSWD: /usr/bin/apt install nodejs, /usr/bin/apt install python3
+```
+
+</CodeGroup>
+
+<Tip>
+To find your username, run: `whoami`
+</Tip>
+
+#### Step 3: Save and Exit
+
+In `visudo`:
+- Press `Ctrl+O` to save (in nano)
+- Press `Ctrl+X` to exit
+- Or use vim commands (`:wq`) if using vim
+
+#### Step 4: Verify Passwordless Sudo
+
+Test that sudo works without password:
+
+```bash
+sudo -n ls /root
+```
+
+**Expected output:** List of files (no password prompt)
+
+**If prompted for password:** Recheck sudoers syntax
+
+### Troubleshooting Passwordless Sudo
+
+#### "sudo: a password is required"
+
+**Cause:** Sudoers rule not applied or syntax error
+
+**Solution:**
+1. Verify username is correct: `whoami`
+2. Check sudoers file: `sudo visudo`
+3. Ensure rule is at the **end** of the file (overrides earlier rules)
+
+#### Syntax Error in Sudoers
+
+**Symptom:** `visudo` shows error on save
+
+**Solution:**
+- Don't save! Press `e` to re-edit
+- Check syntax: username, ALL, NOPASSWD capitalization
+- Use exact format: `username ALL=(ALL) NOPASSWD: ALL`
+
+#### Multiple User Entries
+
+**Problem:** Multiple rules for same user
+
+**Solution:** Keep only the **last** (most permissive) rule:
+
+```bash
+# WRONG - conflicting rules
+username ALL=(ALL) ALL
+username ALL=(ALL) NOPASSWD: ALL
+
+# RIGHT - single rule
+username ALL=(ALL) NOPASSWD: ALL
+```
+
+## Option 2: SUDO_PASSWORD in .env
+
+If passwordless sudo is not possible (shared systems, policy restrictions), use the `SUDO_PASSWORD` environment variable.
+
+### Setup Instructions
+
+#### Step 1: Create/Edit .env File
+
+```bash
+cd /home/claude/fireteam
+nano .env
+```
+
+#### Step 2: Add SUDO_PASSWORD
+
+```bash
+SUDO_PASSWORD=your_actual_sudo_password_here
+```
+
+<Warning>
+**Security Risk:** This stores your password in plaintext. Only use if passwordless sudo is not an option.
+</Warning>
+
+#### Step 3: Secure the .env File
+
+Restrict file permissions to owner-only:
+
+```bash
+chmod 600 /home/claude/fireteam/.env
+```
+
+Verify permissions:
+
+```bash
+ls -la /home/claude/fireteam/.env
+```
+
+**Expected output:** `-rw-------` (600 permissions)
+
+#### Step 4: Verify .env is in .gitignore
+
+Ensure `.env` is **never** committed to version control:
+
+```bash
+cat /home/claude/fireteam/.gitignore | grep .env
+```
+
+**Expected output:** `.env`
+
+If missing, add it:
+
+```bash
+echo ".env" >> /home/claude/fireteam/.gitignore
+```
+
+### How SUDO_PASSWORD Works
+
+When configured, Fireteam agents can execute sudo commands like:
+
+```bash
+echo "$SUDO_PASSWORD" | sudo -S apt install nodejs
+```
+
+The `-S` flag reads password from stdin, enabling non-interactive sudo.
+
+### Testing SUDO_PASSWORD
+
+Create a test script:
+
+```bash
+#!/bin/bash
+source /home/claude/fireteam/.env
+echo "$SUDO_PASSWORD" | sudo -S ls /root
+```
+
+Run it:
+
+```bash
+chmod +x test_sudo.sh
+./test_sudo.sh
+```
+
+**Expected:** List of files (no prompt)
+
+## Security Considerations
+
+### Risk Comparison
+
+| Method | Security Level | Auditability | Convenience |
+|--------|---------------|--------------|-------------|
+| **Passwordless sudo** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **SUDO_PASSWORD** | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **No sudo** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐ |
+
+### Best Practices
+
+<Accordion title="Security Best Practices">
+
+**For Passwordless Sudo:**
+1. ✅ Use on dedicated development machines
+2. ✅ Limit to specific commands when possible
+3. ✅ Regularly audit sudo logs: `sudo journalctl -u sudo`
+4. ✅ Rotate sudo passwords periodically (if system requires it)
+
+**For SUDO_PASSWORD:**
+1. ✅ Set `.env` file permissions to 600
+2. ✅ Never commit `.env` to version control
+3. ✅ Use a unique password (not your user login password)
+4. ✅ Rotate password regularly
+5. ✅ Delete `.env` when not actively using Fireteam
+
+**General:**
+1. ✅ Use Fireteam only on trusted systems
+2. ✅ Monitor orchestrator logs for unexpected sudo usage
+3. ✅ Audit project changes in git commits
+4. ✅ Run Fireteam in isolated environments (VMs, containers)
+
+</Accordion>
+
+### Understanding the Risks
+
+#### What Could Go Wrong?
+
+**With passwordless sudo:**
+- Any process running as your user can execute sudo commands
+- Malicious code in a project could perform system-level operations
+- Agent errors could accidentally modify system files
+
+**Mitigation:**
+- Only run Fireteam on projects you trust
+- Review git commits to understand changes
+- Use VM or container isolation
+- Limit sudo to specific commands
+
+**With SUDO_PASSWORD:**
+- All risks of passwordless sudo, plus:
+- Password exposure if `.env` file leaked
+- Password readable by any process with file access
+
+**Mitigation:**
+- All passwordless sudo mitigations, plus:
+- Strict file permissions (600)
+- Dedicated sudo password (not your main password)
+- Delete `.env` when not in use
+
+## Choosing the Right Approach
+
+### Use Passwordless Sudo If:
+
+✅ You have administrator access to the system
+✅ You're on a dedicated development machine
+✅ You trust the projects Fireteam will build
+✅ You want maximum efficiency
+
+### Use SUDO_PASSWORD If:
+
+✅ Passwordless sudo is not allowed (corporate policy)
+✅ Shared system with multiple users
+✅ You need sudo occasionally but can't configure sudoers
+✅ You're comfortable with the security tradeoff
+
+### Use No Sudo If:
+
+✅ Projects don't require system packages
+✅ All dependencies installable without sudo (pip, npm --prefix, etc.)
+✅ Maximum security is required
+✅ You're on a restricted/shared system
+
+<Tip>
+**Recommendation:** Start with passwordless sudo on a dedicated dev machine. If that's not possible, use SUDO_PASSWORD with proper security measures. As a last resort, work without sudo and manually install system dependencies.
+</Tip>
+
+## Verifying Sudo Configuration
+
+### Check Current Sudo Status
+
+Run this diagnostic script:
+
+```bash
+#!/bin/bash
+
+echo "=== Fireteam Sudo Diagnostic ==="
+echo
+
+# Check passwordless sudo
+echo "1. Testing passwordless sudo..."
+if sudo -n true 2>/dev/null; then
+    echo "   ✅ Passwordless sudo: ENABLED"
+else
+    echo "   ❌ Passwordless sudo: DISABLED"
+fi
+echo
+
+# Check SUDO_PASSWORD in .env
+echo "2. Checking SUDO_PASSWORD in .env..."
+if [ -f /home/claude/fireteam/.env ]; then
+    if grep -q "SUDO_PASSWORD=" /home/claude/fireteam/.env; then
+        echo "   ✅ SUDO_PASSWORD: CONFIGURED"
+
+        # Check permissions
+        PERMS=$(stat -c %a /home/claude/fireteam/.env)
+        if [ "$PERMS" = "600" ]; then
+            echo "   ✅ .env permissions: SECURE (600)"
+        else
+            echo "   ⚠️  .env permissions: INSECURE ($PERMS) - should be 600"
+        fi
+    else
+        echo "   ❌ SUDO_PASSWORD: NOT SET"
+    fi
+else
+    echo "   ❌ .env file: NOT FOUND"
+fi
+echo
+
+# Check .gitignore
+echo "3. Checking .gitignore..."
+if grep -q "^\.env$" /home/claude/fireteam/.gitignore 2>/dev/null; then
+    echo "   ✅ .env in .gitignore: YES"
+else
+    echo "   ⚠️  .env in .gitignore: NO - add it!"
+fi
+echo
+
+# Summary
+echo "=== Summary ==="
+if sudo -n true 2>/dev/null; then
+    echo "✅ Sudo access: READY (passwordless)"
+elif [ -f /home/claude/fireteam/.env ] && grep -q "SUDO_PASSWORD=" /home/claude/fireteam/.env; then
+    echo "✅ Sudo access: READY (via SUDO_PASSWORD)"
+else
+    echo "❌ Sudo access: NOT CONFIGURED"
+    echo "   See: https://docs.fireteam.dev/configuration/sudo-setup"
+fi
+```
+
+Save as `check_sudo.sh`, make executable, and run:
+
+```bash
+chmod +x check_sudo.sh
+./check_sudo.sh
+```
+
+## Impact on Project Performance
+
+### With Sudo Access (Recommended)
+
+**Example: TypeScript Project (Node.js required)**
+
+✅ **Cycle 0:** Detect Node.js needed → `sudo apt install nodejs` → Success
+✅ **Cycle 1-3:** Build project, run tests, complete
+✅ **Total:** 4 cycles, ~60 minutes
+
+### Without Sudo Access
+
+**Same TypeScript Project**
+
+❌ **Cycle 0:** Detect Node.js needed → `sudo apt install nodejs` → **FAILED** (password required)
+❌ **Cycle 1:** Retry `sudo apt install nodejs` → **FAILED**
+❌ **Cycle 2:** Try `apt install nodejs` (no sudo) → **FAILED** (permission denied)
+❌ **Cycle 3-7:** Various installation attempts → **FAILED**
+⚠️ **Cycle 8:** Download Node.js binary to ~/.local/bin → **SUCCESS** (workaround)
+✅ **Cycle 9-19:** Build project, resolve issues, complete
+❌ **Total:** 20 cycles, ~5 hours (8 wasted cycles)
+
+<Info>
+**Real test data:** GitHub Analyzer project wasted 8 cycles (approximately 2 hours) due to lack of sudo access. Final completion: 94%, but with significant efficiency loss.
+</Info>
+
+## Troubleshooting
+
+### "Permission denied" on system operations
+
+**Symptom:** Agents fail to install packages, get permission errors
+
+**Diagnosis:**
+```bash
+# Check sudo access
+sudo -n true 2>/dev/null && echo "Sudo OK" || echo "Sudo blocked"
+
+# Check SUDO_PASSWORD
+grep SUDO_PASSWORD /home/claude/fireteam/.env
+```
+
+**Solution:** Configure one of the sudo methods above
+
+### SUDO_PASSWORD not working
+
+**Symptom:** Password set in .env but sudo still fails
+
+**Diagnosis:**
+```bash
+# Test SUDO_PASSWORD
+source /home/claude/fireteam/.env
+echo "$SUDO_PASSWORD" | sudo -S ls /root
+```
+
+**Possible issues:**
+1. Password incorrect → Update .env
+2. .env not loaded → Check file exists
+3. Special characters in password → Escape or use quotes
+
+### Passwordless sudo not working
+
+**Symptom:** Configured in sudoers but still prompts for password
+
+**Diagnosis:**
+```bash
+# Check sudoers entry
+sudo visudo -c  # Check syntax
+sudo -l -U $(whoami)  # List sudo privileges
+```
+
+**Solution:**
+1. Verify username is correct
+2. Ensure NOPASSWD rule is last in file
+3. Check for conflicting rules above
+
+## Next Steps
+
+<CardGroup cols={2}>
+
+<Card title="Config File Reference" icon="file" href="/configuration/config-file">
+  Review complete configuration options
+</Card>
+
+<Card title="Environment Setup" icon="gear" href="/installation/environment">
+  Configure other .env variables
+</Card>
+
+<Card title="Test Results" icon="chart-bar" href="/performance/test-results">
+  See sudo impact on project performance
+</Card>
+
+<Card title="Troubleshooting" icon="wrench" href="/troubleshooting/troubleshooting">
+  Resolve sudo-related issues
+</Card>
+
+</CardGroup>

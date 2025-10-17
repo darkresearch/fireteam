@@ -1,0 +1,335 @@
+---
+title: "System Requirements"
+description: "Prerequisites and dependencies needed to run Fireteam successfully"
+---
+
+## Overview
+
+Fireteam has minimal system requirements but does need specific tools installed and configured properly. This guide covers all prerequisites for running Fireteam successfully.
+
+## Required Software
+
+### Python 3.12+
+
+Fireteam requires **Python 3.12 or higher** for optimal performance and compatibility.
+
+<Tip>
+Python 3.12+ includes important performance improvements and type system enhancements that Fireteam relies on.
+</Tip>
+
+**Check your Python version:**
+
+```bash
+python3 --version
+```
+
+**Installing Python 3.12+:**
+
+<CodeGroup>
+
+```bash Ubuntu/Debian
+sudo apt update
+sudo apt install python3.12 python3.12-venv python3-pip
+```
+
+```bash macOS (Homebrew)
+brew install python@3.12
+```
+
+```bash From Source
+# Download from python.org
+wget https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz
+tar -xzf Python-3.12.0.tgz
+cd Python-3.12.0
+./configure --enable-optimizations
+make -j$(nproc)
+sudo make altinstall
+```
+
+</CodeGroup>
+
+### Git
+
+Git is required for Fireteam's version control integration. Every project is automatically managed as a git repository with automatic commits and branch management.
+
+**Check Git installation:**
+
+```bash
+git --version
+```
+
+**Installing Git:**
+
+<CodeGroup>
+
+```bash Ubuntu/Debian
+sudo apt update
+sudo apt install git
+```
+
+```bash macOS
+# Git comes with Xcode Command Line Tools
+xcode-select --install
+
+# Or via Homebrew
+brew install git
+```
+
+```bash CentOS/RHEL
+sudo yum install git
+```
+
+</CodeGroup>
+
+**Configure Git:**
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
+
+<Info>
+These git credentials will be used by default, but you can override them using environment variables in the `.env` file.
+</Info>
+
+### Claude CLI
+
+The Claude Command Line Interface is the **core requirement** for Fireteam. All agents communicate with Claude AI through the CLI.
+
+**Check Claude CLI installation:**
+
+```bash
+claude --version
+```
+
+**Installing Claude CLI:**
+
+Follow the [official Claude CLI installation guide](https://docs.claude.com/en/docs/claude-code/installation).
+
+**Quick installation:**
+
+```bash
+# Download and install (example - check official docs for latest)
+curl -fsSL https://claude.ai/install.sh | sh
+```
+
+**Authentication:**
+
+After installation, authenticate with your Anthropic API key:
+
+```bash
+claude auth
+```
+
+<Warning>
+Fireteam requires an authenticated Claude CLI to function. Without proper authentication, all agent operations will fail.
+</Warning>
+
+## Optional Dependencies
+
+### Node.js (for TypeScript/JavaScript projects)
+
+While not required for Fireteam itself, Node.js is needed if you're building TypeScript or JavaScript projects.
+
+**Recommended: Node.js 18+ LTS**
+
+```bash
+# Check Node.js version
+node --version
+
+# Install via nvm (recommended)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+nvm install 18
+nvm use 18
+```
+
+<Tip>
+Based on test results, having Node.js pre-installed saves approximately 8 cycles when building TypeScript projects. See [Test Results](/performance/test-results) for details.
+</Tip>
+
+### Passwordless Sudo (Recommended)
+
+For projects requiring system-level package installation, passwordless sudo access significantly improves efficiency.
+
+**Configure passwordless sudo:**
+
+```bash
+sudo visudo
+```
+
+Add this line (replace `username` with your username):
+
+```
+username ALL=(ALL) NOPASSWD: ALL
+```
+
+**Alternative:** Use `SUDO_PASSWORD` in `.env` file (see [Sudo Setup](/configuration/sudo-setup)).
+
+## Python Dependencies
+
+Fireteam manages its own Python dependencies automatically during setup. Key dependencies include:
+
+- `python-dotenv`: Environment variable management
+- `subprocess` (stdlib): Process execution
+- `pathlib` (stdlib): Path handling
+- Standard library modules for state management and logging
+
+**No manual pip installation needed** - the `setup.sh` script handles all dependencies.
+
+## System Resources
+
+### Minimum Requirements
+
+- **CPU**: 2 cores (4+ recommended for faster cycles)
+- **RAM**: 4GB (8GB+ recommended)
+- **Disk**: 1GB free space for Fireteam + space for your projects
+- **Network**: Internet connection for Claude API calls
+
+### Recommended Resources
+
+- **CPU**: 4+ cores for parallel operations
+- **RAM**: 16GB for large codebases
+- **Disk**: SSD with 10GB+ free space
+- **Network**: Stable broadband connection (Claude API requires consistent connectivity)
+
+<Info>
+Average project completion takes ~50 minutes and makes 15-30 API calls to Claude. Plan for adequate network bandwidth.
+</Info>
+
+## Platform Support
+
+### Supported Operating Systems
+
+✅ **Linux** (Ubuntu 20.04+, Debian 11+, CentOS 8+, Arch Linux)
+✅ **macOS** (11.0 Big Sur or later)
+⚠️ **Windows** (via WSL2 recommended, native support experimental)
+
+<Warning>
+Windows native support is experimental. For best results on Windows, use **WSL2** (Windows Subsystem for Linux 2) with Ubuntu.
+</Warning>
+
+### Shell Requirements
+
+Fireteam CLI tools require a POSIX-compatible shell:
+
+- ✅ bash (recommended)
+- ✅ zsh
+- ✅ fish (with bash compatibility)
+- ⚠️ sh (limited features)
+
+## Verification Checklist
+
+Before installing Fireteam, verify all requirements:
+
+<Accordion title="Pre-Installation Checklist">
+
+- [ ] Python 3.12+ installed and accessible via `python3`
+- [ ] Git installed and configured with username/email
+- [ ] Claude CLI installed and authenticated
+- [ ] Internet connection available
+- [ ] At least 4GB RAM available
+- [ ] 1GB+ free disk space
+- [ ] POSIX-compatible shell (bash/zsh)
+- [ ] (Optional) Node.js 18+ for TypeScript/JS projects
+- [ ] (Optional) Passwordless sudo or SUDO_PASSWORD ready
+
+</Accordion>
+
+## Testing Your Environment
+
+Run these commands to verify your environment is ready:
+
+```bash
+# Check Python
+python3 --version
+python3 -c "import sys; print('✓ Python OK' if sys.version_info >= (3, 12) else '✗ Upgrade to 3.12+')"
+
+# Check Git
+git --version && echo "✓ Git OK"
+
+# Check Claude CLI
+claude --version && echo "✓ Claude CLI OK"
+
+# Check Claude authentication
+claude auth status && echo "✓ Claude authenticated"
+
+# Check disk space
+df -h . | awk 'NR==2 {print "Free space: " $4}'
+
+# Optional: Check Node.js
+node --version 2>/dev/null && echo "✓ Node.js OK" || echo "⚠ Node.js not installed (optional)"
+```
+
+<Tip>
+If all checks pass, you're ready to proceed with [Fireteam installation](/installation/installation)!
+</Tip>
+
+## Troubleshooting
+
+### Python Version Issues
+
+**Problem:** `python3 --version` shows Python 3.11 or lower
+
+**Solution:** Install Python 3.12+ and ensure it's the default:
+
+```bash
+# Add to ~/.bashrc or ~/.zshrc
+alias python3='/usr/bin/python3.12'
+```
+
+### Claude CLI Not Found
+
+**Problem:** `claude: command not found`
+
+**Solution:** Ensure Claude CLI is in your PATH:
+
+```bash
+# Check if installed
+which claude
+
+# If not in PATH, add to ~/.bashrc or ~/.zshrc
+export PATH="$HOME/.local/bin:$PATH"
+source ~/.bashrc
+```
+
+### Git Not Configured
+
+**Problem:** Git operations fail with identity errors
+
+**Solution:** Configure git user and email:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+```
+
+### Insufficient Permissions
+
+**Problem:** Permission denied errors during project operations
+
+**Solution:** Either:
+1. Set up passwordless sudo (recommended)
+2. Add `SUDO_PASSWORD` to `.env` file
+3. Run projects in directories where you have write permissions
+
+## Next Steps
+
+<CardGroup cols={2}>
+
+<Card title="Install Fireteam" icon="download" href="/installation/installation">
+  Complete the Fireteam installation with setup.sh
+</Card>
+
+<Card title="Environment Setup" icon="gear" href="/installation/environment">
+  Configure your .env file for optimal operation
+</Card>
+
+<Card title="Configuration" icon="sliders" href="/configuration/config-file">
+  Customize Fireteam behavior via config.py
+</Card>
+
+<Card title="Quickstart" icon="rocket" href="/quickstart">
+  Build your first project with Fireteam
+</Card>
+
+</CardGroup>

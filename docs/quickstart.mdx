@@ -1,0 +1,432 @@
+---
+title: "Quickstart"
+description: "Get Fireteam running in 5 minutes and build your first autonomous project"
+---
+
+## Prerequisites
+
+Before installing Fireteam, ensure you have the following installed:
+
+<CardGroup cols={2}>
+  <Card title="Python 3.12+" icon="python">
+    Required for running the Fireteam orchestrator and agents
+  </Card>
+  <Card title="Git" icon="code-branch">
+    Used for version control and automatic commits
+  </Card>
+  <Card title="Claude CLI" icon="terminal">
+    Powers the autonomous agents
+  </Card>
+  <Card title="Unix-like System" icon="linux">
+    Linux or macOS (tested on Ubuntu)
+  </Card>
+</CardGroup>
+
+<Tip>
+Need help installing Claude CLI? Check the [official installation guide](https://docs.claude.com/en/docs/claude-code/installation).
+</Tip>
+
+## Installation
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/darkresearch/fireteam.git
+cd fireteam
+```
+
+### Step 2: Run Setup Script
+
+Fireteam includes an automated setup script that:
+- Creates necessary directories
+- Installs the CLI tools to `~/.local/bin`
+- Sets up the environment
+
+```bash
+bash setup.sh
+```
+
+The setup script will:
+1. Create `state/` and `logs/` directories
+2. Copy CLI tools (`start-agent`, `stop-agent`, `fireteam-status`) to `~/.local/bin`
+3. Make the tools executable
+4. Verify the installation
+
+### Step 3: Update Your PATH
+
+If `~/.local/bin` isn't already in your PATH, add it:
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+For macOS using zsh:
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+### Step 4: Configure Environment Variables (Optional)
+
+Create a `.env` file in the Fireteam directory:
+
+```bash
+cd /home/claude/fireteam
+nano .env
+```
+
+Add your configuration:
+
+```bash
+# Git configuration
+GIT_USER_NAME="Your Name"
+GIT_USER_EMAIL="your.email@example.com"
+
+# Optional: Sudo password for system-level operations
+# SUDO_PASSWORD=your_password_here
+```
+
+<Warning>
+Never commit your `.env` file to version control. It's already in `.gitignore`.
+</Warning>
+
+### Step 5: Verify Installation
+
+Check that the CLI tools are accessible:
+
+```bash
+which fireteam-status
+# Should output: /home/your-username/.local/bin/fireteam-status
+
+fireteam-status
+# Should output: No active Fireteam session found.
+```
+
+## Your First Project
+
+Let's build a Bitcoin price checker CLI tool - a real-world project that Fireteam completed at 98% in just 3 cycles during testing.
+
+### Step 1: Start the Agent
+
+```bash
+start-agent --project-dir ~/bitcoin-cli --prompt "Build a Python CLI tool that fetches the current Bitcoin price from the CoinGecko API. Include error handling, retry logic, and formatted output. The tool should accept command-line arguments and display the price in USD."
+```
+
+<Tip>
+Be specific in your goal description. Include desired features, error handling requirements, and output format.
+</Tip>
+
+### Step 2: Monitor Progress
+
+In a separate terminal, watch the progress in real-time:
+
+```bash
+fireteam-status --watch
+```
+
+You'll see output like:
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║                    🔥 FIRETEAM STATUS 🔥                     ║
+╚══════════════════════════════════════════════════════════════╝
+
+Status: ⚡ RUNNING
+
+Project Information:
+  Directory: /home/user/bitcoin-cli
+  Branch: agent-20251017-143022
+  Goal: Build a Python CLI tool that fetches the current Bitcoin...
+
+Current Progress:
+  Cycle: 2
+  Phase: Executing
+  Completion: 95%
+  Validation: 0/3 checks
+
+Last Updated: 2025-10-17 14:35:42
+```
+
+### Step 3: Understanding the Cycle
+
+Watch as Fireteam goes through each cycle:
+
+**Cycle 0 - Initial Build**
+- **Planning**: Analyzes goal, creates project structure plan
+- **Execution**: Implements core functionality, API integration, CLI
+- **Review**: Tests the implementation → 88% complete
+
+**Cycle 1 - Refinement**
+- **Planning**: Reviews gaps, plans improvements
+- **Execution**: Adds error handling, retry logic, better output
+- **Review**: Tests enhanced version → 95% complete (validation 1/3)
+
+**Cycle 2 - Validation**
+- **Planning**: Critical review of remaining gaps
+- **Execution**: Adds documentation, edge case handling
+- **Review**: Comprehensive test → 98% complete (validation 2/3)
+
+**Cycle 3 - Final Validation**
+- **Review**: Final verification → 98% complete (validation 3/3)
+- **Complete!** 🎉
+
+<Info>
+Fireteam requires **3 consecutive reviews ≥95%** to ensure quality. A single high score isn't enough.
+</Info>
+
+### Step 4: Check the Results
+
+Once complete, explore your new project:
+
+```bash
+cd ~/bitcoin-cli
+ls -la
+```
+
+You'll find:
+- **Source code**: `bitcoin_cli.py` or similar
+- **Tests**: `test_bitcoin_cli.py`
+- **Documentation**: `README.md` with usage instructions
+- **Git history**: Complete commit log of all changes
+- **Requirements**: `requirements.txt` with dependencies
+
+Test the CLI:
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the tool
+python bitcoin_cli.py
+```
+
+### Step 5: Explore the Git History
+
+Every cycle creates automatic commits:
+
+```bash
+git log --oneline
+```
+
+Output:
+```
+a3f8b2c Cycle 3: Final validation - Documentation polish
+e7d9a1b Cycle 2: Enhanced error handling and retry logic
+4c2e8f0 Cycle 1: Refactored output formatting
+b1a7d3e Cycle 0: Initial implementation with API integration
+9f4e2a8 Initial commit - Fireteam project initialization
+```
+
+## What Just Happened?
+
+Fireteam autonomously:
+
+1. ✅ Created a complete Python CLI project structure
+2. ✅ Implemented CoinGecko API integration
+3. ✅ Added comprehensive error handling and retry logic
+4. ✅ Created formatted console output
+5. ✅ Wrote unit tests with good coverage
+6. ✅ Generated complete documentation
+7. ✅ Committed all changes to Git with descriptive messages
+8. ✅ Validated the implementation through 3 review cycles
+
+**All without human intervention after the initial goal.**
+
+## Project Monitoring
+
+### Real-Time Watching
+
+Keep the `--watch` flag running to see live updates:
+
+```bash
+fireteam-status --watch
+```
+
+Updates every 3 seconds with current cycle, phase, and completion percentage.
+
+### Detailed Logs
+
+View full agent logs:
+
+```bash
+fireteam-status --logs
+```
+
+Shows the last 50 lines of orchestrator logs with detailed agent outputs.
+
+### Follow Mode
+
+Stream logs in real-time:
+
+```bash
+fireteam-status --follow
+```
+
+Perfect for debugging or watching the agents work.
+
+## Stopping a Project
+
+To gracefully stop Fireteam:
+
+```bash
+stop-agent
+```
+
+This:
+- Sends a shutdown signal to the orchestrator
+- Waits for the current agent to complete
+- Saves the current state
+- Commits any pending changes
+
+<Warning>
+Do not kill the process manually (`Ctrl+C` or `kill -9`). Always use `stop-agent` for graceful shutdown.
+</Warning>
+
+## Common First Project Ideas
+
+Try these proven project ideas that work great with Fireteam:
+
+<CardGroup cols={2}>
+  <Card title="Weather CLI" icon="cloud">
+    **Goal**: "Build a Python CLI that fetches weather data from OpenWeatherMap API for any city"
+
+    **Expected**: 95% in 2 cycles
+  </Card>
+
+  <Card title="Task Manager" icon="list-check">
+    **Goal**: "Create a SQLite-based task manager CLI with CRUD operations"
+
+    **Expected**: 92% in 1 cycle
+  </Card>
+
+  <Card title="Web Scraper" icon="spider">
+    **Goal**: "Build a Python script to scrape Hacker News front page headlines using BeautifulSoup"
+
+    **Expected**: 92% in 1 cycle
+  </Card>
+
+  <Card title="REST API" icon="server">
+    **Goal**: "Create a FastAPI note-taking API with full CRUD endpoints and validation"
+
+    **Expected**: 92% in 1 cycle
+  </Card>
+</CardGroup>
+
+## Tips for Better Results
+
+### Writing Effective Goals
+
+<Tip>
+**Good goals are specific, actionable, and include desired features.**
+</Tip>
+
+✅ **Good Example**:
+```
+Build a Python CLI calculator that supports basic arithmetic operations
+(+, -, *, /), handles division by zero, accepts command-line arguments,
+and provides helpful usage instructions.
+```
+
+❌ **Bad Example**:
+```
+Make a calculator
+```
+
+### Goal Best Practices
+
+1. **Specify the language**: "Python CLI" or "TypeScript Node.js app"
+2. **List key features**: API endpoints, error handling, data validation
+3. **Mention tech stack**: FastAPI, SQLite, BeautifulSoup, etc.
+4. **Include quality requirements**: Error handling, tests, documentation
+5. **Be realistic**: Start with well-defined, medium-sized projects
+
+### Optimal Project Complexity
+
+**Sweet Spot**: Medium complexity, well-defined requirements
+- CLI tools (100-300 lines)
+- API clients with 3-5 endpoints
+- Simple web scrapers
+- CRUD applications with database
+
+**Too Simple**: May complete too quickly for validation
+- Single-function scripts
+- Hello World programs
+
+**Too Complex**: May require many cycles
+- Full web applications with frontend
+- Complex distributed systems
+- Projects requiring multiple services
+
+## Troubleshooting
+
+### "Command not found: start-agent"
+
+Your PATH isn't configured correctly. Add `~/.local/bin`:
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+### "Claude CLI not found"
+
+Install the Claude CLI:
+
+```bash
+# Follow the official guide
+# https://docs.claude.com/en/docs/claude-code/installation
+```
+
+### "Permission denied" errors
+
+Make CLI tools executable:
+
+```bash
+chmod +x ~/.local/bin/{start-agent,stop-agent,fireteam-status}
+```
+
+### Agent timeouts
+
+Some projects need more time. Edit `config.py`:
+
+```python
+AGENT_TIMEOUTS = {
+    "planner": 900,      # 15 minutes for complex planning
+    "reviewer": 900,     # 15 minutes for thorough review
+    "executor": 2400     # 40 minutes for large implementations
+}
+```
+
+### More Help
+
+Check the [Troubleshooting Guide](/troubleshooting/troubleshooting) for detailed solutions.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Understand the Architecture" icon="diagram-project" href="/core-concepts/architecture">
+    Learn how agents coordinate in cycles
+  </Card>
+
+  <Card title="Configure Timeouts" icon="clock" href="/configuration/timeouts">
+    Optimize agent timeouts for your projects
+  </Card>
+
+  <Card title="CLI Tools Reference" icon="terminal" href="/cli-tools/overview">
+    Master the fireteam-status command
+  </Card>
+
+  <Card title="View Test Results" icon="chart-line" href="/performance/test-results">
+    See performance across 11 real projects
+  </Card>
+</CardGroup>
+
+## Congratulations!
+
+You've successfully installed Fireteam and built your first autonomous project. The system is now ready to tackle more complex challenges.
+
+Experiment with different project types, monitor the agents' work, and watch as Fireteam builds production-ready code autonomously.
+
+**Happy building!** 🔥
