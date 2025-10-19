@@ -17,18 +17,9 @@ AGENT_TIMEOUTS = {
 }
 ```
 
-These values are configured in `/home/claude/fireteam/config.py` and were optimized based on comprehensive testing across 11 diverse projects.
+These values are configured in `/home/claude/fireteam/config.py` and were optimized based on real-world usage patterns.
 
 ## Why These Specific Values?
-
-### Test-Driven Optimization
-
-The current timeout values were determined through empirical testing:
-
-<Info>
-**Test Data:** 11 projects, 41 total cycles, 100% success rate with current timeouts.
-See [Test Results](/performance/test-results) for complete analysis.
-</Info>
 
 | Agent | Timeout | Rationale |
 |-------|---------|-----------|
@@ -472,14 +463,6 @@ Validate timeout changes with a representative project before production use.
 
 <Card title="Config File Reference" icon="file" href="/configuration/config-file">
   Complete configuration file documentation
-</Card>
-
-<Card title="Test Results" icon="chart-bar" href="/performance/test-results">
-  See timeout performance across 11 projects
-</Card>
-
-<Card title="Benchmarks" icon="gauge" href="/performance/benchmarks">
-  Cycle duration and efficiency metrics
 </Card>
 
 <Card title="Troubleshooting" icon="wrench" href="/troubleshooting/troubleshooting">

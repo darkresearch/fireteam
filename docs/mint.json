@@ -88,13 +88,6 @@
       ]
     },
     {
-      "group": "Performance & Testing",
-      "pages": [
-        "performance/test-results",
-        "performance/benchmarks"
-      ]
-    },
-    {
       "group": "Advanced Topics",
       "pages": [
         "advanced/state-management",

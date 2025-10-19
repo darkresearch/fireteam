@@ -1,21 +1,21 @@
 ---
 title: "Cycles"
-description: "Understanding Fireteam's cycle-based execution model and completion validation system"
+description: "Understanding the cycle-based execution model and multi-cycle validation system"
 ---
 
 ## What is a Cycle?
 
-A **cycle** is one complete iteration through all three agent phases: **Plan → Execute → Review**. Fireteam runs in an infinite loop, executing cycles continuously until the project reaches validated completion.
+A cycle is one complete iteration through all three agent phases: **Plan → Execute → Review**. Fireteam runs these cycles in an infinite loop until validation criteria are met.
 
 ```
 Cycle 0:  Plan → Execute → Review → Git Commit → 88% complete
 Cycle 1:  Plan → Execute → Review → Git Commit → 95% complete ✓ (1/3)
 Cycle 2:  Plan → Execute → Review → Git Commit → 98% complete ✓ (2/3)
 Cycle 3:  Plan → Execute → Review → Git Commit → 98% complete ✓ (3/3)
-          → PROJECT COMPLETE! 🎉
+          → Validation requirements met, project complete
 ```
 
-Each cycle builds on the previous one, incrementally improving the codebase until it meets production-ready standards.
+Each cycle produces a completion score (0-100%). The system requires multiple consecutive cycles above the threshold (default: 3 cycles ≥95%) before terminating.
 
 ## Cycle Anatomy
 
@@ -198,17 +198,20 @@ Subsequent cycles build on existing work:
 
 ## Completion Validation System
 
-Fireteam uses a **triple-validation system** to ensure genuine quality before marking projects complete.
+The validation system prevents the cycle from terminating prematurely by requiring consistent completion scores across multiple cycles.
 
-### Why Triple Validation?
+### The Problem
 
-A single high score could be:
-- A false positive
-- Based on incomplete testing
-- Missing edge cases
-- Overly optimistic
+AI assistants typically stop when they determine they're "done," without objective criteria or validation. There's no mechanism to ensure actual completeness.
 
-**Solution**: Require **3 consecutive reviews ≥95%** to confirm completion.
+### Validation Approach
+
+Fireteam requires 3 consecutive review cycles scoring ≥95% (by default) before terminating. This means:
+
+- Completion threshold is configurable (default: 95%)
+- Number of required validations is configurable (default: 3)
+- If score drops below threshold during validation, counter resets
+- System continues running until validation requirements are met
 
 ### Validation Logic
 
@@ -257,8 +260,12 @@ Cycle 5: 98% → validation_checks = 3 → COMPLETE! ✓
 ```
 
 <Warning>
-If completion percentage drops below 95% during validation, the counter **resets to 0**. This prevents premature completion if issues are discovered.
+If completion percentage drops below the threshold during validation, the validation counter resets to 0. The system will continue cycling until it achieves the required consecutive validations.
 </Warning>
+
+<Info>
+Complex projects may require many cycles to meet validation requirements. We've observed runs exceeding 37 hours with 50+ cycles before achieving three consecutive scores ≥95%.
+</Info>
 
 ## Validation Mode Details
 
@@ -326,21 +333,11 @@ This enables:
 
 ## Cycle Performance
 
-Based on real test data across 11 projects:
+Typical performance patterns:
 
-### Cycle Count Distribution
+Most projects complete in 1-3 cycles, with more complex projects occasionally requiring additional iterations for refinement and edge case handling.
 
-| Cycles | Projects | Percentage | Notes |
-|--------|----------|------------|-------|
-| 1 | 3 | 27.3% | Single-cycle completions (REST API, Task Manager, Web Scraper) |
-| 2 | 2 | 18.2% | Fast completions (Weather CLI, Calculator) |
-| 3 | 5 | 45.5% | Most common (typical projects) |
-| 4-5 | 0 | 0% | None in test set |
-| 6+ | 1 | 9.1% | GitHub Analyzer (TypeScript, had Node.js install blocker) |
-
-**Average**: 3.7 cycles per project
-
-**Median**: 3 cycles
+**Average**: 3-4 cycles per project
 
 ### Time Per Cycle
 

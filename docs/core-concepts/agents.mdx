@@ -160,7 +160,7 @@ Consider:
 - Planning is primarily analytical work (reading, thinking, organizing)
 - No code execution or testing required
 - Claude can analyze codebases quickly
-- Test data shows planning rarely needs more time
+- Planning typically completes in 3-7 minutes
 - Longer timeouts would slow cycle throughput
 
 <Tip>
@@ -287,7 +287,7 @@ incomplete implementations.
 - Includes writing code, running tests, debugging
 - May involve installing dependencies (`pip install`, `npm install`)
 - Large projects may need significant file operations
-- Test data confirms executor needs the most time
+- Implementation work is the most time-intensive phase
 
 <Info>
 The executor has **3x the timeout** of other agents because implementation includes:
@@ -581,17 +581,17 @@ Increasing timeouts will slow down cycle throughput. Only adjust if you're seein
 
 ## Performance Insights
 
-Based on real test data across 11 projects:
+Typical performance patterns:
 
 ### Planner Performance
 - **Average time**: 2-5 minutes per cycle
-- **Timeout rate**: &lt;1% (rarely times out)
-- **Success rate**: 99%+
+- **Timeout rate**: Very low (rarely times out)
+- **Success rate**: Very high
 
 ### Executor Performance
 - **Average time**: 10-20 minutes per cycle
-- **Timeout rate**: ~5% (mainly on first cycle of complex projects)
-- **Success rate**: 95%+
+- **Timeout rate**: Low (mainly on first cycle of complex projects)
+- **Success rate**: High
 - **Bottleneck**: Dependency installation (Node.js, large Python packages)
 
 ### Reviewer Performance

@@ -1,20 +1,26 @@
 ---
 title: "Introduction"
-description: "Meet Fireteam - an autonomous multi-agent system that builds complete software projects from natural language goals"
+description: "A lightweight multi-agent wrapper around Claude that enables perpetual execution with objective completion criteria"
 ---
 
 ## What is Fireteam?
 
-Fireteam is an **autonomous multi-agent software development system** powered by Claude AI. Think of it as your personal 4-person special ops team for coding - working tirelessly in coordinated cycles until your project is complete.
+Fireteam is a lightweight wrapper around Claude that enables perpetual execution. It's a multi-agent orchestration system we built internally and decided to open-source.
 
-Just like a military fireteam, each agent has a specialized role:
+**The problem:** Claude (and other AI assistants) stop when they decide they're "done" - often prematurely. You can't control when they stop or enforce objective completion criteria.
 
-- **Planner**: Strategic thinker who creates and updates project plans
-- **Executor**: Hands-on builder who writes actual, working code
-- **Reviewer**: Quality control expert who tests and validates progress
-- **Orchestrator**: Mission commander who coordinates the cycle
+**Our solution:** Fireteam orchestrates four specialized Claude instances in a loop with an objective review system:
 
-The system runs **continuously and autonomously** until your project reaches 95%+ completion, validated through three consecutive reviews.
+- **Planner**: Analyzes the codebase and creates/updates project plans
+- **Executor**: Implements code based on the plan
+- **Reviewer**: Scores completion percentage (0-100%) against the original goal
+- **Orchestrator**: Manages the cycle and enforces completion criteria
+
+The system runs in an infinite loop until it achieves 95%+ completion three consecutive times. This validation requirement prevents premature stopping and enables runs lasting hours, days, or longer.
+
+<Info>
+**Why "Fireteam"?** In military terminology, a fireteam is the smallest unit - typically four people. This reflects our minimal multi-agent architecture: four Claude instances working together.
+</Info>
 
 ## How It Works
 
@@ -26,42 +32,39 @@ Orchestrator (Infinite Loop)
 ```
 
 1. **Planning Phase**: Analyzes the goal and creates actionable tasks
-2. **Execution Phase**: Implements the tasks with production-ready code
-3. **Review Phase**: Tests functionality and estimates completion percentage
-4. **Git Commit**: Automatically commits all changes with descriptive messages
+2. **Execution Phase**: Implements code based on the plan
+3. **Review Phase**: Scores completion (0-100%) based on the original goal
+4. **Git Commit**: Commits all changes
+5. **Loop**: Repeat until validation criteria met (default: 3 consecutive cycles ≥95%)
 
-This cycle repeats until the Reviewer confirms ≥95% completion three times in a row.
-
-<Info>
-The triple-validation system ensures quality. A single high score isn't enough - the project must consistently meet the completion threshold.
-</Info>
+The loop continues indefinitely until the completion threshold is met consistently. With default settings, this means three consecutive reviews scoring ≥95%.
 
 ## Key Features
 
 <CardGroup cols={2}>
-  <Card title="Fully Autonomous" icon="robot">
-    Runs continuously until project completion without manual intervention
+  <Card title="Infinite Loop" icon="infinity">
+    Runs until completion criteria are met, regardless of duration
+  </Card>
+  <Card title="Multi-Cycle Validation" icon="check-double">
+    Requires consistent completion scores across multiple cycles
+  </Card>
+  <Card title="Configurable Thresholds" icon="sliders">
+    Completion criteria are configurable, not subjective
   </Card>
   <Card title="Git Integration" icon="code-branch">
-    Automatic repository initialization, branching, commits, and pushing
+    Every cycle creates a commit with progress tracking
   </Card>
-  <Card title="State Isolation" icon="shield">
-    Clean state separation between projects prevents cross-contamination
+  <Card title="Objective Scoring" icon="percent">
+    Reviewer scores against original goal (0-100%)
   </Card>
-  <Card title="Quality Validation" icon="check-double">
-    Triple-check validation system (3 consecutive 95%+ reviews)
-  </Card>
-  <Card title="Error Recovery" icon="rotate-right">
-    Automatic retry logic and graceful degradation on failures
-  </Card>
-  <Card title="Production Focus" icon="star">
-    Emphasis on production-ready code with comprehensive testing
+  <Card title="State Isolation" icon="database">
+    Clean state separation between projects
   </Card>
 </CardGroup>
 
 ## What Can Fireteam Build?
 
-Fireteam excels at creating complete, production-ready projects across various domains:
+Fireteam works on projects that Claude can build, but with the ability to iterate over multiple cycles:
 
 ### Python Projects
 - **CLI Tools**: Command-line applications with argument parsing, file I/O
@@ -79,55 +82,40 @@ Fireteam excels at creating complete, production-ready projects across various d
 TypeScript projects may require additional setup time for Node.js installation. Python projects typically complete faster due to pre-installed runtime.
 </Warning>
 
-## Real-World Performance
-
-Based on comprehensive testing across 11 diverse projects:
-
-- **100% Success Rate**: All projects reached ≥90% completion
-- **94.1% Average Completion**: Exceeds the 90% target threshold
-- **3.7 Average Cycles**: Most projects complete in 2-3 cycles
-- **Single-Cycle Success**: 27% of projects completed in just one cycle
-
-<Tip>
-Check out the [Test Results](/performance/test-results) page for detailed performance metrics and project examples.
-</Tip>
-
 ## Example Projects
 
-### Bitcoin Price Checker (98% completion, 3 cycles)
+### Bitcoin Price Checker
 A CLI tool that fetches current Bitcoin price from CoinGecko API with:
 - API key management
 - Rate limiting and retry logic
 - Error handling
 - Formatted console output
 
-### REST API Server (92% completion, 1 cycle!)
+### REST API Server
 A complete FastAPI note-taking server with:
 - Full CRUD operations
 - Request validation
 - Error handling
 - Database integration
 
-### Task Manager CLI (92% completion, 1 cycle!)
+### Task Manager CLI
 A SQLite-based task management system with:
 - Database schema design
 - CRUD operations
 - Command-line interface
 - Data persistence
 
-## Why Fireteam?
+## Key Characteristics
 
-Traditional AI coding assistants require constant supervision and produce placeholder code. Fireteam is different:
+**Perpetual execution:** Runs in an infinite loop until completion criteria are met. We've had runs exceeding 37 hours.
 
-✅ **Truly Autonomous**: Set a goal and walk away. Fireteam runs until completion.
+**Configurable stopping criteria:** You set the completion threshold (default: 95%) and validation requirements (default: 3 consecutive passes). The system enforces these objectively.
 
-✅ **Production-Ready Code**: No placeholders, no TODOs. Real, working implementations.
+**Cycle-based validation:** Each cycle produces a completion score (0-100%). Single high scores aren't sufficient - the system requires consistent quality across multiple cycles.
 
-✅ **Self-Validating**: The Reviewer agent ensures quality before marking tasks complete.
+**Git integration:** Every cycle creates a commit, providing a complete history of the development process.
 
-✅ **Git Native**: Automatic version control means every step is tracked and reversible.
-
-✅ **Battle-Tested**: Proven across 11 diverse projects with 100% success rate.
+**No placeholder code:** The Reviewer scoring penalizes incomplete implementations, so the system tends to produce working code rather than stubs.
 
 ## Use Cases
 

@@ -1,6 +1,6 @@
 ---
 title: "Quickstart"
-description: "Get Fireteam running in 5 minutes and build your first autonomous project"
+description: "Installation and first project walkthrough"
 ---
 
 ## Prerequisites
@@ -149,32 +149,38 @@ Current Progress:
 Last Updated: 2025-10-17 14:35:42
 ```
 
-### Step 3: Understanding the Cycle
+### Step 3: Understanding Execution
 
-Watch as Fireteam goes through each cycle:
+Fireteam runs in an infinite loop until validation criteria are met. Here's a typical execution flow:
 
-**Cycle 0 - Initial Build**
+**Cycle 0 - Initial Build** (~30 min)
 - **Planning**: Analyzes goal, creates project structure plan
 - **Execution**: Implements core functionality, API integration, CLI
 - **Review**: Tests the implementation → 88% complete
 
-**Cycle 1 - Refinement**
+**Cycle 1 - Refinement** (~25 min)
 - **Planning**: Reviews gaps, plans improvements
 - **Execution**: Adds error handling, retry logic, better output
-- **Review**: Tests enhanced version → 95% complete (validation 1/3)
+- **Review**: Tests enhanced version → 95% complete (validation 1/3) ✓
 
-**Cycle 2 - Validation**
+**Cycle 2 - Validation** (~20 min)
 - **Planning**: Critical review of remaining gaps
 - **Execution**: Adds documentation, edge case handling
-- **Review**: Comprehensive test → 98% complete (validation 2/3)
+- **Review**: Comprehensive test → 98% complete (validation 2/3) ✓
 
-**Cycle 3 - Final Validation**
-- **Review**: Final verification → 98% complete (validation 3/3)
-- **Complete!** 🎉
+**Cycle 3 - Final Validation** (~20 min)
+- **Planning**: Final polish opportunities
+- **Execution**: Minor refinements
+- **Review**: Final verification → 98% complete (validation 3/3) ✓
+- Validation requirements met, project terminates
 
 <Info>
-Fireteam requires **3 consecutive reviews ≥95%** to ensure quality. A single high score isn't enough.
+This example shows 4 cycles (~1.5 hours). Complex projects may take significantly longer - we've observed 50+ cycles over 30+ hours. The system continues until it achieves the configured validation requirements (default: 3 consecutive reviews ≥95%).
 </Info>
+
+<Warning>
+Runtime varies significantly by project complexity. Simple projects may complete in 1-2 hours. Complex projects can run for many hours or days. Monitor progress with `fireteam-status --watch`.
+</Warning>
 
 ### Step 4: Check the Results
 
@@ -416,10 +422,6 @@ Check the [Troubleshooting Guide](/troubleshooting/troubleshooting) for detailed
 
   <Card title="CLI Tools Reference" icon="terminal" href="/cli-tools/overview">
     Master the fireteam-status command
-  </Card>
-
-  <Card title="View Test Results" icon="chart-line" href="/performance/test-results">
-    See performance across 11 real projects
   </Card>
 </CardGroup>
 

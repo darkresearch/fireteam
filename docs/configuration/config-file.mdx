@@ -1,6 +1,6 @@
 ---
 title: "Configuration File Reference"
-description: "Complete guide to config.py settings and customization options"
+description: "Configuration options for timeouts, completion thresholds, and validation criteria"
 ---
 
 ## Overview
@@ -70,11 +70,11 @@ AGENT_TIMEOUTS = {
 
 ### Why These Values?
 
-These timeout values were determined through extensive testing across 11 diverse projects:
+These timeout values are optimized for typical project workflows:
 
 - **Planner (10 min)**: Complex planning, codebase analysis, and task breakdown
-- **Executor (30 min)**: Handles installations, builds, test suites, and complex implementations
-- **Reviewer (10 min)**: Code review, test execution, and completion analysis
+- **Executor (30 min)**: Handles installations, builds, implementation, and complex tasks
+- **Reviewer (10 min)**: Code review, validation, and completion analysis
 
 <Tip>
 See [Timeout Configuration](/configuration/timeouts) for detailed rationale and guidance on adjusting these values.
@@ -133,41 +133,46 @@ RETRY_DELAY = 10
 
 ## Completion Thresholds
 
+These settings control when the infinite loop terminates.
+
 ```python
 COMPLETION_THRESHOLD = 95  # percentage
 VALIDATION_CHECKS_REQUIRED = 3  # consecutive checks needed
 ```
 
-**Description:**
-- `COMPLETION_THRESHOLD`: Minimum completion percentage to trigger validation mode (default: 95%)
-- `VALIDATION_CHECKS_REQUIRED`: Number of consecutive reviews at ≥95% needed to complete project (default: 3)
+**Configuration options:**
+- `COMPLETION_THRESHOLD`: Minimum completion percentage to enter validation mode (default: 95%)
+- `VALIDATION_CHECKS_REQUIRED`: Number of consecutive validations required (default: 3)
 
-### How Validation Works
+### Validation Behavior
 
-1. **Normal cycles**: Reviewer estimates completion percentage
-2. **Threshold reached**: When completion ≥ 95%, enter validation mode
-3. **Validation cycles**: Reviewer performs critical re-examination
-4. **Triple confirmation**: 3 consecutive reviews at ≥95% required
-5. **Project complete**: System stops and logs success
+1. Reviewer scores completion (0-100%) based on the original goal each cycle
+2. When score reaches COMPLETION_THRESHOLD, validation mode activates
+3. System requires VALIDATION_CHECKS_REQUIRED consecutive cycles above threshold
+4. If score drops below threshold, validation counter resets and cycle continues
+
+**Examples:**
+- `98% + 5 checks`: Higher quality bar, longer runtime
+- `90% + 2 checks`: Lower quality bar, shorter runtime
 
 <Info>
-This triple-check validation ensures high-quality deliverables. Test data shows 94.1% average completion across 11 projects with this configuration.
+The multi-validation requirement prevents termination on a single high score. The system continues running until it demonstrates consistent quality across multiple cycles.
 </Info>
 
-**Adjusting thresholds:**
+**Example configurations:**
 
 ```python
-# Stricter completion (higher quality, more cycles)
+# Higher quality requirements (longer runtime expected)
 COMPLETION_THRESHOLD = 98
 VALIDATION_CHECKS_REQUIRED = 5
 
-# Faster completion (lower quality, fewer cycles)
+# Lower quality requirements (shorter runtime expected)
 COMPLETION_THRESHOLD = 90
 VALIDATION_CHECKS_REQUIRED = 2
 ```
 
 <Warning>
-Lowering `COMPLETION_THRESHOLD` below 90% may result in incomplete projects. The 95% threshold is battle-tested across diverse project types.
+Lower thresholds will terminate earlier with potentially less complete implementations. The 95%/3 default reflects a balance between quality and iteration time.
 </Warning>
 
 ## Git Configuration
@@ -345,7 +350,7 @@ def has_sudo_access():
 ### 1. Start with Defaults
 
 <Tip>
-The default configuration is battle-tested across 11 diverse projects with a 100% success rate. Only modify settings when you have a specific need.
+The default configuration is optimized for most use cases. Only modify settings when you have a specific need.
 </Tip>
 
 ### 2. Document Custom Changes
