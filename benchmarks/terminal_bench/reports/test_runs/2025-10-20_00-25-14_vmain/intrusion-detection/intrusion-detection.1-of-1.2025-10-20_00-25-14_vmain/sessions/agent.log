@@ -1,0 +1,30 @@
+[?2004hroot@635bdef78947:/app# asciinema rec --stdin /logs/agent.cast
+[?2004l[0;32masciinema: recording asciicast to /logs/agent.cast[0m
+[0;32masciinema: press <ctrl-d> or type "exit" when you're done[0m
+[?2004hroot@635bdef78947:/app# clear
+[?2004l[H[J[3J[?2004hroot@635bdef78947:/app# source /installed-agent/setup-env.sh; tmux wait -S done
+[?2004lbash: /installed-agent/setup-env.sh: No such file or directory
+[?2004hroot@635bdef78947:/app# source /installed-agent/install-agent.sh || echo 'INSTALL_FAIL_STATUS'; tmux wait -S done
+[?2004l================================================
+Installing Fireteam in Terminal Bench container
+================================================
+
+[1/7] Creating claude user with sudo permissions...
+✓ Created user: claude
+✓ Granted sudo permissions to claude
+
+[2/7] Installing Claude Code credentials...
+✓ Authentication will be provided via ANTHROPIC_API_KEY at runtime
+
+[3/7] Installing system dependencies...
+E: Unable to locate package python3.12
+E: Couldn't find any package by glob 'python3.12'
+E: Couldn't find any package by regex 'python3.12'
+E: Unable to locate package python3.12-venv
+E: Couldn't find any package by glob 'python3.12-venv'
+E: Couldn't find any package by regex 'python3.12-venv'
+✗ Error: curl failed to install
+[0;32masciinema: recording finished[0m
+[0;32masciinema: asciicast saved to /logs/agent.cast[0m
+[?2004hroot@635bdef78947:/app# [?2004l
+logout

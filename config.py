@@ -17,9 +17,15 @@ STATE_DIR = os.path.join(SYSTEM_DIR, "state")
 LOGS_DIR = os.path.join(SYSTEM_DIR, "logs")
 CLI_DIR = os.path.join(SYSTEM_DIR, "cli")
 
-# Claude CLI configuration
-CLAUDE_CLI = "claude"  # Assumes claude is in PATH
-DANGEROUSLY_SKIP_PERMISSIONS = "--dangerously-skip-permissions"
+# Claude Agent SDK configuration
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+if not ANTHROPIC_API_KEY:
+    raise ValueError("ANTHROPIC_API_KEY environment variable must be set")
+
+# SDK options
+SDK_ALLOWED_TOOLS = ["Read", "Write", "Bash", "Edit", "Grep", "Glob"]
+SDK_PERMISSION_MODE = "bypassPermissions"  # Autonomous operation
+SDK_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
 
 # Agent configuration
 MAX_RETRIES = 3

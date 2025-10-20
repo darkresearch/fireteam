@@ -1,0 +1,38 @@
+[project]
+name = "fireteam-terminal-bench"
+version = "0.1.0"
+description = "Terminal Bench integration for Fireteam autonomous coding agent"
+readme = "../../README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "terminal-bench>=0.1.0",
+    "pyyaml>=6.0",
+    "pandas>=2.0.0",
+    "rich>=13.0.0",
+    "jinja2>=3.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=24.0.0",
+    "ruff>=0.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = []
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = []

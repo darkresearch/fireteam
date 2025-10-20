@@ -1,0 +1,30 @@
+{
+    "run_id": "2025-10-20_00-05-57_vmain",
+    "uuid": "1c60e1b4-f033-4787-9cb5-04267c4182fc",
+    "dataset_path": null,
+    "dataset_name": "terminal-bench-core",
+    "dataset_version": "0.1.1",
+    "output_path": "/home/claude/fireteam/benchmarks/terminal_bench/reports/test_runs",
+    "agent_name": "fireteam",
+    "no_rebuild": false,
+    "cleanup": true,
+    "log_level": 20,
+    "task_ids": [
+        "tmux-advanced-workflow"
+    ],
+    "exclude_task_ids": null,
+    "n_tasks": 1,
+    "n_concurrent_trials": 1,
+    "n_attempts": 1,
+    "dataset_size": 1,
+    "accuracy": 0.0,
+    "model_name": null,
+    "start_time": "2025-10-20T00:06:06.105115+00:00",
+    "end_time": "2025-10-20T00:22:11.114453+00:00",
+    "commit_hash": "7e58251b1a80e7df05d1a38b976fcf0ef4dfaa82",
+    "username": "edgarpavlovsky",
+    "s3_bucket": null,
+    "agent_kwargs": null,
+    "pass_at_k": {},
+    "resumed_at": null
+}

@@ -33,9 +33,8 @@ class ExecutorAgent(BaseAgent):
         """
         prompt = self._build_execution_prompt(goal, plan, cycle_number)
 
-        # Execute via Claude CLI
-        cmd = self._build_command(prompt, project_dir)
-        result = self._execute_command(cmd, project_dir)
+        # Execute via Claude Agent SDK
+        result = self._execute_command(prompt, project_dir)
 
         if result["success"]:
             return {

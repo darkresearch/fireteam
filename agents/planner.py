@@ -44,9 +44,8 @@ class PlannerAgent(BaseAgent):
                 goal, previous_plan, last_execution_result, last_review, cycle_number
             )
 
-        # Execute via Claude CLI
-        cmd = self._build_command(prompt, project_dir)
-        result = self._execute_command(cmd, project_dir)
+        # Execute via Claude Agent SDK
+        result = self._execute_command(prompt, project_dir)
 
         if result["success"]:
             # Extract plan from output

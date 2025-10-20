@@ -43,14 +43,18 @@ fi
 
 echo "Python 3: $(python3 --version)"
 
-# Check for Claude CLI
-if ! command -v claude &> /dev/null; then
-    echo "Warning: Claude CLI not found in PATH"
-    echo "Please install Claude CLI: https://docs.claude.com/en/docs/claude-code/installation"
-    echo "Setup will continue, but the system won't work without Claude CLI"
+# Install Python dependencies
+echo "Installing Python dependencies..."
+if command -v pip3 &> /dev/null; then
+    pip3 install -r "$SYSTEM_DIR/requirements.txt" --quiet
+    echo "✓ Python dependencies installed"
 else
-    echo "Claude CLI: $(claude --version 2>&1 | head -1)"
+    echo "Warning: pip3 not found, skipping dependency installation"
+    echo "Please install dependencies manually: pip3 install -r $SYSTEM_DIR/requirements.txt"
 fi
+
+# Claude CLI no longer required - using Agent SDK
+echo "✓ Using Claude Agent SDK (CLI not required)"
 
 # Check for git
 if ! command -v git &> /dev/null; then

@@ -1,0 +1,30 @@
+{
+    "run_id": "2025-10-20_00-20-15_vmain",
+    "uuid": "5e0dbd06-7d13-4c55-af88-dbc963421a68",
+    "dataset_path": null,
+    "dataset_name": "terminal-bench-core",
+    "dataset_version": "0.1.1",
+    "output_path": "/home/claude/fireteam/benchmarks/terminal_bench/reports/test_runs",
+    "agent_name": "fireteam",
+    "no_rebuild": false,
+    "cleanup": true,
+    "log_level": 20,
+    "task_ids": [
+        "fix-permissions"
+    ],
+    "exclude_task_ids": null,
+    "n_tasks": 1,
+    "n_concurrent_trials": 1,
+    "n_attempts": 1,
+    "dataset_size": 1,
+    "accuracy": 0.0,
+    "model_name": null,
+    "start_time": "2025-10-20T00:20:22.742269+00:00",
+    "end_time": "2025-10-20T00:35:57.606833+00:00",
+    "commit_hash": "7e58251b1a80e7df05d1a38b976fcf0ef4dfaa82",
+    "username": "edgarpavlovsky",
+    "s3_bucket": null,
+    "agent_kwargs": null,
+    "pass_at_k": {},
+    "resumed_at": null
+}

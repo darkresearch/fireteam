@@ -1,0 +1,28 @@
+Processing tasks in duration order (longest first):
++-----+---------------+------------+------------+
+|   # | Task Name     | Duration   | Source     |
++=====+===============+============+============+
+|   1 | create-bucket | 3m 30s     | calculated |
++-----+---------------+------------+------------+
+Total tasks: 1
+Starting harness run
+Run ID: 2025-10-19_23-49-38_vmain
+Running task: create-bucket
+Running docker compose command: docker compose -p create-bucket-1-of-1-2025-10-19_23-49-38_vmain -f /root/.cache/terminal-bench/terminal-bench-core/0.1.1/create-bucket/docker-compose.yaml build
+Running docker compose command: docker compose -p create-bucket-1-of-1-2025-10-19_23-49-38_vmain -f /root/.cache/terminal-bench/terminal-bench-core/0.1.1/create-bucket/docker-compose.yaml up -d
+Starting recording.
+Sending keys: ['asciinema rec --stdin /logs/agent.cast', 'Enter'] min_timeout_sec: 3.0 max_timeout_sec: 180.0
+Sending keys: ['clear', 'Enter'] min_timeout_sec: 0.0 max_timeout_sec: 180.0
+Error running agent for task create-bucket: 'str' object has no attribute 'is_file'
+Starting recording.
+Sending keys: ['asciinema rec --stdin /logs/tests.cast', 'Enter'] min_timeout_sec: 3.0 max_timeout_sec: 180.0
+Sending keys: ['clear', 'Enter'] min_timeout_sec: 0.0 max_timeout_sec: 180.0
+Sending keys: ['bash ', '/tests/run-tests.sh', '; tmux wait -S done', 'Enter'] min_timeout_sec: 0.0 max_timeout_sec: 60.0
+Blocking command completed in 12.91s.
+Stopping recording.
+Sending keys: ['C-d'] min_timeout_sec: 0.1 max_timeout_sec: 180.0
+Stopping recording.
+Sending keys: ['C-d'] min_timeout_sec: 0.1 max_timeout_sec: 180.0
+Running docker compose command: docker compose -p create-bucket-1-of-1-2025-10-19_23-49-38_vmain -f /root/.cache/terminal-bench/terminal-bench-core/0.1.1/create-bucket/docker-compose.yaml down
+Running docker compose command: docker compose -p create-bucket-1-of-1-2025-10-19_23-49-38_vmain -f /root/.cache/terminal-bench/terminal-bench-core/0.1.1/create-bucket/docker-compose.yaml down --rmi all --volumes
+Unresolved task create-bucket

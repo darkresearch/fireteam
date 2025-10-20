@@ -1,0 +1,34 @@
+Processing tasks in duration order (longest first):
++-----+---------------+------------+------------+
+|   # | Task Name     | Duration   | Source     |
++=====+===============+============+============+
+|   1 | create-bucket | 3m 30s     | calculated |
++-----+---------------+------------+------------+
+Total tasks: 1
+Starting harness run
+Run ID: 2025-10-20_01-03-28_vmain
+Running task: create-bucket
+Running docker compose command: docker compose -p create-bucket-1-of-1-2025-10-20_01-03-28_vmain -f /home/claude/.cache/terminal-bench/terminal-bench-core/0.1.1/create-bucket/docker-compose.yaml build
+Running docker compose command: docker compose -p create-bucket-1-of-1-2025-10-20_01-03-28_vmain -f /home/claude/.cache/terminal-bench/terminal-bench-core/0.1.1/create-bucket/docker-compose.yaml up -d
+Starting recording.
+Sending keys: ['asciinema rec --stdin /logs/agent.cast', 'Enter'] min_timeout_sec: 3.0 max_timeout_sec: 180.0
+Sending keys: ['clear', 'Enter'] min_timeout_sec: 0.0 max_timeout_sec: 180.0
+Sending keys: ['source /installed-agent/setup-env.sh', '; tmux wait -S done', 'Enter'] min_timeout_sec: 0.0 max_timeout_sec: inf
+Blocking command completed in 0.18s.
+Sending keys: ["source /installed-agent/install-agent.sh || echo 'INSTALL_FAIL_STATUS'", '; tmux wait -S done', 'Enter'] min_timeout_sec: 0.0 max_timeout_sec: inf
+Agent timed out after 600.0s for task create-bucket.
+Agent failed with mode FailureMode.AGENT_TIMEOUT, continuing with test execution
+Starting recording.
+Sending keys: ['asciinema rec --stdin /logs/tests.cast', 'Enter'] min_timeout_sec: 3.0 max_timeout_sec: 180.0
+Sending keys: ['clear', 'Enter'] min_timeout_sec: 0.0 max_timeout_sec: 180.0
+Sending keys: ['bash ', '/tests/run-tests.sh', '; tmux wait -S done', 'Enter'] min_timeout_sec: 0.0 max_timeout_sec: 60.0
+Blocking command completed in 12.23s.
+Blocking command completed in 911.75s.
+Sending keys: ['cd /workspace && python3 /home/claude/fireteam/orchestrator.py --project-dir /workspace --prompt "Create an S3 bucket named \\"sample-bucket\\" using the aws cli and set it to public read." --log-file /home/claude/fireteam/logs/terminal_bench_task.log', 'Enter'] min_timeout_sec: 0.0 max_timeout_sec: 180.0
+Stopping recording.
+Sending keys: ['C-d'] min_timeout_sec: 0.1 max_timeout_sec: 180.0
+Stopping recording.
+Sending keys: ['C-d'] min_timeout_sec: 0.1 max_timeout_sec: 180.0
+Running docker compose command: docker compose -p create-bucket-1-of-1-2025-10-20_01-03-28_vmain -f /home/claude/.cache/terminal-bench/terminal-bench-core/0.1.1/create-bucket/docker-compose.yaml down
+Running docker compose command: docker compose -p create-bucket-1-of-1-2025-10-20_01-03-28_vmain -f /home/claude/.cache/terminal-bench/terminal-bench-core/0.1.1/create-bucket/docker-compose.yaml down --rmi all --volumes
+Unresolved task create-bucket

@@ -40,9 +40,8 @@ class ReviewerAgent(BaseAgent):
             goal, plan, execution_result, cycle_number, is_validation
         )
 
-        # Execute via Claude CLI
-        cmd = self._build_command(prompt, project_dir)
-        result = self._execute_command(cmd, project_dir)
+        # Execute via Claude Agent SDK
+        result = self._execute_command(prompt, project_dir)
 
         if result["success"]:
             # Extract completion percentage from output

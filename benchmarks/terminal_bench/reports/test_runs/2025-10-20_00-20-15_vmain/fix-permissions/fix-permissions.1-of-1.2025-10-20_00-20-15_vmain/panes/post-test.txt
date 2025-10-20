@@ -1,0 +1,61 @@
+root@d354e423b3c5:/app# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://security.ubuntu.com/ubuntu noble-security InRelease
+Hit:2 http://archive.ubuntu.com/ubuntu noble InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu noble-updates InRelease
+Hit:4 http://archive.ubuntu.com/ubuntu noble-backports InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (8.5.0-2ubuntu10.6).
+0 upgraded, 0 newly installed, 0 to remove and 23 not upgraded.
+downloading uv 0.9.4 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+Initialized project `app`
+Using CPython 3.12.3 interpreter at: /usr/bin/python3.12
+Creating virtual environment at: .venv
+Resolved 7 packages in 65ms
+Prepared 5 packages in 265ms
+Installed 5 packages in 27ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==8.4.2
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0
+rootdir: /tests
+collected 1 item
+
+../tests/test_outputs.py F                                                                                                                               [100%]
+
+=========================================================================== FAILURES ===========================================================================
+___________________________________________________________________ test_script_permissions ____________________________________________________________________
+
+    def test_script_permissions():
+        script_path = "./process_data.sh"
+
+        # Check if file exists
+        assert os.path.exists(script_path), "process_data.sh should exist"
+
+        # Check if file has execute permissions
+        file_stat = os.stat(script_path)
+>       assert bool(file_stat.st_mode & stat.S_IXUSR), (
+            "process_data.sh should have execute permissions"
+        )
+E       AssertionError: process_data.sh should have execute permissions
+E       assert False
+E        +  where False = bool((33204 & 64))
+E        +    where 33204 = os.stat_result(st_mode=33204, st_ino=1390365, st_dev=45, st_nlink=1, st_uid=0, st_gid=0, st_size=49, st_atime=1760919623, st_mtime=1
+760917694, st_ctime=1760919623).st_mode
+E        +    and   64 = stat.S_IXUSR
+
+/tests/test_outputs.py:16: AssertionError
+=================================================================== short test summary info ====================================================================
+FAILED ../tests/test_outputs.py::test_script_permissions - AssertionError: process_data.sh should have execute permissions
+====================================================================== 1 failed in 0.11s =======================================================================
+root@d354e423b3c5:/app#
