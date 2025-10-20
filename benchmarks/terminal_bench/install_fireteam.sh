@@ -87,20 +87,42 @@ echo "[4/7] Installing Python dependencies..."
 
 # Install UV (modern Python package manager) as claude user
 echo "  Installing UV package manager..."
-su - "${FIRETEAM_USER}" -c "curl -LsSf https://astral.sh/uv/install.sh | sh > /dev/null 2>&1" && {
-    echo "✓ UV installed"
-} || {
+su - "${FIRETEAM_USER}" << 'EOF'
+set -e
+curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
+# Verify UV was installed
+if [ -f "$HOME/.cargo/bin/uv" ]; then
+    echo "✓ UV installed at $HOME/.cargo/bin/uv"
+else
+    echo "✗ Error: UV installation failed - binary not found"
+    exit 1
+fi
+EOF
+
+if [ $? -eq 0 ]; then
+    echo "✓ UV installation verified"
+else
     echo "⚠ Warning: UV installation failed"
-}
+fi
 
 # Install Claude Agent SDK (required for Fireteam)
 # Use UV instead of pip - faster, better dependency resolution, no PEP 668 issues
 echo "  Installing Claude Agent SDK with UV..."
-su - "${FIRETEAM_USER}" -c "~/.cargo/bin/uv pip install --user --quiet claude-agent-sdk>=0.1.4 python-dotenv>=1.0.0" && {
+su - "${FIRETEAM_USER}" << 'EOF'
+set -e
+# Source cargo env to ensure UV is in PATH
+if [ -f "$HOME/.cargo/env" ]; then
+    source "$HOME/.cargo/env"
+fi
+# Install with UV
+$HOME/.cargo/bin/uv pip install --user --quiet claude-agent-sdk>=0.1.4 python-dotenv>=1.0.0
+EOF
+
+if [ $? -eq 0 ]; then
     echo "✓ Claude Agent SDK installed"
-} || {
+else
     echo "⚠ Warning: Claude Agent SDK installation failed"
-}
+fi
 
 # ===== STEP 5: Install Fireteam as claude user =====
 echo ""
