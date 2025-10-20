@@ -85,39 +85,20 @@ echo "✓ System dependencies installed"
 echo ""
 echo "[4/7] Installing Python dependencies..."
 
-# Install UV (modern Python package manager) as claude user
-echo "  Installing UV package manager..."
-su - "${FIRETEAM_USER}" << 'EOF'
-set -e
-curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
-# Verify UV was installed (UV installs to ~/.local/bin, not ~/.cargo/bin)
-if [ -f "$HOME/.local/bin/uv" ]; then
-    echo "✓ UV installed at $HOME/.local/bin/uv"
-else
-    echo "✗ Error: UV installation failed - binary not found"
-    exit 1
-fi
-EOF
-
-if [ $? -eq 0 ]; then
-    echo "✓ UV installation verified"
-else
-    echo "⚠ Warning: UV installation failed"
-fi
-
 # Install Claude Agent SDK (required for Fireteam)
-# Use UV instead of pip - faster, better dependency resolution, no PEP 668 issues
-echo "  Installing Claude Agent SDK with UV..."
+# Use pip with --break-system-packages (appropriate for Docker containers)
+# UV doesn't support system-wide installs - it requires virtual environments
+echo "  Installing Claude Agent SDK with pip..."
 su - "${FIRETEAM_USER}" << 'EOF'
 set -e
-# Install with UV to system Python (UV doesn't support --user, use --system instead)
-$HOME/.local/bin/uv pip install --system --quiet claude-agent-sdk>=0.1.4 python-dotenv>=1.0.0
+python3 -m pip install --quiet --break-system-packages claude-agent-sdk>=0.1.4 python-dotenv>=1.0.0
 EOF
 
 if [ $? -eq 0 ]; then
     echo "✓ Claude Agent SDK installed"
 else
     echo "⚠ Warning: Claude Agent SDK installation failed"
+    exit 1
 fi
 
 # ===== STEP 5: Install Fireteam as claude user =====
