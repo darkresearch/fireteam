@@ -110,8 +110,8 @@ fi
 echo "  Installing Claude Agent SDK with UV..."
 su - "${FIRETEAM_USER}" << 'EOF'
 set -e
-# Install with UV (installed to ~/.local/bin)
-$HOME/.local/bin/uv pip install --user --quiet claude-agent-sdk>=0.1.4 python-dotenv>=1.0.0
+# Install with UV to system Python (UV doesn't support --user, use --system instead)
+$HOME/.local/bin/uv pip install --system --quiet claude-agent-sdk>=0.1.4 python-dotenv>=1.0.0
 EOF
 
 if [ $? -eq 0 ]; then
