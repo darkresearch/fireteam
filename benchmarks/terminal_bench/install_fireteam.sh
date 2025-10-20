@@ -81,27 +81,22 @@ fi
 
 echo "✓ System dependencies installed"
 
-# Install UV (modern Python package manager) - not strictly required
-curl -LsSf https://astral.sh/uv/install.sh | sh > /dev/null 2>&1 || {
-    echo "⚠ Warning: UV installation failed (not critical)"
-}
-
 # ===== STEP 4: Install Python dependencies =====
 echo ""
 echo "[4/7] Installing Python dependencies..."
 
-# Install pip if needed
-if ! command -v pip3 &> /dev/null; then
-    apt-get install -y -qq python3-pip > /dev/null 2>&1
-fi
-
-echo "✓ Python pip available"
+# Install UV (modern Python package manager) as claude user
+echo "  Installing UV package manager..."
+su - "${FIRETEAM_USER}" -c "curl -LsSf https://astral.sh/uv/install.sh | sh > /dev/null 2>&1" && {
+    echo "✓ UV installed"
+} || {
+    echo "⚠ Warning: UV installation failed"
+}
 
 # Install Claude Agent SDK (required for Fireteam)
-# Do this as claude user to avoid permission issues
-# Use --break-system-packages for Ubuntu 24.04+ (safe in containers)
-echo "  Installing Claude Agent SDK..."
-su - "${FIRETEAM_USER}" -c "pip3 install --user --quiet --break-system-packages claude-agent-sdk>=0.1.4 python-dotenv>=1.0.0" && {
+# Use UV instead of pip - faster, better dependency resolution, no PEP 668 issues
+echo "  Installing Claude Agent SDK with UV..."
+su - "${FIRETEAM_USER}" -c "~/.cargo/bin/uv pip install --user --quiet claude-agent-sdk>=0.1.4 python-dotenv>=1.0.0" && {
     echo "✓ Claude Agent SDK installed"
 } || {
     echo "⚠ Warning: Claude Agent SDK installation failed"
@@ -163,10 +158,10 @@ echo "✓ Fireteam installed in ${FIRETEAM_HOME}"
 echo ""
 echo "[6/7] Configuring environment..."
 
-# Ensure .local/bin in PATH for fireteam-user
+# Ensure .local/bin and .cargo/bin in PATH for claude user
 su - "${FIRETEAM_USER}" << 'EOF'
 if ! grep -q ".local/bin" ~/.bashrc 2>/dev/null; then
-    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+    echo 'export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
 fi
 EOF
 
