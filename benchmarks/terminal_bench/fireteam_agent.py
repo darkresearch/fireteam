@@ -150,13 +150,13 @@ class FireteamAgent(AbstractInstalledAgent):
         escaped_description = task_description.replace('"', '\\"')
 
         # Run Fireteam's orchestrator directly
-        # - Works in /workspace (Terminal Bench standard)
+        # - Works in /app (Terminal Bench working directory)
         # - Full orchestrator capabilities
         # - Logs to Fireteam directory for debugging
         command = (
-            f'cd /workspace && '
+            f'cd /app && '
             f'python3 /home/claude/fireteam/orchestrator.py '
-            f'--project-dir /workspace '
+            f'--project-dir /app '
             f'--prompt "{escaped_description}" '
             f'--log-file /home/claude/fireteam/logs/terminal_bench_task.log'
         )
