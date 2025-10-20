@@ -18,9 +18,16 @@ LOGS_DIR = os.path.join(SYSTEM_DIR, "logs")
 CLI_DIR = os.path.join(SYSTEM_DIR, "cli")
 
 # Claude Agent SDK configuration
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-if not ANTHROPIC_API_KEY:
-    raise ValueError("ANTHROPIC_API_KEY environment variable must be set")
+# Note: API key is lazy-loaded to allow --help and other non-API operations
+def get_anthropic_api_key():
+    """Get ANTHROPIC_API_KEY, raising error only when actually needed."""
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise ValueError(
+            "ANTHROPIC_API_KEY environment variable must be set. "
+            "Set it in your environment or in .env file."
+        )
+    return api_key
 
 # SDK options
 SDK_ALLOWED_TOOLS = ["Read", "Write", "Bash", "Edit", "Grep", "Glob"]
