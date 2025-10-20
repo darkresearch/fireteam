@@ -8,8 +8,12 @@ This script orchestrates Terminal Bench runs for Fireteam, supporting:
 - 48-hour task timeout (Fireteam's long-horizon advantage)
 - Progressive reporting during execution
 - Configuration via config.yaml
+- Automatic Docker access handling (uses sg docker if needed)
 
 Usage:
+    # Test on 1 sample task (automatic Docker access)
+    python run_benchmark.py --test --n-tasks 1
+
     # Test on 2 sample tasks
     python run_benchmark.py --test
 
@@ -21,10 +25,13 @@ Usage:
 
     # Run with custom config
     python run_benchmark.py --config custom_config.yaml
+
+Note: Set ANTHROPIC_API_KEY environment variable before running.
 """
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import yaml
@@ -38,6 +45,54 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 
 console = Console()
+
+
+def ensure_docker_access():
+    """Ensure we have Docker access, re-exec with sg docker if needed."""
+    # Check if we can access Docker
+    try:
+        subprocess.run(
+            ["docker", "ps"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=True,
+        )
+        # Docker works - we're good
+        return
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pass
+
+    # Check if we're already running under sg docker (avoid infinite loop)
+    if os.environ.get("_SG_DOCKER_WRAPPER") == "1":
+        console.print("[red]Error: Cannot access Docker even with sg docker[/red]")
+        console.print("Please ensure you're in the docker group: sudo usermod -aG docker $USER")
+        sys.exit(1)
+
+    # Re-exec with sg docker
+    console.print("[yellow]Re-executing with docker group access...[/yellow]")
+
+    # Get the virtualenv Python path
+    venv_python = Path(sys.executable)
+    script_path = Path(__file__).absolute()
+
+    # Build the sg docker command
+    env = os.environ.copy()
+    env["_SG_DOCKER_WRAPPER"] = "1"  # Mark that we're running under wrapper
+
+    # Preserve the virtualenv in PATH
+    venv_bin = venv_python.parent
+    env["PATH"] = f"{venv_bin}:{env.get('PATH', '')}"
+
+    cmd = ["sg", "docker", "-c", f"{venv_python} {script_path} {' '.join(sys.argv[1:])}"]
+
+    try:
+        result = subprocess.run(cmd, env=env)
+        sys.exit(result.returncode)
+    except KeyboardInterrupt:
+        sys.exit(130)
+    except Exception as e:
+        console.print(f"[red]Error re-executing with sg docker: {e}[/red]")
+        sys.exit(1)
 
 
 class FireteamBenchmarkRunner:
@@ -268,6 +323,9 @@ class FireteamBenchmarkRunner:
 
 def main():
     """Main entry point for the benchmark orchestrator."""
+    # Ensure we have Docker access (will re-exec with sg docker if needed)
+    ensure_docker_access()
+
     parser = argparse.ArgumentParser(
         description="Fireteam Terminal Bench Orchestrator",
         formatter_class=argparse.RawDescriptionHelpFormatter,

@@ -99,8 +99,9 @@ echo "✓ Python pip available"
 
 # Install Claude Agent SDK (required for Fireteam)
 # Do this as claude user to avoid permission issues
+# Use --break-system-packages for Ubuntu 24.04+ (safe in containers)
 echo "  Installing Claude Agent SDK..."
-su - "${FIRETEAM_USER}" -c "pip3 install --user --quiet claude-agent-sdk>=0.1.4 python-dotenv>=1.0.0" && {
+su - "${FIRETEAM_USER}" -c "pip3 install --user --quiet --break-system-packages claude-agent-sdk>=0.1.4 python-dotenv>=1.0.0" && {
     echo "✓ Claude Agent SDK installed"
 } || {
     echo "⚠ Warning: Claude Agent SDK installation failed"
