@@ -29,7 +29,7 @@ ln -sf "$SYSTEM_DIR/cli/agent-progress" "$BIN_DIR/agent-progress"
 
 # Ensure all scripts are executable
 chmod +x "$SYSTEM_DIR/cli/"*
-chmod +x "$SYSTEM_DIR/orchestrator.py"
+chmod +x "$SYSTEM_DIR/src/orchestrator.py"
 
 # Create necessary directories
 mkdir -p "$SYSTEM_DIR/logs"

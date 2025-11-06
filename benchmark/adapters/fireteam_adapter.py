@@ -79,7 +79,7 @@ class FireteamAdapter(AbstractInstalledAgent):
         
         # Build environment exports
         env_exports = [
-            "export PYTHONPATH=/fireteam",
+            "export PYTHONPATH=/fireteam/src",
             "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH",
             f"export ANTHROPIC_API_KEY='{os.environ['ANTHROPIC_API_KEY']}'",
             "export FIRETEAM_DIR='/app'",
@@ -95,7 +95,7 @@ class FireteamAdapter(AbstractInstalledAgent):
             "cd /fireteam\n"
             # Set up environment
             + "\n".join(env_exports) + "\n"
-            + f"python3 -u orchestrator.py --project-dir /app --goal {shlex.quote(instruction)}\n"
+            + f"python3 -u src/orchestrator.py --project-dir /app --goal {shlex.quote(instruction)}\n"
         )
         encoded_script = base64.b64encode(run_script.encode()).decode()
         
@@ -141,38 +141,38 @@ class FireteamAdapter(AbstractInstalledAgent):
         fireteam_root = Path(__file__).parent.parent.parent
         
         # Create directory structure in container first
-        session.container.exec_run(["mkdir", "-p", "/fireteam/agents", "/fireteam/state"])
+        session.container.exec_run(["mkdir", "-p", "/fireteam/src/agents", "/fireteam/src/state"])
         
         # Copy main files
         session.copy_to_container(
-            paths=[fireteam_root / "orchestrator.py"],
-            container_dir="/fireteam",
+            paths=[fireteam_root / "src" / "orchestrator.py"],
+            container_dir="/fireteam/src",
             container_filename="orchestrator.py"
         )
         session.copy_to_container(
-            paths=[fireteam_root / "config.py"],
-            container_dir="/fireteam",
+            paths=[fireteam_root / "src" / "config.py"],
+            container_dir="/fireteam/src",
             container_filename="config.py"
         )
         session.copy_to_container(
-            paths=[fireteam_root / "__init__.py"],
-            container_dir="/fireteam",
+            paths=[fireteam_root / "src" / "__init__.py"],
+            container_dir="/fireteam/src",
             container_filename="__init__.py"
         )
         
         # Copy agents module files
-        for agent_file in (fireteam_root / "agents").glob("*.py"):
+        for agent_file in (fireteam_root / "src" / "agents").glob("*.py"):
             session.copy_to_container(
                 paths=[agent_file],
-                container_dir="/fireteam/agents",
+                container_dir="/fireteam/src/agents",
                 container_filename=agent_file.name
             )
         
         # Copy state module files
-        for state_file in (fireteam_root / "state").glob("*.py"):
+        for state_file in (fireteam_root / "src" / "state").glob("*.py"):
             session.copy_to_container(
                 paths=[state_file],
-                container_dir="/fireteam/state",
+                container_dir="/fireteam/src/state",
                 container_filename=state_file.name
             )
         

@@ -33,8 +33,10 @@ def get_anthropic_api_key():
 
 # SDK options
 SDK_ALLOWED_TOOLS = ["Read", "Write", "Bash", "Edit", "Grep", "Glob"]
-SDK_PERMISSION_MODE = "bypassPermissions"  # Autonomous operation
-SDK_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+# Autonomous operation
+SDK_PERMISSION_MODE = "bypassPermissions"
+# Using latest claude sonnet 4.5
+SDK_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-5-20250929")
 
 # Agent configuration
 MAX_RETRIES = 3

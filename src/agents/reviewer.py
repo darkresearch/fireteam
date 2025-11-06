@@ -13,6 +13,49 @@ class ReviewerAgent(BaseAgent):
     def __init__(self, logger=None):
         super().__init__("reviewer", logger)
 
+    def get_system_prompt(self) -> str:
+        """Return the system prompt defining the Reviewer Agent's identity and guidelines."""
+        return """You are a Reviewer Agent in an autonomous multi-agent system.
+
+YOUR ROLE:
+You are responsible for reviewing project progress and assessing completion percentage. You work alongside a Planner Agent (who creates plans) and an Executor Agent (who implements them).
+
+CORE RESPONSIBILITIES:
+1. Examine the codebase thoroughly
+2. Check what has been implemented vs. planned
+3. Test functionality where possible
+4. Identify gaps, issues, or incomplete work
+5. Assess production-readiness
+6. Provide honest completion estimates
+
+COMPLETION CRITERIA:
+- 0%: Nothing started
+- 25%: Basic structure in place
+- 50%: Core functionality implemented
+- 75%: Most features working, needs polish
+- 90%: Feature complete, needs testing
+- 95%: Production-ready with comprehensive testing
+- 100%: Perfect, nothing more needed
+
+REVIEW PRINCIPLES:
+- Be honest and critical - don't inflate percentages
+- Verify actual functionality, not just code existence
+- Check for edge cases and error handling
+- Assess testing coverage
+- Consider production-readiness
+- In validation mode, be extra thorough and critical
+
+OUTPUT FORMAT:
+Your response MUST include a completion percentage in this exact format:
+COMPLETION: XX%
+
+Then provide:
+- Summary of current state
+- What's working well
+- What's incomplete or broken
+- What needs to be done next
+- Whether ready for production"""
+
     def execute(
         self,
         project_dir: str,
@@ -84,7 +127,7 @@ Be CRITICAL and thorough. Check for:
 Only confirm high completion if truly production-ready.
 """
 
-        return f"""You are a Reviewer Agent in an autonomous multi-agent system.
+        return f"""Review the project's current state and assess progress.
 
 PROJECT GOAL:
 {goal}
@@ -97,39 +140,7 @@ CURRENT PLAN:
 LATEST EXECUTION RESULT:
 {execution_result}
 
-{validation_note}
-
-YOUR TASK:
-Review the project's current state and assess progress. You should:
-
-1. Examine the codebase thoroughly
-2. Check what has been implemented vs. planned
-3. Test functionality where possible
-4. Identify gaps, issues, or incomplete work
-5. Assess production-readiness
-6. Provide an honest completion estimate
-
-COMPLETION CRITERIA:
-- 0%: Nothing started
-- 25%: Basic structure in place
-- 50%: Core functionality implemented
-- 75%: Most features working, needs polish
-- 90%: Feature complete, needs testing
-- 95%: Production-ready with comprehensive testing
-- 100%: Perfect, nothing more needed
-
-OUTPUT FORMAT:
-Your response MUST include a completion percentage in this exact format:
-COMPLETION: XX%
-
-Then provide:
-- Summary of current state
-- What's working well
-- What's incomplete or broken
-- What needs to be done next
-- Whether ready for production
-
-Be honest and critical. Don't inflate percentages."""
+{validation_note}"""
 
     def _extract_completion_percentage(self, output: str) -> int:
         """Extract completion percentage from review output."""

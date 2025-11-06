@@ -33,22 +33,25 @@ Fireteam is built as a modular Python system with clean separation between orche
 
 ```
 fireteam/
-├── orchestrator.py         # Main orchestration loop
-├── config.py              # System configuration
-├── agents/
+├── src/                    # Source code directory
+│   ├── orchestrator.py    # Main orchestration loop
+│   ├── config.py          # System configuration
 │   ├── __init__.py
-│   ├── base.py           # Base agent class
-│   ├── planner.py        # Planner agent implementation
-│   ├── executor.py       # Executor agent implementation
-│   └── reviewer.py       # Reviewer agent implementation
-├── state/
-│   ├── manager.py        # State management
-│   └── current.json      # Active state (gitignored)
+│   ├── agents/
+│   │   ├── __init__.py
+│   │   ├── base.py        # Base agent class
+│   │   ├── planner.py     # Planner agent implementation
+│   │   ├── executor.py    # Executor agent implementation
+│   │   └── reviewer.py    # Reviewer agent implementation
+│   └── state/
+│       └── manager.py     # State management module
+├── state/                 # Runtime state data (gitignored)
+│   └── current.json       # Active project state
 ├── cli/
-│   ├── start-agent       # Start command
-│   ├── stop-agent        # Stop command
-│   └── fireteam-status   # Status tool
-└── logs/                 # Orchestrator logs
+│   ├── start-agent        # Start command
+│   ├── stop-agent         # Stop command
+│   └── fireteam-status    # Status tool
+└── logs/                  # Orchestrator logs
 ```
 
 ## Core Classes
@@ -57,7 +60,7 @@ fireteam/
 
 Main control class managing the agent system lifecycle.
 
-**Location:** `/home/claude/fireteam/orchestrator.py`
+**Location:** `/home/claude/fireteam/src/orchestrator.py`
 
 **Key methods:**
 - `__init__(project_dir, goal)` - Initialize orchestrator
@@ -79,7 +82,7 @@ orchestrator.run()
 
 Abstract base class for all agents.
 
-**Location:** `/home/claude/fireteam/agents/base.py`
+**Location:** `/home/claude/fireteam/src/agents/base.py`
 
 **Key methods:**
 - `execute(**kwargs)` - Main execution method (abstract)
@@ -90,7 +93,7 @@ Abstract base class for all agents.
 
 Creates and updates project plans.
 
-**Location:** `/home/claude/fireteam/agents/planner.py`
+**Location:** `/home/claude/fireteam/src/agents/planner.py`
 
 **Input:**
 - `goal`: Project objective
@@ -106,7 +109,7 @@ Creates and updates project plans.
 
 Implements tasks from the plan.
 
-**Location:** `/home/claude/fireteam/agents/executor.py`
+**Location:** `/home/claude/fireteam/src/agents/executor.py`
 
 **Input:**
 - `goal`: Project objective
@@ -120,7 +123,7 @@ Implements tasks from the plan.
 
 Reviews code and estimates completion.
 
-**Location:** `/home/claude/fireteam/agents/reviewer.py`
+**Location:** `/home/claude/fireteam/src/agents/reviewer.py`
 
 **Input:**
 - `goal`: Project objective
@@ -137,7 +140,7 @@ Reviews code and estimates completion.
 
 Manages project state persistence.
 
-**Location:** `/home/claude/fireteam/state/manager.py`
+**Location:** `/home/claude/fireteam/src/state/manager.py`
 
 **Key methods:**
 - `initialize_project(dir, goal)` - Create fresh state
@@ -248,7 +251,7 @@ state_manager.update_state({
 
 ```python
 import sys
-sys.path.insert(0, '/home/claude/fireteam')
+sys.path.insert(0, '/home/claude/fireteam/src')
 
 from orchestrator import Orchestrator
 

@@ -119,7 +119,7 @@ Each cycle consists of three phases:
 
 ## State Management
 
-State is stored in `state/current.json` and includes:
+State is stored in `state/current.json` (runtime data directory) and includes:
 
 - `project_dir`: Absolute path to project
 - `goal`: Project objective
@@ -136,7 +136,7 @@ State is stored in `state/current.json` and includes:
 
 ## Configuration
 
-Edit `config.py` to customize:
+Edit `src/config.py` to customize:
 
 - `MAX_RETRIES`: Number of retry attempts for failed agent calls (default: 3)
 - `COMPLETION_THRESHOLD`: Percentage to trigger validation (default: 95)
@@ -154,26 +154,29 @@ Logs are stored in `logs/`:
 
 ```
 fireteam/
-├── orchestrator.py         # Main orchestration loop
-├── config.py              # Configuration settings
-├── agents/
+├── src/                    # Source code directory
+│   ├── orchestrator.py    # Main orchestration loop
+│   ├── config.py          # Configuration settings
 │   ├── __init__.py
-│   ├── base.py           # Base agent class
-│   ├── planner.py        # Planner agent
-│   ├── executor.py       # Executor agent
-│   └── reviewer.py       # Reviewer agent
-├── state/
-│   ├── manager.py        # State management
-│   └── current.json      # Active state (gitignored)
+│   ├── agents/
+│   │   ├── __init__.py
+│   │   ├── base.py        # Base agent class
+│   │   ├── planner.py     # Planner agent
+│   │   ├── executor.py    # Executor agent
+│   │   └── reviewer.py    # Reviewer agent
+│   └── state/
+│       └── manager.py     # State management module
+├── state/                 # Runtime state data (gitignored)
+│   └── current.json       # Active project state
 ├── cli/
-│   ├── start-agent       # Start system
-│   ├── stop-agent        # Stop system
-│   └── agent-progress    # Check status
-├── logs/                 # Log directory
+│   ├── start-agent        # Start system
+│   ├── stop-agent         # Stop system
+│   └── agent-progress     # Check status
+├── logs/                  # Log directory
 ├── service/
 │   └── claude-agent.service  # Systemd service file
-├── setup.sh              # Installation script
-└── README.md            # This file
+├── setup.sh               # Installation script
+└── README.md             # This file
 ```
 
 ## Troubleshooting

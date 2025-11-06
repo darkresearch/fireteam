@@ -21,6 +21,13 @@ class BaseAgent:
         self.retry_delay = config.RETRY_DELAY
         self.timeout = config.AGENT_TIMEOUTS.get(agent_type, 600)  # Default 10 min if not specified
 
+    def get_system_prompt(self) -> str:
+        """
+        Get the system prompt for this agent.
+        Must be implemented by subclasses to define agent identity and core guidelines.
+        """
+        raise NotImplementedError("Subclasses must implement get_system_prompt()")
+
     async def _execute_with_sdk(self, prompt: str, project_dir: str) -> dict[str, Any]:
         """Execute prompt using Claude Agent SDK."""
         try:
@@ -40,7 +47,7 @@ class BaseAgent:
                 permission_mode=config.SDK_PERMISSION_MODE,
                 model=config.SDK_MODEL,
                 cwd=project_dir,  # Set working directory for Claude Code
-                system_prompt=f"You are a {self.agent_type} agent. Work in the project directory: {project_dir}"
+                system_prompt=self.get_system_prompt()
             )
 
             # Execute with SDK
