@@ -153,10 +153,11 @@ class FireteamAgent(AbstractInstalledAgent):
         # - Works in /app (Terminal Bench working directory)
         # - Full orchestrator capabilities
         # - Must run as claude user (not root) for Claude Code CLI security
-        # - Use 'su -c' (not 'su -') to stay in current directory and wait for completion
+        # - Use exec to replace the shell with the orchestrator process
+        #   This ensures the command doesn't return until orchestrator completes
         command = (
             f'cd /app && '
-            f'su claude -c "cd /app && python3 /home/claude/fireteam/orchestrator.py '
+            f'exec su claude -c "cd /app && exec python3 /home/claude/fireteam/orchestrator.py '
             f'--project-dir /app '
             f'--goal \\"{escaped_description}\\""'
         )
