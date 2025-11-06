@@ -1,4 +1,0 @@
-['asciinema rec --stdin /logs/agent.cast', 'Enter']
-['clear', 'Enter']
-['source /installed-agent/setup-env.sh', 'Enter']
-["source /installed-agent/install-agent.sh || echo 'INSTALL_FAIL_STATUS'", 'Enter']

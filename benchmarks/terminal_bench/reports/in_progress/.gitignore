@@ -1,3 +1,0 @@
-# Ignore in-progress reports (generated during benchmark runs)
-*
-!.gitignore
