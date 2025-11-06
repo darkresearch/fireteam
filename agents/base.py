@@ -41,26 +41,46 @@ class BaseAgent:
                 # Set working directory
                 os.chdir(project_dir)
 
-                # Execute the prompt
-                response = await client.query(prompt)
+                # Execute the prompt - send query first
+                self.logger.debug(f"Starting SDK query for {self.agent_type}")
+                await client.query(prompt)
+                
+                # Then receive messages from the response
+                messages = []
+                async for message in client.receive_response():
+                    messages.append(message)
+                    self.logger.debug(f"Received message type: {type(message)}")
+                    
+                self.logger.debug(f"Received {len(messages)} messages total")
+                
+                # Extract text from messages
+                # Collect all text blocks from assistant messages
+                output_text = ""
+                for msg in messages:
+                    if hasattr(msg, 'content'):
+                        # Message has content blocks
+                        for block in msg.content:
+                            if hasattr(block, 'text'):
+                                output_text += block.text + "\n"
+                            elif isinstance(block, dict) and 'text' in block:
+                                output_text += block['text'] + "\n"
+                            elif isinstance(block, str):
+                                output_text += block + "\n"
+                    elif isinstance(msg, str):
+                        output_text += msg + "\n"
+                    elif isinstance(msg, dict):
+                        output_text += str(msg) + "\n"
+                    else:
+                        output_text += str(msg) + "\n"
 
-                # Extract text from response
-                # SDK response might be a dict, string, or object
-                if response is None:
-                    output_text = ""
-                elif isinstance(response, str):
-                    output_text = response
-                elif isinstance(response, dict):
-                    # Try common response keys
-                    output_text = response.get('content') or response.get('text') or str(response)
-                elif hasattr(response, 'content'):
-                    output_text = response.content
-                else:
-                    output_text = str(response)
+                if not output_text.strip():
+                    error_msg = f"Received {len(messages)} messages but no extractable text content"
+                    self.logger.warning(error_msg)
+                    output_text = error_msg
 
                 return {
                     "success": True,
-                    "output": output_text,
+                    "output": output_text.strip(),
                     "error": None
                 }
 
