@@ -96,30 +96,65 @@ class FireteamAgent(AbstractInstalledAgent):
         if fireteam_dir.exists():
             import subprocess
             import base64
+            
+            # First, try to get current git branch
             try:
-                # Create tarball of fireteam directory
-                # Exclude .git, benchmarks, logs, state to reduce size
-                tar_bytes = subprocess.check_output(
-                    [
-                        "tar", "-czf", "-",
-                        "-C", str(fireteam_dir.parent),
-                        "--exclude=.git",
-                        "--exclude=benchmarks/terminal_bench/.venv",
-                        "--exclude=benchmarks/terminal_bench/reports",
-                        "--exclude=logs",
-                        "--exclude=state",
-                        "--exclude=__pycache__",
-                        "--exclude=*.pyc",
-                        fireteam_dir.name
-                    ],
-                    stderr=subprocess.DEVNULL
-                )
-                # Base64 encode for environment variable
-                env["FIRETEAM_SOURCE_TAR_GZ_BASE64"] = base64.b64encode(tar_bytes).decode('ascii')
-                print(f"Encoded Fireteam source ({len(tar_bytes)} bytes)")
+                branch_result = subprocess.check_output(
+                    ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                    cwd=fireteam_dir,
+                    stderr=subprocess.DEVNULL,
+                    text=True
+                ).strip()
+                if branch_result and branch_result != "HEAD":
+                    # Inject branch name directly into install script
+                    # This ensures it works even if Terminal Bench doesn't copy companion files
+                    install_script_path = Path(__file__).parent / "install_fireteam.sh"
+                    if install_script_path.exists():
+                        script_content = install_script_path.read_text()
+                        # Replace the marker with actual branch name
+                        marker = "# FIRETEAM_BRANCH_INJECT_MARKER=<branch_will_be_injected_here>"
+                        replacement = f"# FIRETEAM_BRANCH_INJECT_MARKER={branch_result.strip()}"
+                        if marker in script_content:
+                            script_content = script_content.replace(marker, replacement)
+                            install_script_path.write_text(script_content)
+                            print(f"Using local Fireteam branch: {branch_result} (injected into install script)")
+                        else:
+                            print(f"Warning: Could not find branch marker in install script")
+                    
+                    # Also write to file as fallback
+                    install_script_dir = Path(__file__).parent
+                    branch_file = install_script_dir / ".fireteam_branch"
+                    branch_file.write_text(branch_result.strip())
+                    
+                    # Also pass as env var (in case Terminal Bench supports it)
+                    env["FIRETEAM_BRANCH"] = branch_result
+                    
+                    # Also try to encode source as fallback
+                    try:
+                        tar_bytes = subprocess.check_output(
+                            [
+                                "tar", "-czf", "-",
+                                "-C", str(fireteam_dir.parent),
+                                "--exclude=.git",
+                                "--exclude=benchmarks/terminal_bench/.venv",
+                                "--exclude=benchmarks/terminal_bench/reports",
+                                "--exclude=logs",
+                                "--exclude=state",
+                                "--exclude=__pycache__",
+                                "--exclude=*.pyc",
+                                fireteam_dir.name
+                            ],
+                            stderr=subprocess.DEVNULL
+                        )
+                        # Base64 encode for environment variable
+                        env["FIRETEAM_SOURCE_TAR_GZ_BASE64"] = base64.b64encode(tar_bytes).decode('ascii')
+                        print(f"Encoded Fireteam source ({len(tar_bytes)} bytes)")
+                    except Exception as e:
+                        print(f"Warning: Could not encode Fireteam source: {e}")
+                        print("Will use branch checkout instead")
             except Exception as e:
-                print(f"Warning: Could not encode Fireteam source: {e}")
-                print("Will fall back to cloning from GitHub")
+                print(f"Warning: Could not detect git branch: {e}")
+                print("Will fall back to cloning from GitHub main branch")
 
         # Also pass API key if set (fallback authentication)
         if "ANTHROPIC_API_KEY" in os.environ:

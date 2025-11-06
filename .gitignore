@@ -34,3 +34,10 @@ Thumbs.db
 
 # Logs
 logs/
+
+# Terminal Bench outputs
+benchmarks/terminal_bench/reports/test_runs/
+benchmarks/terminal_bench/reports/in_progress/
+benchmarks/terminal_bench/*.log
+benchmarks/terminal_bench/.fireteam_branch
+benchmarks/terminal_bench/.venv/
