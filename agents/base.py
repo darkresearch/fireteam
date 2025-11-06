@@ -49,11 +49,9 @@ class BaseAgent:
                 os.chdir(project_dir)
 
                 # Send the query
-                self.logger.info(f"PROMPT KICKING OFF: {prompt!r}")
                 await client.query(prompt)
-                self.logger.info(f"PROMPT HAS KICKED OFF: {prompt!r}")
+                self.logger.debug(f"Prompt has kicked off: {prompt!r}")
 
-                # Consume the response iterator (this is the key fix!)
                 output_text = ""
                 async for message in client.receive_response():
                     self.logger.info(f"Received SDK message: {message!r}")
