@@ -24,8 +24,14 @@ class BaseAgent:
     async def _execute_with_sdk(self, prompt: str, project_dir: str) -> dict[str, Any]:
         """Execute prompt using Claude Agent SDK."""
         try:
-            # Import SDK here to avoid issues if not installed
-            from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions
+            # Import SDK and error types
+            from claude_agent_sdk import (
+                ClaudeSDKClient, 
+                ClaudeAgentOptions,
+                CLINotFoundError,
+                CLIConnectionError,
+                ProcessError
+            )
 
             # Configure SDK options
             # Note: API key is read from ANTHROPIC_API_KEY environment variable
@@ -33,6 +39,7 @@ class BaseAgent:
                 allowed_tools=config.SDK_ALLOWED_TOOLS,
                 permission_mode=config.SDK_PERMISSION_MODE,
                 model=config.SDK_MODEL,
+                cwd=project_dir,  # Set working directory for Claude Code
                 system_prompt=f"You are a {self.agent_type} agent. Work in the project directory: {project_dir}"
             )
 
@@ -41,22 +48,41 @@ class BaseAgent:
                 # Set working directory
                 os.chdir(project_dir)
 
-                # Execute the prompt
-                response = await client.query(prompt)
+                # Send the query
+                self.logger.info(f"PROMPT KICKING OFF: {prompt!r}")
+                await client.query(prompt)
+                self.logger.info(f"PROMPT HAS KICKED OFF: {prompt!r}")
 
-                # Extract text from response
-                # SDK response might be a dict, string, or object
-                if response is None:
-                    output_text = ""
-                elif isinstance(response, str):
-                    output_text = response
-                elif isinstance(response, dict):
-                    # Try common response keys
-                    output_text = response.get('content') or response.get('text') or str(response)
-                elif hasattr(response, 'content'):
-                    output_text = response.content
-                else:
-                    output_text = str(response)
+                # Consume the response iterator (this is the key fix!)
+                output_text = ""
+                async for message in client.receive_response():
+                    self.logger.info(f"Received SDK message: {message!r}")
+
+                    # Collect all text from the response
+                    if hasattr(message, 'content'):
+                        if isinstance(message.content, str):
+                            output_text += message.content
+                        elif isinstance(message.content, list):
+                            for block in message.content:
+                                if hasattr(block, 'text'):
+                                    output_text += block.text
+                                elif isinstance(block, dict) and 'text' in block:
+                                    output_text += block['text']
+                    elif isinstance(message, str):
+                        output_text += message
+                    elif isinstance(message, dict):
+                        # Try common keys
+                        output_text += message.get('content', '') or message.get('text', '')
+
+                # Validate we got actual output
+                if not output_text or len(output_text.strip()) == 0:
+                    error_msg = "SDK returned empty output - Claude may have failed silently"
+                    self.logger.error(error_msg)
+                    return {
+                        "success": False,
+                        "output": None,
+                        "error": error_msg
+                    }
 
                 return {
                     "success": True,
@@ -65,7 +91,21 @@ class BaseAgent:
                 }
 
         except Exception as e:
-            self.logger.error(f"SDK execution error: {str(e)}")
+            # Try to import error types for better error messages
+            try:
+                from claude_agent_sdk import CLINotFoundError, CLIConnectionError, ProcessError
+                
+                if isinstance(e, CLINotFoundError):
+                    self.logger.error("Claude Code CLI not found - check that 'claude' is in PATH")
+                elif isinstance(e, CLIConnectionError):
+                    self.logger.error("Failed to connect to Claude Code CLI - check if CLI is responsive")
+                elif isinstance(e, ProcessError):
+                    self.logger.error(f"Claude Code CLI process error: {str(e)}")
+                else:
+                    self.logger.error(f"SDK execution error: {str(e)}")
+            except ImportError:
+                self.logger.error(f"SDK execution error: {str(e)}")
+            
             return {
                 "success": False,
                 "output": None,

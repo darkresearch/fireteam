@@ -13,7 +13,7 @@ from datetime import datetime
 from pathlib import Path
 
 # Add system directory to path
-sys.path.insert(0, '/home/claude/fireteam')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import config
 from state.manager import StateManager
@@ -23,9 +23,10 @@ from agents import PlannerAgent, ExecutorAgent, ReviewerAgent
 class Orchestrator:
     """Main orchestrator managing the agent system lifecycle."""
 
-    def __init__(self, project_dir: str, goal: str):
+    def __init__(self, project_dir: str, goal: str, debug: bool = False):
         self.project_dir = os.path.abspath(project_dir)
         self.goal = goal
+        self.debug = debug
         self.state_manager = StateManager()
 
         # Set up logging
@@ -44,13 +45,19 @@ class Orchestrator:
 
     def setup_logging(self):
         """Set up logging to file and console."""
+        # Ensure logs directory exists
+        os.makedirs(config.LOGS_DIR, exist_ok=True)
+        
         log_file = os.path.join(
             config.LOGS_DIR,
             f"orchestrator_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
         )
 
+        # Override log level if debug flag is set
+        log_level = "DEBUG" if self.debug else config.LOG_LEVEL
+
         logging.basicConfig(
-            level=getattr(logging, config.LOG_LEVEL),
+            level=getattr(logging, log_level),
             format=config.LOG_FORMAT,
             handlers=[
                 logging.FileHandler(log_file),
@@ -73,6 +80,7 @@ class Orchestrator:
     def initialize_git_repo(self) -> str:
         """
         Initialize git repo if needed and create a new branch.
+        Works with both new and existing repositories.
         Returns the branch name.
         """
         try:
@@ -81,7 +89,9 @@ class Orchestrator:
 
             # Check if .git exists
             git_dir = os.path.join(self.project_dir, ".git")
-            if not os.path.exists(git_dir):
+            repo_exists = os.path.exists(git_dir)
+            
+            if not repo_exists:
                 self.logger.info("Initializing new git repository")
                 subprocess.run(
                     ["git", "init"],
@@ -89,37 +99,71 @@ class Orchestrator:
                     check=True,
                     capture_output=True
                 )
+            else:
+                self.logger.info("Using existing git repository")
 
-                # Set git config
-                subprocess.run(
-                    ["git", "config", "user.name", config.GIT_USER_NAME],
+            # Set git config only if not already configured
+            try:
+                result = subprocess.run(
+                    ["git", "config", "user.name"],
                     cwd=self.project_dir,
-                    check=True,
-                    capture_output=True
+                    capture_output=True,
+                    text=True
                 )
-                subprocess.run(
-                    ["git", "config", "user.email", config.GIT_USER_EMAIL],
+                if result.returncode != 0 or not result.stdout.strip():
+                    self.logger.info("Configuring git user.name")
+                    subprocess.run(
+                        ["git", "config", "user.name", config.GIT_USER_NAME],
+                        cwd=self.project_dir,
+                        check=True,
+                        capture_output=True
+                    )
+                
+                result = subprocess.run(
+                    ["git", "config", "user.email"],
                     cwd=self.project_dir,
-                    check=True,
-                    capture_output=True
+                    capture_output=True,
+                    text=True
                 )
+                if result.returncode != 0 or not result.stdout.strip():
+                    self.logger.info("Configuring git user.email")
+                    subprocess.run(
+                        ["git", "config", "user.email", config.GIT_USER_EMAIL],
+                        cwd=self.project_dir,
+                        check=True,
+                        capture_output=True
+                    )
+            except subprocess.CalledProcessError as e:
+                self.logger.warning(f"Could not configure git user: {e}")
+                # Continue anyway - git might work with global config
 
-                # Create initial commit if no commits exist
-                subprocess.run(
-                    ["git", "add", "."],
-                    cwd=self.project_dir,
-                    check=True,
-                    capture_output=True
-                )
-                subprocess.run(
-                    ["git", "commit", "-m", "Initial commit", "--allow-empty"],
-                    cwd=self.project_dir,
-                    check=True,
-                    capture_output=True
-                )
+            # For new repos, create initial commit if no commits exist
+            if not repo_exists:
+                try:
+                    # Check if there are any commits
+                    subprocess.run(
+                        ["git", "rev-parse", "HEAD"],
+                        cwd=self.project_dir,
+                        check=True,
+                        capture_output=True
+                    )
+                except subprocess.CalledProcessError:
+                    # No commits yet, create initial commit
+                    self.logger.info("Creating initial commit")
+                    subprocess.run(
+                        ["git", "add", "."],
+                        cwd=self.project_dir,
+                        capture_output=True
+                    )
+                    subprocess.run(
+                        ["git", "commit", "-m", "Initial commit", "--allow-empty"],
+                        cwd=self.project_dir,
+                        check=True,
+                        capture_output=True
+                    )
 
-            # Create new branch with timestamp
-            branch_name = f"agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+            # Create new branch with timestamp from current HEAD
+            branch_name = f"fireteam-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
             self.logger.info(f"Creating branch: {branch_name}")
 
             subprocess.run(
@@ -370,10 +414,11 @@ def main():
     parser = argparse.ArgumentParser(description="Fireteam Orchestrator")
     parser.add_argument("--project-dir", required=True, help="Project directory")
     parser.add_argument("--goal", required=True, help="Project goal/prompt")
+    parser.add_argument("--debug", action="store_true", help="Enable debug logging")
 
     args = parser.parse_args()
 
-    orchestrator = Orchestrator(args.project_dir, args.goal)
+    orchestrator = Orchestrator(args.project_dir, args.goal, debug=args.debug)
     sys.exit(orchestrator.run())
 
 

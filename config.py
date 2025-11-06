@@ -11,8 +11,10 @@ env_file = Path(__file__).parent / ".env"
 if env_file.exists():
     load_dotenv(env_file)
 
-# System paths
-SYSTEM_DIR = "/home/claude/fireteam"
+# System paths - configurable via FIRETEAM_DIR environment variable
+# Defaults to /home/claude/fireteam for standalone mode
+# Can be set to /app for containerized environments (e.g., terminal-bench)
+SYSTEM_DIR = os.getenv("FIRETEAM_DIR", "/home/claude/fireteam")
 STATE_DIR = os.path.join(SYSTEM_DIR, "state")
 LOGS_DIR = os.path.join(SYSTEM_DIR, "logs")
 CLI_DIR = os.path.join(SYSTEM_DIR, "cli")
@@ -54,7 +56,7 @@ GIT_USER_NAME = os.environ.get("GIT_USER_NAME", "fireteam")
 GIT_USER_EMAIL = os.environ.get("GIT_USER_EMAIL", "fireteam@darkresearch.ai")
 
 # Logging
-LOG_LEVEL = "INFO"
+LOG_LEVEL = os.getenv("LOG_LEVEL", os.getenv("FIRETEAM_LOG_LEVEL", "INFO")).upper()
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
 # Sudo password for system operations (optional)

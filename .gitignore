@@ -34,3 +34,6 @@ Thumbs.db
 
 # Logs
 logs/
+
+# Benchmark runs
+runs/
