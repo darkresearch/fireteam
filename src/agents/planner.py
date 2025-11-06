@@ -10,8 +10,8 @@ from .base import BaseAgent
 class PlannerAgent(BaseAgent):
     """Agent responsible for creating and updating project plans."""
 
-    def __init__(self, logger=None):
-        super().__init__("planner", logger)
+    def __init__(self, logger=None, memory_manager=None):
+        super().__init__("planner", logger, memory_manager)
 
     def get_system_prompt(self) -> str:
         """Return the system prompt defining the Planner Agent's identity and guidelines."""
@@ -45,7 +45,17 @@ Always provide your plan as a structured markdown document with:
 
 Your plans guide the Executor Agent's work and should be clear enough for autonomous execution."""
 
-    def execute(
+    def _build_memory_context_query(self) -> str:
+        """Build context query for planning."""
+        goal = self._execution_context.get('goal', '')
+        last_review = self._execution_context.get('last_review', '')
+        return f"Planning to achieve: {goal}. Recent feedback: {last_review}"
+
+    def _get_relevant_memory_types(self) -> list[str]:
+        """Planner cares about decisions, failed approaches, learnings."""
+        return ["decision", "failed_approach", "learning"]
+
+    def _do_execute(
         self,
         project_dir: str,
         goal: str,

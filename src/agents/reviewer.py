@@ -10,8 +10,8 @@ from .base import BaseAgent
 class ReviewerAgent(BaseAgent):
     """Agent responsible for reviewing progress and estimating completion."""
 
-    def __init__(self, logger=None):
-        super().__init__("reviewer", logger)
+    def __init__(self, logger=None, memory_manager=None):
+        super().__init__("reviewer", logger, memory_manager)
 
     def get_system_prompt(self) -> str:
         """Return the system prompt defining the Reviewer Agent's identity and guidelines."""
@@ -54,9 +54,35 @@ Then provide:
 - What's working well
 - What's incomplete or broken
 - What needs to be done next
-- Whether ready for production"""
+- Whether ready for production
 
-    def execute(
+MEMORY EXTRACTION:
+As you review, identify key learnings:
+1. **Patterns**: Architectural patterns discovered (e.g., "All DB calls use async/await")
+2. **Decisions**: Technical decisions made (e.g., "Chose SQLite for simpler deployment")
+3. **Failed Approaches**: What was tried but failed (e.g., "Tried bcrypt but Node 18 issues")
+4. **Code Locations**: Where things are (e.g., "Auth middleware in src/auth/jwt.js")
+
+Format in your review using:
+LEARNING[type]: content
+
+Example:
+LEARNING[pattern]: All database operations use connection pooling
+LEARNING[decision]: Using JWT tokens with 24h expiry for sessions
+LEARNING[failed_approach]: Attempted websockets but had CORS issues
+LEARNING[code_location]: User authentication logic in src/auth/handler.py"""
+
+    def _build_memory_context_query(self) -> str:
+        """Build context query for review."""
+        execution_result = self._execution_context.get('execution_result', '')
+        plan = self._execution_context.get('plan', '')
+        return f"Reviewing implementation: {execution_result}. Original plan: {plan}"
+
+    def _get_relevant_memory_types(self) -> list[str]:
+        """Reviewer cares about patterns, decisions, learnings."""
+        return ["learning", "decision", "pattern"]
+
+    def _do_execute(
         self,
         project_dir: str,
         goal: str,
@@ -89,10 +115,13 @@ Then provide:
         if result["success"]:
             # Extract completion percentage from output
             completion_pct = self._extract_completion_percentage(result["output"])
+            # Extract learnings from output
+            learnings = self._extract_learnings(result["output"])
             return {
                 "success": True,
                 "review": result["output"],
                 "completion_percentage": completion_pct,
+                "learnings": learnings,
                 "raw_output": result["output"]
             }
         else:
@@ -100,6 +129,7 @@ Then provide:
                 "success": False,
                 "review": None,
                 "completion_percentage": 0,
+                "learnings": [],
                 "error": result["error"]
             }
 
@@ -157,3 +187,21 @@ LATEST EXECUTION RESULT:
         # Default to 0 if no percentage found
         self.logger.warning("Could not extract completion percentage from review")
         return 0
+
+    def _extract_learnings(self, review_text: str) -> list[dict]:
+        """Parse structured learnings from review."""
+        learnings = []
+        
+        # Match pattern: LEARNING[type]: content
+        pattern = r'LEARNING\[(\w+)\]:\s*(.+?)(?=\n|$)'
+        matches = re.findall(pattern, review_text, re.MULTILINE)
+        
+        for match in matches:
+            learning_type = match[0].lower()
+            content = match[1].strip()
+            learnings.append({
+                "type": learning_type,
+                "content": content
+            })
+        
+        return learnings

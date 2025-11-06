@@ -65,6 +65,11 @@ LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 # Set in .env file: SUDO_PASSWORD=your_password_here
 SUDO_PASSWORD = os.getenv("SUDO_PASSWORD", None)
 
+# Memory configuration
+MEMORY_DIR = os.path.join(SYSTEM_DIR, "memory")
+MEMORY_EMBEDDING_MODEL = "Qwen/Qwen3-Embedding-0.6B"
+MEMORY_SEARCH_LIMIT = 10  # How many memories to retrieve per query
+
 def has_sudo_access():
     """Check if sudo password is available."""
     return SUDO_PASSWORD is not None

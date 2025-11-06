@@ -9,8 +9,8 @@ from .base import BaseAgent
 class ExecutorAgent(BaseAgent):
     """Agent responsible for executing planned tasks."""
 
-    def __init__(self, logger=None):
-        super().__init__("executor", logger)
+    def __init__(self, logger=None, memory_manager=None):
+        super().__init__("executor", logger, memory_manager)
 
     def get_system_prompt(self) -> str:
         """Return the system prompt defining the Executor Agent's identity and guidelines."""
@@ -51,7 +51,17 @@ Always provide a summary of:
 
 Work efficiently and aim for quality."""
 
-    def execute(
+    def _build_memory_context_query(self) -> str:
+        """Build context query for execution."""
+        plan = self._execution_context.get('plan', '')
+        goal = self._execution_context.get('goal', '')
+        return f"Implementing plan: {plan}. Goal: {goal}"
+
+    def _get_relevant_memory_types(self) -> list[str]:
+        """Executor cares about failed approaches, traces, code locations."""
+        return ["failed_approach", "trace", "code_location"]
+
+    def _do_execute(
         self,
         project_dir: str,
         goal: str,

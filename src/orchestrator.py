@@ -17,25 +17,30 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import config
 from state.manager import StateManager
+from memory.manager import MemoryManager
 from agents import PlannerAgent, ExecutorAgent, ReviewerAgent
 
 
 class Orchestrator:
     """Main orchestrator managing the agent system lifecycle."""
 
-    def __init__(self, project_dir: str, goal: str, debug: bool = False):
+    def __init__(self, project_dir: str, goal: str, debug: bool = False, keep_memory: bool = False):
         self.project_dir = os.path.abspath(project_dir)
         self.goal = goal
         self.debug = debug
+        self.keep_memory = keep_memory  # Flag to preserve memory/state after completion
         self.state_manager = StateManager()
 
         # Set up logging
         self.setup_logging()
 
-        # Initialize agents
-        self.planner = PlannerAgent(self.logger)
-        self.executor = ExecutorAgent(self.logger)
-        self.reviewer = ReviewerAgent(self.logger)
+        # Initialize memory (pass logger for observability)
+        self.memory = MemoryManager(logger=self.logger)
+
+        # Initialize agents WITH memory manager
+        self.planner = PlannerAgent(self.logger, memory_manager=self.memory)
+        self.executor = ExecutorAgent(self.logger, memory_manager=self.memory)
+        self.reviewer = ReviewerAgent(self.logger, memory_manager=self.memory)
 
         # Signal handling for graceful shutdown
         signal.signal(signal.SIGINT, self._signal_handler)
@@ -173,6 +178,9 @@ class Orchestrator:
                 capture_output=True
             )
 
+            # Initialize memory for project
+            self.memory.initialize_project(self.project_dir, self.goal)
+
             return branch_name
 
         except subprocess.CalledProcessError as e:
@@ -306,6 +314,13 @@ class Orchestrator:
         execution_result = executor_result["execution_result"]
         self.logger.info("Execution completed")
 
+        # Record execution trace in memory
+        self.memory.add_memory(
+            content=execution_result,
+            memory_type="trace",
+            cycle=cycle_num
+        )
+
         # PHASE 3: Review
         self.logger.info("\nPHASE 3: Review")
         self.state_manager.update_state({
@@ -338,6 +353,15 @@ class Orchestrator:
         )
 
         self.logger.info(f"Review completed - Completion: {completion_pct}%")
+
+        # Extract and store learnings from reviewer
+        if "learnings" in reviewer_result:
+            for learning in reviewer_result["learnings"]:
+                self.memory.add_memory(
+                    content=learning["content"],
+                    memory_type=learning["type"],
+                    cycle=cycle_num
+                )
 
         # Update state (completion_percentage already set by update_completion_percentage)
         updated_state = self.state_manager.update_state({
@@ -398,6 +422,16 @@ class Orchestrator:
                     self.logger.info("\n" + "=" * 80)
                     self.logger.info("PROJECT COMPLETED SUCCESSFULLY")
                     self.logger.info("=" * 80)
+                    
+                    # Automatic cleanup (unless --keep-memory flag set)
+                    if not self.keep_memory:
+                        self.logger.info("Cleaning up project data...")
+                        self.memory.clear_project_memory(self.project_dir)
+                        self.state_manager.clear_state()
+                        self.logger.info("Cleanup complete")
+                    else:
+                        self.logger.info("Debug mode: Memory and state preserved for analysis")
+                    
                     break
 
             return 0
@@ -415,10 +449,17 @@ def main():
     parser.add_argument("--project-dir", required=True, help="Project directory")
     parser.add_argument("--goal", required=True, help="Project goal/prompt")
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
+    parser.add_argument("--keep-memory", action="store_true", 
+                        help="Preserve memory and state after completion (for debugging)")
 
     args = parser.parse_args()
 
-    orchestrator = Orchestrator(args.project_dir, args.goal, debug=args.debug)
+    orchestrator = Orchestrator(
+        args.project_dir, 
+        args.goal, 
+        debug=args.debug,
+        keep_memory=args.keep_memory
+    )
     sys.exit(orchestrator.run())
 
 

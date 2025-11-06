@@ -14,12 +14,14 @@ import config
 class BaseAgent:
     """Base class for all specialized agents using Claude Agent SDK."""
 
-    def __init__(self, agent_type: str, logger: logging.Logger | None = None):
+    def __init__(self, agent_type: str, logger: logging.Logger | None = None, memory_manager=None):
         self.agent_type = agent_type
         self.logger = logger or logging.getLogger(f"agent.{agent_type}")
+        self.memory = memory_manager  # Injected by orchestrator
         self.max_retries = config.MAX_RETRIES
         self.retry_delay = config.RETRY_DELAY
         self.timeout = config.AGENT_TIMEOUTS.get(agent_type, 600)  # Default 10 min if not specified
+        self._execution_context = {}  # Store for memory retrieval
 
     def get_system_prompt(self) -> str:
         """
@@ -29,7 +31,7 @@ class BaseAgent:
         raise NotImplementedError("Subclasses must implement get_system_prompt()")
 
     async def _execute_with_sdk(self, prompt: str, project_dir: str) -> dict[str, Any]:
-        """Execute prompt using Claude Agent SDK."""
+        """Execute prompt using Claude Agent SDK, automatically injecting memories into system prompt."""
         try:
             # Import SDK and error types
             from claude_agent_sdk import (
@@ -40,6 +42,18 @@ class BaseAgent:
                 ProcessError
             )
 
+            # Get base system prompt
+            base_system_prompt = self.get_system_prompt()
+            
+            # Automatic memory retrieval (happens silently to agent)
+            memory_context = self._retrieve_and_format_memories()
+            
+            # Inject memories into system prompt
+            enhanced_system_prompt = base_system_prompt
+            if memory_context:
+                enhanced_system_prompt += "\n" + memory_context
+                self.logger.debug(f"[{self.agent_type.upper()}] System prompt enhanced with memories")
+
             # Configure SDK options
             # Note: API key is read from ANTHROPIC_API_KEY environment variable
             options = ClaudeAgentOptions(
@@ -47,7 +61,7 @@ class BaseAgent:
                 permission_mode=config.SDK_PERMISSION_MODE,
                 model=config.SDK_MODEL,
                 cwd=project_dir,  # Set working directory for Claude Code
-                system_prompt=self.get_system_prompt()
+                system_prompt=enhanced_system_prompt  # Enhanced with memories
             )
 
             # Execute with SDK
@@ -157,6 +171,83 @@ class BaseAgent:
             "error": f"Failed after {self.max_retries} attempts"
         }
 
+    def _build_memory_context_query(self) -> str:
+        """
+        Build context query for semantic search.
+        Override in subclasses to customize based on agent type.
+        Access self._execution_context for execute() parameters.
+        """
+        return ""
+
+    def _get_relevant_memory_types(self) -> list[str]:
+        """
+        Return memory types relevant to this agent.
+        Override in subclasses.
+        """
+        return []  # All types by default
+
+    def _retrieve_and_format_memories(self) -> str:
+        """Automatically retrieve and format relevant memories."""
+        if not self.memory:
+            return ""
+        
+        # Build context query
+        context_query = self._build_memory_context_query()
+        if not context_query:
+            return ""
+        
+        self.logger.info(f"[{self.agent_type.upper()}] Retrieving memories...")
+        start_time = time.time()
+        
+        # Semantic search
+        memories = self.memory.search(
+            query=context_query,
+            limit=config.MEMORY_SEARCH_LIMIT,
+            memory_types=self._get_relevant_memory_types() or None
+        )
+        
+        elapsed = time.time() - start_time
+        self.logger.info(f"[{self.agent_type.upper()}] Retrieved {len(memories)} memories in {elapsed:.2f}s")
+        
+        if not memories:
+            self.logger.info(f"[{self.agent_type.upper()}] No relevant memories found")
+            return ""
+        
+        # Format for injection (cleaner template)
+        memory_lines = []
+        for mem in memories:
+            mem_type = mem.get('type', 'learning').replace('_', ' ').title()
+            content = mem.get('content', '')
+            cycle = mem.get('cycle', '?')
+            memory_lines.append(f"• {mem_type} (Cycle {cycle}): {content}")
+        
+        memory_text = f"""
+---
+BACKGROUND KNOWLEDGE FROM PREVIOUS WORK:
+(You have access to these learnings from earlier cycles)
+
+{"\n".join(memory_lines)}
+
+Use this background knowledge naturally. Don't explicitly reference cycles.
+---
+"""
+        
+        return memory_text
+
     def execute(self, **kwargs) -> dict[str, Any]:
-        """Execute the agent. Must be implemented by subclasses."""
-        raise NotImplementedError("Subclasses must implement execute()")
+        """
+        Template method - handles memory injection automatically.
+        Subclasses should NOT override this - override _do_execute instead.
+        """
+        # Store execution context for memory retrieval
+        self._execution_context = kwargs
+        
+        # Call subclass implementation
+        return self._do_execute(**kwargs)
+
+    def _do_execute(self, **kwargs) -> dict[str, Any]:
+        """
+        Subclass implementation of execute logic.
+        Subclasses override this instead of execute().
+        """
+        raise NotImplementedError("Subclasses must implement _do_execute()")
