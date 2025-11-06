@@ -117,26 +117,58 @@ class Orchestrator:
                     check=True,
                     capture_output=True
                 )
+            else:
+                # Existing repo - ensure git config is set
+                self.logger.info("Using existing git repository")
+                try:
+                    subprocess.run(
+                        ["git", "config", "user.name", config.GIT_USER_NAME],
+                        cwd=self.project_dir,
+                        check=True,
+                        capture_output=True
+                    )
+                    subprocess.run(
+                        ["git", "config", "user.email", config.GIT_USER_EMAIL],
+                        cwd=self.project_dir,
+                        check=True,
+                        capture_output=True
+                    )
+                except subprocess.CalledProcessError:
+                    # If we can't set config (e.g., permission issues), try to continue anyway
+                    self.logger.warning("Could not set git config, continuing anyway")
 
             # Create new branch with timestamp
             branch_name = f"agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
             self.logger.info(f"Creating branch: {branch_name}")
 
-            subprocess.run(
-                ["git", "checkout", "-b", branch_name],
-                cwd=self.project_dir,
-                check=True,
-                capture_output=True
-            )
+            try:
+                subprocess.run(
+                    ["git", "checkout", "-b", branch_name],
+                    cwd=self.project_dir,
+                    check=True,
+                    capture_output=True
+                )
+            except subprocess.CalledProcessError as e:
+                # If we can't create a branch (e.g., permission issues), log but continue
+                # We'll work without git tracking
+                self.logger.warning(f"Could not create git branch: {e}. Continuing without git tracking.")
+                branch_name = "no-git"
 
             return branch_name
 
         except subprocess.CalledProcessError as e:
             self.logger.error(f"Git initialization error: {e}")
-            raise
+            # Instead of raising, continue without git tracking
+            self.logger.warning("Continuing without git tracking due to initialization error")
+            return "no-git"
 
     def commit_changes(self, cycle_number: int, message_suffix: str = ""):
         """Commit changes after each cycle."""
+        # Skip if we're in no-git mode
+        if hasattr(self, 'branch_name') and self.branch_name == "no-git":
+            self.logger.debug("Skipping git commit (no-git mode)")
+            return
+            
         try:
             # Check if there are changes to commit
             result = subprocess.run(
