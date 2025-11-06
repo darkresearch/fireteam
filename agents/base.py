@@ -37,21 +37,34 @@ class BaseAgent:
             )
 
             # Execute with SDK
+            self.logger.info(f"[{self.agent_type}] Initializing ClaudeSDKClient...")
             async with ClaudeSDKClient(options=options) as client:
                 # Set working directory
+                original_dir = os.getcwd()
                 os.chdir(project_dir)
+                self.logger.info(f"[{self.agent_type}] Changed working directory to: {project_dir}")
 
                 # Execute the prompt - send query first
-                self.logger.debug(f"Starting SDK query for {self.agent_type}")
+                self.logger.info(f"[{self.agent_type}] Sending query to Claude SDK...")
+                start_time = time.time()
                 await client.query(prompt)
+                query_time = time.time() - start_time
+                self.logger.info(f"[{self.agent_type}] Query sent in {query_time:.2f}s, now receiving response...")
                 
                 # Then receive messages from the response
                 messages = []
+                message_count = 0
                 async for message in client.receive_response():
+                    message_count += 1
                     messages.append(message)
-                    self.logger.debug(f"Received message type: {type(message)}")
+                    msg_type = type(message).__name__
+                    self.logger.info(f"[{self.agent_type}] Received message #{message_count}: {msg_type}")
                     
-                self.logger.debug(f"Received {len(messages)} messages total")
+                response_time = time.time() - start_time
+                self.logger.info(f"[{self.agent_type}] Received {len(messages)} messages total in {response_time:.2f}s")
+                
+                # Restore original directory
+                os.chdir(original_dir)
                 
                 # Extract text from messages
                 # Collect all text blocks from assistant messages
@@ -74,9 +87,16 @@ class BaseAgent:
                         output_text += str(msg) + "\n"
 
                 if not output_text.strip():
-                    error_msg = f"Received {len(messages)} messages but no extractable text content"
-                    self.logger.warning(error_msg)
+                    error_msg = f"Received {len(messages)} messages but no extractable text content. Messages: {[type(m).__name__ for m in messages]}"
+                    self.logger.warning(f"[{self.agent_type}] {error_msg}")
                     output_text = error_msg
+
+                output_length = len(output_text)
+                self.logger.info(f"[{self.agent_type}] Extracted {output_length} characters of output")
+                if output_length > 200:
+                    self.logger.info(f"[{self.agent_type}] Output preview: {output_text[:200]}...")
+                else:
+                    self.logger.info(f"[{self.agent_type}] Full output: {output_text}")
 
                 return {
                     "success": True,
@@ -85,7 +105,10 @@ class BaseAgent:
                 }
 
         except Exception as e:
-            self.logger.error(f"SDK execution error: {str(e)}")
+            import traceback
+            error_details = traceback.format_exc()
+            self.logger.error(f"[{self.agent_type}] SDK execution error: {str(e)}")
+            self.logger.error(f"[{self.agent_type}] Traceback:\n{error_details}")
             return {
                 "success": False,
                 "output": None,
