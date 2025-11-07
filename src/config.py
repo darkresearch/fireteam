@@ -44,10 +44,13 @@ MAX_RETRIES = 3
 RETRY_DELAY = 5  # seconds
 
 # Agent timeouts (in seconds)
+# Can be overridden via FIRETEAM_AGENT_TIMEOUT_* env vars (e.g., FIRETEAM_AGENT_TIMEOUT_PLANNER=120)
+# Shorter timeouts in CI to fail fast instead of hanging
+DEFAULT_TIMEOUT = int(os.getenv("FIRETEAM_DEFAULT_TIMEOUT", "600"))  # 10 minutes default
 AGENT_TIMEOUTS = {
-    "planner": 600,      # 10 minutes (complex planning, analysis)
-    "reviewer": 600,     # 10 minutes (code review + test runs)
-    "executor": 1800     # 30 minutes (complex builds, installations, test suites)
+    "planner": int(os.getenv("FIRETEAM_AGENT_TIMEOUT_PLANNER", DEFAULT_TIMEOUT)),
+    "reviewer": int(os.getenv("FIRETEAM_AGENT_TIMEOUT_REVIEWER", DEFAULT_TIMEOUT)),
+    "executor": int(os.getenv("FIRETEAM_AGENT_TIMEOUT_EXECUTOR", str(DEFAULT_TIMEOUT * 3)))  # 30 min default
 }
 
 # Completion thresholds

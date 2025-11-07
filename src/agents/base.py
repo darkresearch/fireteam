@@ -33,6 +33,8 @@ class BaseAgent:
     async def _execute_with_sdk(self, prompt: str, project_dir: str) -> dict[str, Any]:
         """Execute prompt using Claude Agent SDK, automatically injecting memories into system prompt."""
         try:
+            self.logger.info(f"[{self.agent_type.upper()}] Initializing Claude Agent SDK...")
+            
             # Import SDK and error types
             from claude_agent_sdk import (
                 ClaudeSDKClient, 
@@ -56,6 +58,7 @@ class BaseAgent:
 
             # Configure SDK options
             # Note: API key is read from ANTHROPIC_API_KEY environment variable
+            self.logger.info(f"[{self.agent_type.upper()}] Configuring SDK with model: {config.SDK_MODEL}")
             options = ClaudeAgentOptions(
                 allowed_tools=config.SDK_ALLOWED_TOOLS,
                 permission_mode=config.SDK_PERMISSION_MODE,
@@ -64,18 +67,22 @@ class BaseAgent:
                 system_prompt=enhanced_system_prompt  # Enhanced with memories
             )
 
-            # Execute with SDK
+            # Execute with SDK with timeout
+            self.logger.info(f"[{self.agent_type.upper()}] Connecting to Claude CLI (timeout: {self.timeout}s)...")
             async with ClaudeSDKClient(options=options) as client:
                 # Set working directory
                 os.chdir(project_dir)
 
                 # Send the query
+                self.logger.info(f"[{self.agent_type.upper()}] Sending query to Claude...")
                 await client.query(prompt)
-                self.logger.debug(f"Prompt has kicked off: {prompt!r}")
+                self.logger.info(f"[{self.agent_type.upper()}] Query sent, waiting for response...")
 
                 output_text = ""
+                message_count = 0
                 async for message in client.receive_response():
-                    self.logger.info(f"Received SDK message: {message!r}")
+                    message_count += 1
+                    self.logger.info(f"[{self.agent_type.upper()}] Received message {message_count}: {type(message).__name__}")
 
                     # Collect all text from the response
                     if hasattr(message, 'content'):
@@ -132,13 +139,33 @@ class BaseAgent:
             }
 
     def _execute_command(self, prompt: str, project_dir: str) -> dict[str, Any]:
-        """Execute Claude Agent SDK with retry logic."""
+        """Execute Claude Agent SDK with retry logic and timeout."""
         for attempt in range(self.max_retries):
             try:
-                self.logger.info(f"Executing {self.agent_type} (attempt {attempt + 1}/{self.max_retries})")
+                self.logger.info(f"[{self.agent_type.upper()}] Starting attempt {attempt + 1}/{self.max_retries} (timeout: {self.timeout}s)")
 
-                # Run async SDK call in sync context
-                result = asyncio.run(self._execute_with_sdk(prompt, project_dir))
+                # Run async SDK call in sync context with timeout
+                start_time = time.time()
+                try:
+                    # Use wait_for to enforce timeout
+                    result = asyncio.run(
+                        asyncio.wait_for(
+                            self._execute_with_sdk(prompt, project_dir),
+                            timeout=self.timeout
+                        )
+                    )
+                except asyncio.TimeoutError:
+                    elapsed = time.time() - start_time
+                    error_msg = f"SDK call timed out after {elapsed:.1f}s (limit: {self.timeout}s)"
+                    self.logger.error(f"[{self.agent_type.upper()}] {error_msg}")
+                    return {
+                        "success": False,
+                        "output": None,
+                        "error": error_msg
+                    }
+                
+                elapsed = time.time() - start_time
+                self.logger.info(f"[{self.agent_type.upper()}] SDK call completed in {elapsed:.1f}s")
 
                 if result["success"]:
                     self.logger.info(f"{self.agent_type} completed successfully")
