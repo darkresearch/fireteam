@@ -39,7 +39,10 @@ jobs:
     name: End-to-End Tests (API)
     runs-on: ubuntu-latest
     # Run on main branch and e/* branches for testing
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/e/')
+    if: |
+      github.ref == 'refs/heads/main' || 
+      startsWith(github.ref, 'refs/heads/e/') ||
+      startsWith(github.head_ref, 'e/')
     
     steps:
     - uses: actions/checkout@v4
@@ -71,7 +74,10 @@ jobs:
     name: Terminal-bench Integration
     runs-on: ubuntu-latest
     # Run on main branch and e/* branches for testing
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/e/')
+    if: |
+      github.ref == 'refs/heads/main' || 
+      startsWith(github.ref, 'refs/heads/e/') ||
+      startsWith(github.head_ref, 'e/')
     
     steps:
     - uses: actions/checkout@v4
