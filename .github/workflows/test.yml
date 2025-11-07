@@ -48,6 +48,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    
+    - name: Install Claude CLI
+      run: |
+        npm install -g @anthropic-ai/claude-code
+        echo "Claude CLI installed at: $(which claude)"
+        claude --version
+    
     - name: Set up Python 3.12
       uses: actions/setup-python@v5
       with:
@@ -64,22 +75,11 @@ jobs:
         source .venv/bin/activate
         uv pip install -r requirements.txt
     
-    - name: Check Claude CLI availability
-      run: |
-        echo "Checking for Claude CLI..."
-        if command -v claude &> /dev/null; then
-          echo "✅ Claude CLI found at: $(which claude)"
-          claude --version || true
-        else
-          echo "⚠️  Claude CLI not found - tests will use direct API mode"
-        fi
-    
     - name: Run E2E tests
       timeout-minutes: 15  # Per-step timeout
       env:
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         PYTHONUNBUFFERED: "1"  # Force immediate output
-        FIRETEAM_DEFAULT_TIMEOUT: "120"  # 2-minute timeout for agents in CI
       run: |
         source .venv/bin/activate
         echo "Starting e2e tests at $(date)"
