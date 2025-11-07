@@ -41,8 +41,9 @@ class ConcreteAgent(BaseAgent):
         return ["learning", "decision"]
 
 
+@pytest.mark.slow
 class TestBaseAgentMemoryIntegration:
-    """Test BaseAgent memory features."""
+    """Test BaseAgent memory features (uses heavy Qwen3 model)."""
     
     @pytest.fixture
     def temp_memory_dir(self):
@@ -186,8 +187,9 @@ class TestBaseAgentMemoryIntegration:
         agent_with_memory._retrieve_and_format_memories()
 
 
+@pytest.mark.slow
 class TestMemoryInjection:
-    """Test memory injection into agent execution."""
+    """Test memory injection into agent execution (uses heavy Qwen3 model)."""
     
     @pytest.fixture
     def temp_memory_dir(self):

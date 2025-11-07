@@ -16,8 +16,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 from memory.manager import MemoryManager
 
 
+@pytest.mark.slow
 class TestMemoryManager:
-    """Test MemoryManager functionality."""
+    """Test MemoryManager functionality (uses heavy Qwen3 model)."""
     
     @pytest.fixture
     def temp_memory_dir(self):
@@ -243,8 +244,9 @@ class TestMemoryManager:
         assert results[0]["cycle"] == 5
 
 
+@pytest.mark.slow
 class TestMemoryManagerEdgeCases:
-    """Test edge cases and error handling."""
+    """Test edge cases and error handling (uses heavy Qwen3 model)."""
     
     @pytest.fixture
     def temp_memory_dir(self):

@@ -20,8 +20,9 @@ from agents import PlannerAgent, ExecutorAgent, ReviewerAgent
 from test_base_agent_memory import ConcreteAgent
 
 
+@pytest.mark.slow
 class TestMemoryIntegration:
-    """Test memory integration across full cycles."""
+    """Test memory integration across full cycles (uses heavy Qwen3 model)."""
     
     @pytest.fixture
     def temp_dirs(self):
@@ -186,8 +187,9 @@ class TestMemoryIntegration:
         assert memories == ""
 
 
+@pytest.mark.slow
 class TestMemoryCleanup:
-    """Test cleanup functionality."""
+    """Test cleanup functionality (uses heavy Qwen3 model)."""
     
     @pytest.fixture
     def temp_memory_dir(self):
@@ -242,6 +244,7 @@ class TestMemoryCleanup:
         assert "Project 2" in results[0]["content"]
 
 
+@pytest.mark.slow
 class TestEndToEndScenario:
     """Test realistic end-to-end scenarios."""
     
@@ -252,8 +255,9 @@ class TestEndToEndScenario:
         yield temp_dir
         shutil.rmtree(temp_dir, ignore_errors=True)
     
+    @pytest.mark.slow
     def test_realistic_multi_cycle_scenario(self, temp_memory_dir):
-        """Test a realistic scenario across multiple cycles."""
+        """Test a realistic scenario across multiple cycles (uses heavy Qwen3 model)."""
         memory_manager = MemoryManager(memory_dir=temp_memory_dir)
         project_dir = "/tmp/realistic-project"
         goal = "Build REST API with authentication"

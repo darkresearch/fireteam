@@ -15,8 +15,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 from memory.manager import MemoryManager
 
 
+@pytest.mark.slow
 class TestProjectIsolation:
-    """Test that different projects have isolated memories."""
+    """Test that different projects have isolated memories (uses heavy Qwen3 model)."""
     
     @pytest.fixture
     def temp_memory_dir(self):
