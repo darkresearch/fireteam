@@ -5,3 +5,12 @@ claude-agent-sdk>=0.1.4
 
 # Environment management
 python-dotenv>=1.0.0
+
+# Memory layer - local vector storage and embeddings
+chromadb>=1.0.0
+transformers>=4.50.0
+torch>=2.5.0
+sentence-transformers>=2.2.0
+
+# Testing
+pytest>=7.0.0

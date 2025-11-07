@@ -14,7 +14,12 @@ from pathlib import Path
 class StateManager:
     """Manages agent system state with project isolation."""
 
-    def __init__(self, state_dir: str = "/home/claude/fireteam/state"):
+    def __init__(self, state_dir: str | None = None):
+        # Use provided state_dir, or fall back to config, or use default
+        if state_dir is None:
+            import config
+            state_dir = config.STATE_DIR
+        
         self.state_dir = Path(state_dir)
         self.state_dir.mkdir(parents=True, exist_ok=True)
         self.state_file = self.state_dir / "current.json"

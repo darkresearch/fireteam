@@ -1,0 +1,2 @@
+"""State management for Fireteam."""
+

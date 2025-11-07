@@ -54,7 +54,7 @@ echo "Goal: $GOAL"
 echo ""
 
 # Start orchestrator in background
-nohup python3 "$SYSTEM_DIR/orchestrator.py" \
+nohup python3 "$SYSTEM_DIR/src/orchestrator.py" \
     --project-dir "$PROJECT_DIR" \
     --goal "$GOAL" \
     > "$SYSTEM_DIR/logs/system.log" 2>&1 &

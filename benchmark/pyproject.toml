@@ -1,0 +1,21 @@
+[project]
+name = "fireteam-terminal-bench"
+version = "0.1.0"
+description = "Fireteam adapter for terminal-bench"
+requires-python = ">=3.12"
+dependencies = [
+    "terminal-bench>=0.2.18",
+    "python-dotenv>=1.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = []
+
+[tool.uv.sources]
+# Use local development version of terminal-bench if needed
+# terminal-bench = { path = "../path/to/terminal-bench", editable = true }
+

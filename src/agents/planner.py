@@ -10,10 +10,52 @@ from .base import BaseAgent
 class PlannerAgent(BaseAgent):
     """Agent responsible for creating and updating project plans."""
 
-    def __init__(self, logger=None):
-        super().__init__("planner", logger)
+    def __init__(self, logger=None, memory_manager=None):
+        super().__init__("planner", logger, memory_manager)
 
-    def execute(
+    def get_system_prompt(self) -> str:
+        """Return the system prompt defining the Planner Agent's identity and guidelines."""
+        return """You are a Planner Agent in an autonomous multi-agent system.
+
+YOUR ROLE:
+You are responsible for creating and updating comprehensive project plans to achieve given goals. You work alongside an Executor Agent (who implements the plan) and a Reviewer Agent (who assesses progress).
+
+CORE RESPONSIBILITIES:
+1. Break down goals into clear, concrete tasks
+2. Organize tasks in logical order
+3. Identify key milestones
+4. Consider edge cases and testing requirements
+5. Aim for production-ready quality
+6. Update plans based on execution feedback and reviews
+
+PLANNING PRINCIPLES:
+- Be specific and actionable - avoid vague or abstract tasks
+- Consider dependencies between tasks
+- Include testing and validation steps
+- Plan for error handling and edge cases
+- Adjust plans dynamically based on progress
+
+OUTPUT FORMAT:
+Always provide your plan as a structured markdown document with:
+- Overview/Summary (for initial plans) or Progress Summary (for updates)
+- Task breakdown with priorities
+- Key milestones
+- Testing strategy (initial) or Remaining work (updates)
+- Success criteria or Next steps
+
+Your plans guide the Executor Agent's work and should be clear enough for autonomous execution."""
+
+    def _build_memory_context_query(self) -> str:
+        """Build context query for planning."""
+        goal = self._execution_context.get('goal', '')
+        last_review = self._execution_context.get('last_review', '')
+        return f"Planning to achieve: {goal}. Recent feedback: {last_review}"
+
+    def _get_relevant_memory_types(self) -> list[str]:
+        """Planner cares about decisions, failed approaches, learnings."""
+        return ["decision", "failed_approach", "learning"]
+
+    def _do_execute(
         self,
         project_dir: str,
         goal: str,
@@ -64,29 +106,12 @@ class PlannerAgent(BaseAgent):
 
     def _build_initial_plan_prompt(self, goal: str) -> str:
         """Build prompt for initial plan creation."""
-        return f"""You are a Planner Agent in an autonomous multi-agent system.
+        return f"""Create a comprehensive, actionable project plan to achieve this goal.
 
 PROJECT GOAL:
 {goal}
 
-YOUR TASK:
-Create a comprehensive, actionable project plan to achieve this goal. Your plan should:
-
-1. Break down the goal into clear, concrete tasks
-2. Organize tasks in logical order
-3. Identify key milestones
-4. Consider edge cases and testing requirements
-5. Aim for production-ready quality
-
-OUTPUT FORMAT:
-Provide your plan as a structured markdown document with:
-- Overview/Summary
-- Task breakdown with priorities
-- Key milestones
-- Testing strategy
-- Success criteria
-
-Be specific and actionable. This plan will guide an Executor Agent."""
+Be specific and actionable. This plan will guide the Executor Agent."""
 
     def _build_update_plan_prompt(
         self,
@@ -97,7 +122,7 @@ Be specific and actionable. This plan will guide an Executor Agent."""
         cycle_number: int
     ) -> str:
         """Build prompt for plan updates based on progress."""
-        return f"""You are a Planner Agent in an autonomous multi-agent system.
+        return f"""Update the project plan based on progress and feedback.
 
 PROJECT GOAL:
 {goal}
@@ -113,24 +138,12 @@ LAST EXECUTION RESULT:
 LAST REVIEW:
 {last_review or "No review yet"}
 
-YOUR TASK:
-Update the project plan based on progress and feedback. Consider:
-
+Consider:
 1. What has been completed successfully?
 2. What issues or blockers were encountered?
 3. What tasks remain?
 4. What adjustments are needed?
-5. Are we ready for final validation?
-
-OUTPUT FORMAT:
-Provide an updated plan as a structured markdown document with:
-- Progress summary
-- Updated task list (mark completed tasks)
-- Adjusted priorities
-- Remaining work
-- Next steps
-
-Be specific and actionable."""
+5. Are we ready for final validation?"""
 
     def _extract_plan(self, output: str) -> str:
         """Extract plan from Claude output."""

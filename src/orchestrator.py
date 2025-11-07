@@ -13,28 +13,34 @@ from datetime import datetime
 from pathlib import Path
 
 # Add system directory to path
-sys.path.insert(0, '/home/claude/fireteam')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import config
 from state.manager import StateManager
+from memory.manager import MemoryManager
 from agents import PlannerAgent, ExecutorAgent, ReviewerAgent
 
 
 class Orchestrator:
     """Main orchestrator managing the agent system lifecycle."""
 
-    def __init__(self, project_dir: str, goal: str):
+    def __init__(self, project_dir: str, goal: str, debug: bool = False, keep_memory: bool = False):
         self.project_dir = os.path.abspath(project_dir)
         self.goal = goal
+        self.debug = debug
+        self.keep_memory = keep_memory  # Flag to preserve memory/state after completion
         self.state_manager = StateManager()
 
         # Set up logging
         self.setup_logging()
 
-        # Initialize agents
-        self.planner = PlannerAgent(self.logger)
-        self.executor = ExecutorAgent(self.logger)
-        self.reviewer = ReviewerAgent(self.logger)
+        # Initialize memory (pass logger for observability)
+        self.memory = MemoryManager(logger=self.logger)
+
+        # Initialize agents WITH memory manager
+        self.planner = PlannerAgent(self.logger, memory_manager=self.memory)
+        self.executor = ExecutorAgent(self.logger, memory_manager=self.memory)
+        self.reviewer = ReviewerAgent(self.logger, memory_manager=self.memory)
 
         # Signal handling for graceful shutdown
         signal.signal(signal.SIGINT, self._signal_handler)
@@ -44,13 +50,19 @@ class Orchestrator:
 
     def setup_logging(self):
         """Set up logging to file and console."""
+        # Ensure logs directory exists
+        os.makedirs(config.LOGS_DIR, exist_ok=True)
+        
         log_file = os.path.join(
             config.LOGS_DIR,
             f"orchestrator_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
         )
 
+        # Override log level if debug flag is set
+        log_level = "DEBUG" if self.debug else config.LOG_LEVEL
+
         logging.basicConfig(
-            level=getattr(logging, config.LOG_LEVEL),
+            level=getattr(logging, log_level),
             format=config.LOG_FORMAT,
             handlers=[
                 logging.FileHandler(log_file),
@@ -73,6 +85,7 @@ class Orchestrator:
     def initialize_git_repo(self) -> str:
         """
         Initialize git repo if needed and create a new branch.
+        Works with both new and existing repositories.
         Returns the branch name.
         """
         try:
@@ -81,7 +94,9 @@ class Orchestrator:
 
             # Check if .git exists
             git_dir = os.path.join(self.project_dir, ".git")
-            if not os.path.exists(git_dir):
+            repo_exists = os.path.exists(git_dir)
+            
+            if not repo_exists:
                 self.logger.info("Initializing new git repository")
                 subprocess.run(
                     ["git", "init"],
@@ -89,37 +104,71 @@ class Orchestrator:
                     check=True,
                     capture_output=True
                 )
+            else:
+                self.logger.info("Using existing git repository")
 
-                # Set git config
-                subprocess.run(
-                    ["git", "config", "user.name", config.GIT_USER_NAME],
+            # Set git config only if not already configured
+            try:
+                result = subprocess.run(
+                    ["git", "config", "user.name"],
                     cwd=self.project_dir,
-                    check=True,
-                    capture_output=True
+                    capture_output=True,
+                    text=True
                 )
-                subprocess.run(
-                    ["git", "config", "user.email", config.GIT_USER_EMAIL],
+                if result.returncode != 0 or not result.stdout.strip():
+                    self.logger.info("Configuring git user.name")
+                    subprocess.run(
+                        ["git", "config", "user.name", config.GIT_USER_NAME],
+                        cwd=self.project_dir,
+                        check=True,
+                        capture_output=True
+                    )
+                
+                result = subprocess.run(
+                    ["git", "config", "user.email"],
                     cwd=self.project_dir,
-                    check=True,
-                    capture_output=True
+                    capture_output=True,
+                    text=True
                 )
+                if result.returncode != 0 or not result.stdout.strip():
+                    self.logger.info("Configuring git user.email")
+                    subprocess.run(
+                        ["git", "config", "user.email", config.GIT_USER_EMAIL],
+                        cwd=self.project_dir,
+                        check=True,
+                        capture_output=True
+                    )
+            except subprocess.CalledProcessError as e:
+                self.logger.warning(f"Could not configure git user: {e}")
+                # Continue anyway - git might work with global config
 
-                # Create initial commit if no commits exist
-                subprocess.run(
-                    ["git", "add", "."],
-                    cwd=self.project_dir,
-                    check=True,
-                    capture_output=True
-                )
-                subprocess.run(
-                    ["git", "commit", "-m", "Initial commit", "--allow-empty"],
-                    cwd=self.project_dir,
-                    check=True,
-                    capture_output=True
-                )
+            # For new repos, create initial commit if no commits exist
+            if not repo_exists:
+                try:
+                    # Check if there are any commits
+                    subprocess.run(
+                        ["git", "rev-parse", "HEAD"],
+                        cwd=self.project_dir,
+                        check=True,
+                        capture_output=True
+                    )
+                except subprocess.CalledProcessError:
+                    # No commits yet, create initial commit
+                    self.logger.info("Creating initial commit")
+                    subprocess.run(
+                        ["git", "add", "."],
+                        cwd=self.project_dir,
+                        capture_output=True
+                    )
+                    subprocess.run(
+                        ["git", "commit", "-m", "Initial commit", "--allow-empty"],
+                        cwd=self.project_dir,
+                        check=True,
+                        capture_output=True
+                    )
 
-            # Create new branch with timestamp
-            branch_name = f"agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+            # Create new branch with timestamp from current HEAD
+            branch_name = f"fireteam-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
             self.logger.info(f"Creating branch: {branch_name}")
 
             subprocess.run(
@@ -128,6 +177,9 @@ class Orchestrator:
                 check=True,
                 capture_output=True
             )
+
+            # Initialize memory for project
+            self.memory.initialize_project(self.project_dir, self.goal)
 
             return branch_name
 
@@ -262,6 +314,13 @@ class Orchestrator:
         execution_result = executor_result["execution_result"]
         self.logger.info("Execution completed")
 
+        # Record execution trace in memory
+        self.memory.add_memory(
+            content=execution_result,
+            memory_type="trace",
+            cycle=cycle_num
+        )
+
         # PHASE 3: Review
         self.logger.info("\nPHASE 3: Review")
         self.state_manager.update_state({
@@ -294,6 +353,15 @@ class Orchestrator:
         )
 
         self.logger.info(f"Review completed - Completion: {completion_pct}%")
+
+        # Extract and store learnings from reviewer
+        if "learnings" in reviewer_result:
+            for learning in reviewer_result["learnings"]:
+                self.memory.add_memory(
+                    content=learning["content"],
+                    memory_type=learning["type"],
+                    cycle=cycle_num
+                )
 
         # Update state (completion_percentage already set by update_completion_percentage)
         updated_state = self.state_manager.update_state({
@@ -354,6 +422,16 @@ class Orchestrator:
                     self.logger.info("\n" + "=" * 80)
                     self.logger.info("PROJECT COMPLETED SUCCESSFULLY")
                     self.logger.info("=" * 80)
+                    
+                    # Automatic cleanup (unless --keep-memory flag set)
+                    if not self.keep_memory:
+                        self.logger.info("Cleaning up project data...")
+                        self.memory.clear_project_memory(self.project_dir)
+                        self.state_manager.clear_state()
+                        self.logger.info("Cleanup complete")
+                    else:
+                        self.logger.info("Debug mode: Memory and state preserved for analysis")
+                    
                     break
 
             return 0
@@ -370,10 +448,18 @@ def main():
     parser = argparse.ArgumentParser(description="Fireteam Orchestrator")
     parser.add_argument("--project-dir", required=True, help="Project directory")
     parser.add_argument("--goal", required=True, help="Project goal/prompt")
+    parser.add_argument("--debug", action="store_true", help="Enable debug logging")
+    parser.add_argument("--keep-memory", action="store_true", 
+                        help="Preserve memory and state after completion (for debugging)")
 
     args = parser.parse_args()
 
-    orchestrator = Orchestrator(args.project_dir, args.goal)
+    orchestrator = Orchestrator(
+        args.project_dir, 
+        args.goal, 
+        debug=args.debug,
+        keep_memory=args.keep_memory
+    )
     sys.exit(orchestrator.run())
 
 
