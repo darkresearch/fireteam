@@ -38,8 +38,8 @@ jobs:
   e2e-tests:
     name: End-to-End Tests (API)
     runs-on: ubuntu-latest
-    # Only run on main branch to save API costs
-    if: github.ref == 'refs/heads/main'
+    # Run on main branch and e/* branches for testing
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/e/')
     
     steps:
     - uses: actions/checkout@v4
@@ -70,8 +70,8 @@ jobs:
   integration-tests:
     name: Terminal-bench Integration
     runs-on: ubuntu-latest
-    # Only run on main branch to save API costs
-    if: github.ref == 'refs/heads/main'
+    # Run on main branch and e/* branches for testing
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/e/')
     
     steps:
     - uses: actions/checkout@v4
