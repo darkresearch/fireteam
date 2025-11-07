@@ -2,6 +2,7 @@
 
 import chromadb
 from transformers import AutoModel, AutoTokenizer
+from sentence_transformers import SentenceTransformer
 import torch
 import hashlib
 import logging
@@ -14,8 +15,16 @@ from functools import lru_cache
 class MemoryManager:
     """Manages trace memory with automatic semantic search and observability."""
     
-    def __init__(self, memory_dir: str = None, logger: logging.Logger = None):
-        """Initialize with Qwen3 embeddings and Chroma storage."""
+    def __init__(self, memory_dir: str = None, logger: logging.Logger = None, 
+                 embedding_model: str = None):
+        """Initialize with embeddings and Chroma storage.
+        
+        Args:
+            memory_dir: Directory for memory storage
+            logger: Logger instance
+            embedding_model: HuggingFace model name for embeddings
+                           (defaults to config.MEMORY_EMBEDDING_MODEL)
+        """
         self.logger = logger or logging.getLogger("memory")
         
         if memory_dir is None:
@@ -28,23 +37,37 @@ class MemoryManager:
         self.chroma_client = chromadb.PersistentClient(path=memory_dir)
         self.logger.info(f"[MEMORY] Chroma initialized at {memory_dir}")
         
-        # Load Qwen3-Embedding-0.6B (loads from cache if available)
-        model_name = "Qwen/Qwen3-Embedding-0.6B"
-        self.logger.info(f"[MEMORY] Loading model {model_name}...")
+        # Load embedding model
+        if embedding_model is None:
+            import config
+            embedding_model = config.MEMORY_EMBEDDING_MODEL
+        
+        self.embedding_model_name = embedding_model
+        self.logger.info(f"[MEMORY] Loading model {embedding_model}...")
         start_time = time.time()
         
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModel.from_pretrained(model_name)
+        # Use sentence-transformers for lightweight models, 
+        # otherwise use transformers library for Qwen3
+        if 'sentence-transformers' in embedding_model or 'all-MiniLM' in embedding_model:
+            # Lightweight model - use sentence-transformers API
+            self.model = SentenceTransformer(embedding_model)
+            self.tokenizer = self.model.tokenizer
+            self.use_sentence_transformers = True
+        else:
+            # Qwen3 or other transformers model
+            self.tokenizer = AutoTokenizer.from_pretrained(embedding_model)
+            self.model = AutoModel.from_pretrained(embedding_model)
+            self.use_sentence_transformers = False
+            
+            # Use Metal/MPS acceleration on Mac (with CPU fallback)
+            if torch.backends.mps.is_available():
+                self.model = self.model.to("mps")
+                self.logger.info("[MEMORY] Using Metal/MPS acceleration")
+            else:
+                self.logger.info("[MEMORY] Using CPU (MPS not available)")
         
         load_time = time.time() - start_time
         self.logger.info(f"[MEMORY] Model loaded in {load_time:.2f}s")
-        
-        # Use Metal/MPS acceleration on Mac (with CPU fallback)
-        if torch.backends.mps.is_available():
-            self.model = self.model.to("mps")
-            self.logger.info("[MEMORY] Using Metal/MPS acceleration")
-        else:
-            self.logger.info("[MEMORY] Using CPU (MPS not available)")
         
         self.current_collection = None
     
@@ -55,25 +78,31 @@ class MemoryManager:
         return tuple(self._get_embeddings_impl(texts))
     
     def _get_embeddings_impl(self, texts: list[str]) -> list[list[float]]:
-        """Generate embeddings using Qwen3."""
-        # Tokenize
-        inputs = self.tokenizer(texts, padding=True, truncation=True, return_tensors="pt")
-        
-        # Move to MPS if available
-        if torch.backends.mps.is_available():
-            inputs = {k: v.to("mps") for k, v in inputs.items()}
-        
-        # Generate embeddings
-        with torch.no_grad():
-            outputs = self.model(**inputs)
-        
-        # Mean pooling
-        embeddings = outputs.last_hidden_state.mean(dim=1)
-        
-        # Normalize
-        embeddings = torch.nn.functional.normalize(embeddings, p=2, dim=1)
-        
-        return embeddings.cpu().tolist()
+        """Generate embeddings using configured model."""
+        if self.use_sentence_transformers:
+            # Use sentence-transformers API (simpler)
+            embeddings = self.model.encode(texts, convert_to_numpy=True)
+            return embeddings.tolist()
+        else:
+            # Use transformers API for Qwen3
+            # Tokenize
+            inputs = self.tokenizer(texts, padding=True, truncation=True, return_tensors="pt")
+            
+            # Move to MPS if available
+            if torch.backends.mps.is_available():
+                inputs = {k: v.to("mps") for k, v in inputs.items()}
+            
+            # Generate embeddings
+            with torch.no_grad():
+                outputs = self.model(**inputs)
+            
+            # Mean pooling
+            embeddings = outputs.last_hidden_state.mean(dim=1)
+            
+            # Normalize
+            embeddings = torch.nn.functional.normalize(embeddings, p=2, dim=1)
+            
+            return embeddings.cpu().tolist()
     
     def _get_embeddings(self, texts: list[str]) -> list[list[float]]:
         """Get embeddings with caching."""

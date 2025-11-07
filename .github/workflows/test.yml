@@ -1,0 +1,118 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, e/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  fast-tests:
+    name: Fast Tests (Unit + Lightweight)
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    
+    - name: Install uv
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
+    
+    - name: Create virtual environment
+      run: uv venv
+    
+    - name: Install dependencies
+      run: |
+        source .venv/bin/activate
+        uv pip install -r requirements.txt
+    
+    - name: Run fast tests
+      run: |
+        source .venv/bin/activate
+        pytest tests/ -m "not slow and not e2e and not integration" -v --tb=short
+    
+    - name: Run lightweight embedding tests
+      run: |
+        source .venv/bin/activate
+        pytest tests/ -m "lightweight" -v --tb=short
+
+  e2e-tests:
+    name: End-to-End Tests (API)
+    runs-on: ubuntu-latest
+    # Only run on main branch to save API costs
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    
+    - name: Install uv
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
+    
+    - name: Create virtual environment
+      run: uv venv
+    
+    - name: Install dependencies
+      run: |
+        source .venv/bin/activate
+        uv pip install -r requirements.txt
+    
+    - name: Run E2E tests
+      env:
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      run: |
+        source .venv/bin/activate
+        pytest tests/ -m "e2e" -v --tb=short
+
+  integration-tests:
+    name: Terminal-bench Integration
+    runs-on: ubuntu-latest
+    # Only run on main branch to save API costs
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Install uv
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
+    
+    - name: Install terminal-bench
+      run: uv tool install terminal-bench
+    
+    - name: Create virtual environment
+      run: uv venv
+    
+    - name: Install dependencies
+      run: |
+        source .venv/bin/activate
+        uv pip install -r requirements.txt
+    
+    - name: Install Fireteam adapter
+      run: |
+        source .venv/bin/activate
+        cd benchmark
+        uv pip install -e .
+    
+    - name: Run terminal-bench integration test
+      env:
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      run: |
+        source .venv/bin/activate
+        pytest tests/ -m "integration" -v --tb=short
+

@@ -7,7 +7,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
-env_file = Path(__file__).parent / ".env"
+# Look in repo root (parent of src directory)
+env_file = Path(__file__).parent.parent / ".env"
 if env_file.exists():
     load_dotenv(env_file)
 
