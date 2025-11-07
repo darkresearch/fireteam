@@ -30,15 +30,10 @@ jobs:
         source .venv/bin/activate
         uv pip install -r requirements.txt
     
-    - name: Run fast tests
+    - name: Run all fast tests
       run: |
         source .venv/bin/activate
         pytest tests/ -m "not slow and not e2e and not integration" -v --tb=short
-    
-    - name: Run lightweight embedding tests
-      run: |
-        source .venv/bin/activate
-        pytest tests/ -m "lightweight" -v --tb=short
 
   e2e-tests:
     name: End-to-End Tests (API)
