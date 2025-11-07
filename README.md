@@ -1,6 +1,6 @@
 # Fireteam
 
-[![Tests](https://github.com/YOUR_ORG/fireteam/actions/workflows/test.yml/badge.svg)](https://github.com/YOUR_ORG/fireteam/actions/workflows/test.yml)
+[![Tests](https://github.com/darkresearch/fireteam/actions/workflows/test.yml/badge.svg)](https://github.com/darkresearch/fireteam/actions/workflows/test.yml)
 
 An autonomous multi-agent system for long-running project execution powered by Claude.
 
