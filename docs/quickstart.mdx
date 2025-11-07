@@ -14,8 +14,8 @@ Before installing Fireteam, ensure you have the following installed:
   <Card title="Git" icon="code-branch">
     Used for version control and automatic commits
   </Card>
-  <Card title="Claude CLI" icon="terminal">
-    Powers the autonomous agents
+  <Card title="Anthropic API Key" icon="key">
+    Powers the autonomous agents via Claude AI
   </Card>
   <Card title="Unix-like System" icon="linux">
     Linux or macOS (tested on Ubuntu)
@@ -23,7 +23,7 @@ Before installing Fireteam, ensure you have the following installed:
 </CardGroup>
 
 <Tip>
-Need help installing Claude CLI? Check the [official installation guide](https://docs.claude.com/en/docs/claude-code/installation).
+Get your Anthropic API key from [console.anthropic.com](https://console.anthropic.com)
 </Tip>
 
 ## Installation
@@ -68,31 +68,46 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-### Step 4: Configure Environment Variables (Optional)
+### Step 4: Set Your API Key
 
-Create a `.env` file in the Fireteam directory:
+Fireteam requires an Anthropic API key to access Claude AI:
 
 ```bash
-cd /home/claude/fireteam
-nano .env
+# Set as environment variable
+export ANTHROPIC_API_KEY="your-key-here"
+
+# Or add to .env file
+echo "ANTHROPIC_API_KEY=your-key-here" > .env
 ```
 
-Add your configuration:
+<Info>
+Get your API key from [console.anthropic.com](https://console.anthropic.com)
+</Info>
+
+### Step 5: Configure Additional Settings (Optional)
+
+Optionally configure additional settings in `.env`:
 
 ```bash
-# Git configuration
+# Anthropic API key (required)
+ANTHROPIC_API_KEY=your-key-here
+
+# Model selection (optional)
+ANTHROPIC_MODEL=claude-sonnet-4-5-20250929
+
+# Git configuration (optional)
 GIT_USER_NAME="Your Name"
 GIT_USER_EMAIL="your.email@example.com"
 
-# Optional: Sudo password for system-level operations
-# SUDO_PASSWORD=your_password_here
+# Logging level (optional)
+FIRETEAM_LOG_LEVEL=INFO
 ```
 
 <Warning>
 Never commit your `.env` file to version control. It's already in `.gitignore`.
 </Warning>
 
-### Step 5: Verify Installation
+### Step 6: Verify Installation
 
 Check that the CLI tools are accessible:
 

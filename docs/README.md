@@ -50,7 +50,7 @@ npm run preview
 ## Documentation Structure
 
 ```
-fireteam-docs/
+docs/
 ├── mint.json              # Mintlify configuration
 ├── package.json           # Dependencies
 ├── introduction.mdx       # Homepage
@@ -72,11 +72,9 @@ fireteam-docs/
 │   ├── start-agent.mdx
 │   ├── fireteam-status.mdx
 │   └── stop-agent.mdx
-├── performance/          # Test results & benchmarks
-│   ├── test-results.mdx
-│   └── benchmarks.mdx
 ├── advanced/             # Advanced topics
 │   ├── state-management.mdx
+│   ├── memory-system.mdx (planned)
 │   └── improvements.mdx
 ├── troubleshooting/      # Common issues
 │   └── troubleshooting.mdx

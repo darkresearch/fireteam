@@ -40,17 +40,17 @@ Before installing Fireteam, ensure your system meets these requirements:
       ```
   </Accordion>
 
-  <Accordion title="Claude CLI" icon="terminal">
-    **Required**: Claude CLI for agent execution
+  <Accordion title="Anthropic API Key" icon="key">
+    **Required**: Anthropic API key for Claude AI access
 
-    Install following the [official guide](https://docs.claude.com/en/docs/claude-code/installation)
+    Get your API key from [console.anthropic.com](https://console.anthropic.com)
 
-    Verify installation:
+    Set the environment variable:
     ```bash
-    claude --version
+    export ANTHROPIC_API_KEY="your-key-here"
     ```
 
-    The Claude CLI must be accessible in your PATH.
+    Or add it to your `.env` file in the Fireteam repository root.
   </Accordion>
 
   <Accordion title="Unix-like System" icon="linux">
@@ -203,25 +203,35 @@ After installation, Fireteam's structure looks like this:
 
 ```
 /home/claude/fireteam/
-├── agents/
-│   ├── __init__.py
-│   ├── base.py           # Base agent class
-│   ├── planner.py        # Planner agent
-│   ├── executor.py       # Executor agent
-│   └── reviewer.py       # Reviewer agent
+├── src/
+│   ├── agents/
+│   │   ├── __init__.py
+│   │   ├── base.py       # Base agent class
+│   │   ├── planner.py    # Planner agent
+│   │   ├── executor.py   # Executor agent
+│   │   └── reviewer.py   # Reviewer agent
+│   ├── state/
+│   │   └── manager.py    # State management
+│   ├── memory/
+│   │   └── manager.py    # Memory system
+│   ├── orchestrator.py   # Main orchestration logic
+│   └── config.py         # Configuration settings
 ├── state/
-│   ├── manager.py        # State management
 │   └── current.json      # Active state (created on first run)
+├── memory/               # Memory storage (gitignored)
+│   └── {project_hash}/   # Per-project vector database
 ├── cli/
 │   ├── start-agent       # Start command
 │   ├── stop-agent        # Stop command
-│   ├── agent-progress    # Progress command (legacy)
-│   └── fireteam-status   # Status command (recommended)
+│   ├── agent-progress    # Progress command
+│   └── fireteam-status   # Status command
+├── tests/                # Comprehensive test suite
+│   ├── test_*.py
+│   └── pytest.ini
 ├── logs/                 # Log directory (created by setup)
 │   └── orchestrator_*.log
-├── orchestrator.py       # Main orchestration logic
-├── config.py             # Configuration settings
 ├── setup.sh              # Installation script
+├── requirements.txt      # Python dependencies
 ├── .env.example          # Example environment file
 ├── .env                  # Your environment file (create this)
 ├── .gitignore
@@ -245,14 +255,21 @@ nano .env  # or use your preferred editor
 Edit `.env` with your settings:
 
 ```bash
-# Sudo password for system-level operations
-# Used when agents need to install system packages
-SUDO_PASSWORD=your_password_here
+# Required: Anthropic API key
+ANTHROPIC_API_KEY=your-key-here
 
-# Git configuration (optional)
-# Overrides default values in config.py
+# Optional: Model selection (default: claude-sonnet-4-5-20250929)
+ANTHROPIC_MODEL=claude-sonnet-4-5-20250929
+
+# Optional: Git configuration (overrides defaults)
 GIT_USER_NAME=Your Name
 GIT_USER_EMAIL=your.email@example.com
+
+# Optional: Logging level
+FIREТEAM_LOG_LEVEL=INFO
+
+# Optional: Sudo password for system-level operations
+# SUDO_PASSWORD=your_password_here
 ```
 
 <Warning>
@@ -294,14 +311,20 @@ ls -la ~/.local/bin/ | grep agent
 
 If symlinks are missing, re-run `bash setup.sh`.
 
-### "Claude CLI not found"
+### "ANTHROPIC_API_KEY not set"
 
-**Problem**: Claude CLI not installed or not in PATH
+**Problem**: API key not configured
 
 **Solution**:
-1. Install Claude CLI following [official docs](https://docs.claude.com/en/docs/claude-code/installation)
-2. Verify it's in PATH: `which claude`
-3. Test it works: `claude --version`
+1. Get your API key from [console.anthropic.com](https://console.anthropic.com)
+2. Set it as environment variable:
+   ```bash
+   export ANTHROPIC_API_KEY="your-key-here"
+   ```
+3. Or add to `.env` file:
+   ```bash
+   echo "ANTHROPIC_API_KEY=your-key-here" > .env
+   ```
 
 ### "Python 3.12+ required"
 
