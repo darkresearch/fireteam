@@ -43,14 +43,24 @@ fireteam/
 │   │   ├── planner.py     # Planner agent implementation
 │   │   ├── executor.py    # Executor agent implementation
 │   │   └── reviewer.py    # Reviewer agent implementation
-│   └── state/
-│       └── manager.py     # State management module
+│   ├── state/
+│   │   ├── __init__.py
+│   │   └── manager.py     # State management module
+│   └── memory/
+│       ├── __init__.py
+│       └── manager.py     # Memory system with embeddings
 ├── state/                 # Runtime state data (gitignored)
 │   └── current.json       # Active project state
+├── memory/                # Memory storage (gitignored)
+│   └── {project_hash}/    # Per-project vector database
 ├── cli/
 │   ├── start-agent        # Start command
 │   ├── stop-agent         # Stop command
 │   └── fireteam-status    # Status tool
+├── tests/                 # Comprehensive test suite (165 tests)
+│   ├── pytest.ini
+│   ├── conftest.py
+│   └── test_*.py
 └── logs/                  # Orchestrator logs
 ```
 
@@ -63,7 +73,7 @@ Main control class managing the agent system lifecycle.
 **Location:** `/home/claude/fireteam/src/orchestrator.py`
 
 **Key methods:**
-- `__init__(project_dir, goal)` - Initialize orchestrator
+- `__init__(project_dir, goal, debug, keep_memory)` - Initialize orchestrator
 - `run()` - Main execution loop
 - `run_cycle(state)` - Execute single cycle
 - `check_completion(state)` - Validation logic
@@ -73,7 +83,9 @@ Main control class managing the agent system lifecycle.
 ```python
 orchestrator = Orchestrator(
     project_dir="/home/claude/project",
-    goal="Build a CLI calculator"
+    goal="Build a CLI calculator",
+    debug=False,
+    keep_memory=False
 )
 orchestrator.run()
 ```
@@ -85,9 +97,17 @@ Abstract base class for all agents.
 **Location:** `/home/claude/fireteam/src/agents/base.py`
 
 **Key methods:**
-- `execute(**kwargs)` - Main execution method (abstract)
-- `_call_claude(prompt, cwd)` - Claude CLI interaction
-- `_parse_output(output)` - Output parsing
+- `execute(**kwargs)` - Main execution method (template method pattern)
+- `_do_execute(**kwargs)` - Subclass implementation (abstract)
+- `_execute_with_sdk(prompt, cwd)` - Claude Agent SDK interaction
+- `_retrieve_and_format_memories()` - Automatic memory retrieval
+- `_build_memory_context_query()` - Build context for memory search
+
+**Features:**
+- Automatic memory injection into agent context
+- Retry logic with exponential backoff
+- Timeout management per agent type
+- Template method pattern for consistent behavior
 
 ### PlannerAgent
 
@@ -146,8 +166,28 @@ Manages project state persistence.
 - `initialize_project(dir, goal)` - Create fresh state
 - `load_state()` - Load current state
 - `update_state(updates)` - Update state fields
+- `update_completion_percentage(pct, logger)` - Update with parse failure handling
 - `increment_cycle()` - Advance cycle counter
 - `mark_completed()` - Mark project complete
+- `clear_state()` - Reset state
+
+### MemoryManager
+
+Manages project memory with semantic search.
+
+**Location:** `/home/claude/fireteam/src/memory/manager.py`
+
+**Key methods:**
+- `initialize_project(dir, goal)` - Create memory collection
+- `add_memory(content, memory_type, cycle, metadata)` - Store memory
+- `search(query, limit, memory_types)` - Semantic search
+- `clear_project_memory(dir)` - Clean up memory
+
+**Features:**
+- Local vector database (ChromaDB)
+- Semantic search with Qwen3 embeddings
+- Project isolation via hashing
+- Automatic cleanup
 
 ## Configuration System
 
@@ -155,27 +195,38 @@ Manages project state persistence.
 
 ```python
 # System paths
-SYSTEM_DIR = "/home/claude/fireteam"
+SYSTEM_DIR = os.getenv("FIRETEAM_DIR", "/home/claude/fireteam")
 STATE_DIR = os.path.join(SYSTEM_DIR, "state")
 LOGS_DIR = os.path.join(SYSTEM_DIR, "logs")
+MEMORY_DIR = os.path.join(SYSTEM_DIR, "memory")
+
+# Claude Agent SDK configuration
+SDK_ALLOWED_TOOLS = ["Read", "Write", "Bash", "Edit", "Grep", "Glob"]
+SDK_PERMISSION_MODE = "bypassPermissions"
+SDK_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-5-20250929")
 
 # Agent timeouts (seconds)
+DEFAULT_TIMEOUT = int(os.getenv("FIRETEAM_DEFAULT_TIMEOUT", "600"))
 AGENT_TIMEOUTS = {
-    "planner": 600,
-    "reviewer": 600,
-    "executor": 1800
+    "planner": int(os.getenv("FIRETEAM_AGENT_TIMEOUT_PLANNER", DEFAULT_TIMEOUT)),
+    "reviewer": int(os.getenv("FIRETEAM_AGENT_TIMEOUT_REVIEWER", DEFAULT_TIMEOUT)),
+    "executor": int(os.getenv("FIRETEAM_AGENT_TIMEOUT_EXECUTOR", str(DEFAULT_TIMEOUT * 3)))
 }
 
 # Completion thresholds
 COMPLETION_THRESHOLD = 95
 VALIDATION_CHECKS_REQUIRED = 3
 
+# Memory configuration
+MEMORY_EMBEDDING_MODEL = "Qwen/Qwen3-Embedding-0.6B"
+MEMORY_SEARCH_LIMIT = 10
+
 # Git configuration
 GIT_USER_NAME = os.environ.get("GIT_USER_NAME", "fireteam")
 GIT_USER_EMAIL = os.environ.get("GIT_USER_EMAIL", "fireteam@darkresearch.ai")
 
-# Optional sudo password
-SUDO_PASSWORD = os.getenv("SUDO_PASSWORD", None)
+# Logging
+LOG_LEVEL = os.getenv("LOG_LEVEL", os.getenv("FIRETEAM_LOG_LEVEL", "INFO")).upper()
 ```
 
 See [Configuration Reference](/configuration/config-file) for details.
@@ -318,25 +369,31 @@ def commit_changes(self, cycle_number, message_suffix):
     )
 ```
 
-### Claude CLI Integration
+### Claude Agent SDK Integration
 
-All agents use:
+All agents use the Claude Agent SDK:
 ```python
 # Base agent method
-def _call_claude(self, prompt, cwd):
-    result = subprocess.run(
-        [
-            "claude",
-            "--dangerously-skip-permissions",
-            "--prompt", prompt,
-            "--cwd", cwd
-        ],
-        capture_output=True,
-        text=True,
-        timeout=self.timeout
+async def _execute_with_sdk(self, prompt, project_dir):
+    from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions
+    
+    # Configure SDK options
+    options = ClaudeAgentOptions(
+        allowed_tools=config.SDK_ALLOWED_TOOLS,
+        permission_mode=config.SDK_PERMISSION_MODE,
+        model=config.SDK_MODEL,
+        cwd=project_dir,
+        system_prompt=self.get_system_prompt()
     )
-    return result.stdout
+    
+    # Execute with SDK
+    async with ClaudeSDKClient(options=options) as client:
+        await client.query(prompt)
+        async for message in client.receive_response():
+            # Process response...
 ```
+
+**Note**: API key is read from `ANTHROPIC_API_KEY` environment variable.
 
 ## Error Handling
 

@@ -10,11 +10,11 @@ Fireteam's behavior is controlled through `config.py`, located in the root of th
 ## Configuration File Location
 
 ```bash
-/home/claude/fireteam/config.py
+/home/claude/fireteam/src/config.py
 ```
 
 <Tip>
-Changes to `config.py` require restarting any running Fireteam instances to take effect.
+Configuration can be set via environment variables or by editing `src/config.py`. Environment variables take precedence.
 </Tip>
 
 ## Core Settings
@@ -22,51 +22,84 @@ Changes to `config.py` require restarting any running Fireteam instances to take
 ### System Paths
 
 ```python
-SYSTEM_DIR = "/home/claude/fireteam"
+SYSTEM_DIR = os.getenv("FIRETEAM_DIR", "/home/claude/fireteam")
 STATE_DIR = os.path.join(SYSTEM_DIR, "state")
 LOGS_DIR = os.path.join(SYSTEM_DIR, "logs")
-CLI_DIR = os.path.join(SYSTEM_DIR, "cli")
+MEMORY_DIR = os.path.join(SYSTEM_DIR, "memory")
 ```
 
 **Description:**
-- `SYSTEM_DIR`: Root directory for Fireteam installation
+- `SYSTEM_DIR`: Root directory for Fireteam installation (can be overridden via `FIRETEAM_DIR` env var)
 - `STATE_DIR`: Where project state files are stored (`state/current.json`)
 - `LOGS_DIR`: Location for orchestrator and system logs
-- `CLI_DIR`: Directory containing CLI executables (`start-agent`, `stop-agent`, etc.)
+- `MEMORY_DIR`: Vector database storage for project memories
 
 <Warning>
-**Do not modify these paths** unless you've relocated the Fireteam installation. Changing these can break CLI tools and state management.
+**Do not modify these paths** in code unless you understand the implications. Use the `FIRETEAM_DIR` environment variable instead.
 </Warning>
 
-## Claude CLI Configuration
+## Claude Agent SDK Configuration
 
 ```python
-CLAUDE_CLI = "claude"
-DANGEROUSLY_SKIP_PERMISSIONS = "--dangerously-skip-permissions"
+SDK_ALLOWED_TOOLS = ["Read", "Write", "Bash", "Edit", "Grep", "Glob"]
+SDK_PERMISSION_MODE = "bypassPermissions"
+SDK_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-5-20250929")
 ```
 
 **Description:**
-- `CLAUDE_CLI`: Command to invoke Claude CLI (assumes `claude` is in PATH)
-- `DANGEROUSLY_SKIP_PERMISSIONS`: Flag enabling fully autonomous operation without permission prompts
+- `SDK_ALLOWED_TOOLS`: Tools available to agents (Read, Write, Bash, Edit, Grep, Glob)
+- `SDK_PERMISSION_MODE`: Permission mode - `bypassPermissions` enables fully autonomous operation
+- `SDK_MODEL`: Claude model to use (default: claude-sonnet-4-5-20250929)
+
+**Environment Variables:**
+```bash
+# Set model via environment
+export ANTHROPIC_MODEL="claude-sonnet-4-5-20250929"
+```
 
 <Info>
-The `--dangerously-skip-permissions` flag allows agents to execute file operations, install packages, and run commands without manual approval. This is essential for autonomous operation but should only be used in controlled environments.
+The `bypassPermissions` mode allows agents to execute file operations and commands without manual approval. This is essential for autonomous operation.
 </Info>
+
+## API Key Configuration
+
+Fireteam requires an Anthropic API key:
+
+```bash
+# Set as environment variable
+export ANTHROPIC_API_KEY="your-key-here"
+
+# Or in .env file
+echo "ANTHROPIC_API_KEY=your-key-here" > .env
+```
+
+<Warning>
+Never commit `.env` files containing your API key to version control.
+</Warning>
 
 ## Agent Timeouts
 
 ```python
+DEFAULT_TIMEOUT = int(os.getenv("FIRETEAM_DEFAULT_TIMEOUT", "600"))
 AGENT_TIMEOUTS = {
-    "planner": 600,      # 10 minutes
-    "reviewer": 600,     # 10 minutes
-    "executor": 1800     # 30 minutes
+    "planner": int(os.getenv("FIRETEAM_AGENT_TIMEOUT_PLANNER", DEFAULT_TIMEOUT)),
+    "reviewer": int(os.getenv("FIRETEAM_AGENT_TIMEOUT_REVIEWER", DEFAULT_TIMEOUT)),
+    "executor": int(os.getenv("FIRETEAM_AGENT_TIMEOUT_EXECUTOR", str(DEFAULT_TIMEOUT * 3)))
 }
 ```
 
 **Description:**
-- `planner`: Maximum time (seconds) for planning phase
-- `reviewer`: Maximum time (seconds) for review phase
-- `executor`: Maximum time (seconds) for execution phase
+- `planner`: Maximum time (seconds) for planning phase (default: 600 = 10 minutes)
+- `reviewer`: Maximum time (seconds) for review phase (default: 600 = 10 minutes)
+- `executor`: Maximum time (seconds) for execution phase (default: 1800 = 30 minutes)
+
+**Environment Variables:**
+```bash
+# Configure via environment
+export FIRETEAM_AGENT_TIMEOUT_PLANNER=900   # 15 minutes
+export FIRETEAM_AGENT_TIMEOUT_EXECUTOR=3600 # 60 minutes
+export FIRETEAM_AGENT_TIMEOUT_REVIEWER=900  # 15 minutes
+```
 
 ### Why These Values?
 
@@ -203,7 +236,7 @@ See [Environment Setup](/installation/environment) for `.env` configuration.
 ## Logging Configuration
 
 ```python
-LOG_LEVEL = "INFO"
+LOG_LEVEL = os.getenv("LOG_LEVEL", os.getenv("FIRETEAM_LOG_LEVEL", "INFO")).upper()
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 ```
 
@@ -215,11 +248,42 @@ LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
 | Level | Description | When to use |
 |-------|-------------|-------------|
-| `DEBUG` | Detailed diagnostic info | Debugging agent behavior, state changes |
+| `DEBUG` | Detailed diagnostic info | Debugging agent behavior, state changes, memory operations |
 | `INFO` | General informational messages | Default, normal operation |
 | `WARNING` | Warning messages | Non-critical issues |
 | `ERROR` | Error messages | Failures and exceptions |
 | `CRITICAL` | Critical errors | System-level failures |
+
+**Environment Variables:**
+```bash
+export FIRETEAM_LOG_LEVEL=DEBUG  # Enable verbose logging
+```
+
+## Memory System Configuration
+
+```python
+MEMORY_DIR = os.path.join(SYSTEM_DIR, "memory")
+MEMORY_EMBEDDING_MODEL = "Qwen/Qwen3-Embedding-0.6B"
+MEMORY_SEARCH_LIMIT = 10
+```
+
+**Description:**
+- `MEMORY_DIR`: Directory for storing vector databases per project
+- `MEMORY_EMBEDDING_MODEL`: Embedding model for semantic search
+- `MEMORY_SEARCH_LIMIT`: Number of relevant memories to retrieve per query
+
+**Memory System Features:**
+- Automatic memory retrieval injected into agent context each cycle
+- Local vector storage with ChromaDB (no external dependencies)
+- Per-project isolation - zero cross-contamination
+- Semantic search for relevant past experiences
+- Automatic cleanup on project completion
+
+**Performance:**
+- First run downloads ~1.2GB Qwen3 embedding model (cached locally)
+- Model load: 3-5 seconds (once at startup)
+- Per cycle overhead: ~3 seconds for memory retrieval
+- Storage grows with project size, auto-cleaned on completion
 
 **Example for debugging:**
 

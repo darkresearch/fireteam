@@ -9,17 +9,16 @@ Fireteam is a lightweight wrapper around Claude that enables perpetual execution
 
 **The problem:** Claude (and other AI assistants) stop when they decide they're "done" - often prematurely. You can't control when they stop or enforce objective completion criteria.
 
-**Our solution:** Fireteam orchestrates four specialized Claude instances in a loop with an objective review system:
+**Our solution:** Fireteam orchestrates three specialized Claude instances in a loop with an objective review system:
 
 - **Planner**: Analyzes the codebase and creates/updates project plans
 - **Executor**: Implements code based on the plan
 - **Reviewer**: Scores completion percentage (0-100%) against the original goal
-- **Orchestrator**: Manages the cycle and enforces completion criteria
 
 The system runs in an infinite loop until it achieves 95%+ completion three consecutive times. This validation requirement prevents premature stopping and enables runs lasting hours, days, or longer.
 
 <Info>
-**Why "Fireteam"?** In military terminology, a fireteam is the smallest unit - typically four people. This reflects our minimal multi-agent architecture: four Claude instances working together.
+**Why "Fireteam"?** In military terminology, a fireteam is the smallest unit - typically three to four people. This reflects our minimal multi-agent architecture: three specialized Claude instances working together under orchestration.
 </Info>
 
 ## How It Works
@@ -48,8 +47,8 @@ The loop continues indefinitely until the completion threshold is met consistent
   <Card title="Multi-Cycle Validation" icon="check-double">
     Requires consistent completion scores across multiple cycles
   </Card>
-  <Card title="Configurable Thresholds" icon="sliders">
-    Completion criteria are configurable, not subjective
+  <Card title="Memory System" icon="brain">
+    Learns from past cycles using local vector-based memory
   </Card>
   <Card title="Git Integration" icon="code-branch">
     Every cycle creates a commit with progress tracking
@@ -57,8 +56,8 @@ The loop continues indefinitely until the completion threshold is met consistent
   <Card title="Objective Scoring" icon="percent">
     Reviewer scores against original goal (0-100%)
   </Card>
-  <Card title="State Isolation" icon="database">
-    Clean state separation between projects
+  <Card title="Comprehensive Testing" icon="flask">
+    165 tests with CI/CD pipeline ensuring reliability
   </Card>
 </CardGroup>
 
