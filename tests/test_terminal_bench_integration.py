@@ -33,8 +33,8 @@ class TestTerminalBenchIntegration:
             '--dataset', 'terminal-bench-core==0.1.1',
             '--task-id', 'hello-world',
             '--global-agent-timeout-sec', '600',
-            '--log-level', 'debug',
-            '--livestream'  # Enable real-time output
+            '--log-level', 'debug'
+            # Note: --livestream removed to show output in CI/act logs
         ]
         
         print("\n🚀 Running terminal-bench hello-world task...")
