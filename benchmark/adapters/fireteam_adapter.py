@@ -141,7 +141,7 @@ class FireteamAdapter(AbstractInstalledAgent):
         fireteam_root = Path(__file__).parent.parent.parent
         
         # Create directory structure in container first
-        session.container.exec_run(["mkdir", "-p", "/fireteam/src/agents", "/fireteam/src/state"])
+        session.container.exec_run(["mkdir", "-p", "/fireteam/src/agents", "/fireteam/src/state", "/fireteam/src/memory"])
         
         # Copy main files
         session.copy_to_container(
@@ -174,6 +174,14 @@ class FireteamAdapter(AbstractInstalledAgent):
                 paths=[state_file],
                 container_dir="/fireteam/src/state",
                 container_filename=state_file.name
+            )
+        
+        # Copy memory module files
+        for memory_file in (fireteam_root / "src" / "memory").glob("*.py"):
+            session.copy_to_container(
+                paths=[memory_file],
+                container_dir="/fireteam/src/memory",
+                container_filename=memory_file.name
             )
         
         # Run parent's setup and execution
