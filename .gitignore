@@ -37,3 +37,4 @@ logs/
 
 # Benchmark runs
 runs/
+.secrets

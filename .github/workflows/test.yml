@@ -99,8 +99,12 @@ jobs:
   integration-tests:
     name: Terminal-bench Integration
     runs-on: ubuntu-latest
-    # Temporarily disabled - needs debugging
-    if: false
+    timeout-minutes: 20  # Fail fast if tests hang
+    # Run on main branch and e/* branches for testing
+    if: |
+      github.ref == 'refs/heads/main' || 
+      startsWith(github.ref, 'refs/heads/e/') ||
+      startsWith(github.head_ref, 'e/')
     
     steps:
     - uses: actions/checkout@v4
@@ -114,10 +118,15 @@ jobs:
       uses: docker/setup-buildx-action@v3
     
     - name: Install uv
-      run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
     
     - name: Install terminal-bench
-      run: uv tool install terminal-bench
+      run: |
+        export PATH="$HOME/.local/bin:$PATH"
+        uv tool install terminal-bench
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
     
     - name: Create virtual environment
       run: uv venv
@@ -134,9 +143,14 @@ jobs:
         uv pip install -e .
     
     - name: Run terminal-bench integration test
+      timeout-minutes: 15  # Per-step timeout
       env:
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        PYTHONUNBUFFERED: "1"  # Force immediate output
       run: |
         source .venv/bin/activate
-        pytest tests/ -m "integration" -v --tb=short
+        export PATH="$HOME/.local/bin:$PATH"
+        echo "Starting terminal-bench integration tests at $(date)"
+        pytest tests/ -m "integration" -v --tb=short -s --log-cli-level=INFO
+        echo "Terminal-bench tests completed at $(date)"
 
