@@ -1,0 +1,12 @@
+# Act configuration for running GitHub Actions locally
+# Uses larger Docker image to support full Ubuntu functionality
+
+# Use medium-sized Ubuntu image (ubuntu-latest equivalent)
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+
+# Enable verbose output for debugging
+--verbose
+
+# Container architecture (automatically detected)
+--container-architecture linux/amd64
+
