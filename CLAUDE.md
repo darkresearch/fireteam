@@ -12,17 +12,24 @@
 
 ### Common Operations
 ```bash
-# Install dependencies from requirements.txt
-uv pip install -r requirements.txt
+# Install all dependencies (creates venv and uses uv.lock)
+uv sync
 
-# Install a single package
-uv pip install <package-name>
+# Install with dev dependencies
+uv sync --extra dev
 
-# Create virtual environment with uv
-uv venv
+# Add a new dependency
+uv add <package-name>
 
-# Sync dependencies (install exact versions from lockfile)
-uv pip sync requirements.txt
+# Add a dev dependency
+uv add --dev <package-name>
+
+# Update lockfile after changing pyproject.toml
+uv lock
+
+# Run a command in the virtual environment
+uv run python script.py
+uv run pytest
 ```
 
 ## Why These Rules?

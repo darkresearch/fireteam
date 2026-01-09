@@ -35,23 +35,32 @@ chmod +x "$SYSTEM_DIR/src/orchestrator.py"
 mkdir -p "$SYSTEM_DIR/logs"
 mkdir -p "$SYSTEM_DIR/state"
 
-# Check for Python
+# Check for Python 3.12+
 if ! command -v python3 &> /dev/null; then
-    echo "Error: Python 3 is required but not found"
+    echo "Error: Python 3.12+ is required but not found"
     exit 1
 fi
 
-echo "Python 3: $(python3 --version)"
-
-# Install Python dependencies
-echo "Installing Python dependencies..."
-if command -v pip3 &> /dev/null; then
-    pip3 install -r "$SYSTEM_DIR/requirements.txt" --quiet
-    echo "✓ Python dependencies installed"
-else
-    echo "Warning: pip3 not found, skipping dependency installation"
-    echo "Please install dependencies manually: pip3 install -r $SYSTEM_DIR/requirements.txt"
+PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+if [[ "$(echo -e "3.12\n$PYTHON_VERSION" | sort -V | head -n1)" != "3.12" ]]; then
+    echo "Error: Python 3.12+ is required, but found Python $PYTHON_VERSION"
+    exit 1
 fi
+
+echo "Python: $(python3 --version)"
+
+# Install uv if not present
+if ! command -v uv &> /dev/null; then
+    echo "Installing uv package manager..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+
+# Install Python dependencies using uv
+echo "Installing Python dependencies with uv..."
+cd "$SYSTEM_DIR"
+uv sync --quiet
+echo "✓ Python dependencies installed"
 
 # Claude CLI no longer required - using Agent SDK
 echo "✓ Using Claude Agent SDK (CLI not required)"

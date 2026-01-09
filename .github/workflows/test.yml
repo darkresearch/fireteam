@@ -22,13 +22,8 @@ jobs:
     - name: Install uv
       run: curl -LsSf https://astral.sh/uv/install.sh | sh
 
-    - name: Create virtual environment
-      run: uv venv
-
     - name: Install dependencies
-      run: |
-        source .venv/bin/activate
-        uv pip install -e ".[dev]"
+      run: uv sync --extra dev
 
     - name: Run unit tests
       run: |
@@ -55,13 +50,8 @@ jobs:
     - name: Install uv
       run: curl -LsSf https://astral.sh/uv/install.sh | sh
 
-    - name: Create virtual environment
-      run: uv venv
-
     - name: Install dependencies
-      run: |
-        source .venv/bin/activate
-        uv pip install -e ".[dev]"
+      run: uv sync --extra dev
 
     - name: Run integration tests
       timeout-minutes: 15
