@@ -1,0 +1,7 @@
+{
+  "name": "fireteam",
+  "version": "0.1.0",
+  "description": "Multi-phase autonomous task execution with complexity estimation, planning, execution, and review",
+  "commands": ["commands/fireteam.md"],
+  "hooks": "hooks/hooks.json"
+}

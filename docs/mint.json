@@ -55,53 +55,19 @@
       ]
     },
     {
-      "group": "Core Concepts",
+      "group": "Concepts",
       "pages": [
-        "core-concepts/architecture",
-        "core-concepts/agents",
-        "core-concepts/cycles"
-      ]
-    },
-    {
-      "group": "Installation & Setup",
-      "pages": [
-        "installation/installation",
-        "installation/environment",
-        "installation/requirements"
-      ]
-    },
-    {
-      "group": "Configuration",
-      "pages": [
-        "configuration/config-file",
-        "configuration/timeouts",
-        "configuration/sudo-setup"
-      ]
-    },
-    {
-      "group": "CLI Tools",
-      "pages": [
-        "cli-tools/overview",
-        "cli-tools/start-agent",
-        "cli-tools/fireteam-status",
-        "cli-tools/stop-agent"
-      ]
-    },
-    {
-      "group": "Advanced Topics",
-      "pages": [
-        "advanced/state-management",
-        "advanced/improvements",
-        "troubleshooting/troubleshooting"
+        "concepts/complexity",
+        "concepts/execution-modes",
+        "concepts/hooks"
       ]
     },
     {
       "group": "API Reference",
       "pages": [
-        "api/overview",
-        "api/state-manager",
-        "api/agents",
-        "api/configuration"
+        "api/execute",
+        "api/estimate-complexity",
+        "api/types"
       ]
     }
   ],
@@ -117,10 +83,5 @@
   },
   "search": {
     "prompt": "Search Fireteam docs..."
-  },
-  "analytics": {
-    "posthog": {
-      "apiKey": "phc_placeholder_key_fireteam_docs"
-    }
   }
 }

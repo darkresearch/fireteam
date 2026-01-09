@@ -1,0 +1,156 @@
+---
+title: Execution Modes
+description: Understanding Fireteam's execution strategies
+---
+
+# Execution Modes
+
+Fireteam uses different execution strategies based on task complexity. Each mode balances thoroughness against efficiency.
+
+## Mode Overview
+
+```
+SINGLE_TURN  →  Execute
+SIMPLE       →  Execute
+MODERATE     →  Execute → Review
+FULL         →  Plan → Execute → Review (×3)
+```
+
+## SINGLE_TURN Mode
+
+**For:** Trivial tasks like typo fixes, adding comments
+
+**Behavior:**
+- Single Claude SDK call
+- Minimal tool access
+- No review phase
+- Fastest execution
+
+```python
+from fireteam import execute, ExecutionMode
+
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Fix the typo in README.md",
+    mode=ExecutionMode.SINGLE_TURN,
+)
+```
+
+## SIMPLE Mode
+
+**For:** Self-contained tasks that don't require planning
+
+**Behavior:**
+- Execute phase only
+- Full tool access (Read, Write, Edit, Bash)
+- No review phase
+- Quick execution
+
+```python
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Add logging to the auth module",
+    mode=ExecutionMode.SIMPLE,
+)
+```
+
+## MODERATE Mode
+
+**For:** Tasks requiring some verification
+
+**Behavior:**
+- Execute phase with full tools
+- Single review phase afterward
+- Extracts completion percentage
+- Good balance of speed and quality
+
+```python
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Refactor the user service",
+    mode=ExecutionMode.MODERATE,
+)
+
+# Result includes review info
+print(result.completion_percentage)  # e.g., 85
+print(result.metadata.get("review"))  # Review output
+```
+
+## FULL Mode
+
+**For:** Complex tasks requiring planning and validation
+
+**Behavior:**
+1. **Planning Phase**: Analyze goal, create implementation plan
+2. **Execution Phase**: Implement the plan
+3. **Validation Phase**: Multiple reviews until 3 consecutive >95% completion
+
+```python
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Redesign the authentication system",
+    mode=ExecutionMode.FULL,
+)
+
+# Result includes all phases
+print(result.metadata.get("plan"))  # Implementation plan
+print(result.metadata.get("review"))  # Final review
+print(result.completion_percentage)  # Should be >95%
+```
+
+### Validation Requirements
+
+FULL mode requires **3 consecutive reviews** scoring **>95%** completion before succeeding. This ensures:
+
+- No premature completion
+- Consistent quality across reviews
+- Thorough verification of changes
+
+If validation fails, the result will have `success=False` with an error explaining why.
+
+## Mode Selection
+
+### Automatic (Recommended)
+
+Let Fireteam choose based on complexity estimation:
+
+```python
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Your task here",
+    # mode not specified - auto-detect
+)
+
+print(f"Used mode: {result.mode}")
+```
+
+### Manual Override
+
+Force a specific mode:
+
+```python
+# Be thorough with a simple task
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Add a comment",
+    mode=ExecutionMode.FULL,
+)
+
+# Be quick with a complex task (not recommended)
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Refactor everything",
+    mode=ExecutionMode.SINGLE_TURN,
+)
+```
+
+## Tool Access by Mode
+
+| Mode | Read | Write | Edit | Bash | Glob | Grep |
+|------|------|-------|------|------|------|------|
+| SINGLE_TURN | Limited | Limited | Limited | No | No | No |
+| SIMPLE | Yes | Yes | Yes | Yes | Yes | Yes |
+| MODERATE | Yes | Yes | Yes | Yes | Yes | Yes |
+| FULL | Yes | Yes | Yes | Yes | Yes | Yes |
+
+Note: Planner and Reviewer phases in FULL mode have read-only access.

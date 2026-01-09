@@ -1,298 +1,188 @@
 # Fireteam
 
-[![Tests](https://github.com/darkresearch/fireteam/actions/workflows/test.yml/badge.svg)](https://github.com/darkresearch/fireteam/actions/workflows/test.yml)
-
-An autonomous multi-agent system for long-running project execution powered by Claude.
+Multi-phase autonomous task execution with complexity estimation, planning, execution, and review.
 
 ## Overview
 
-The Fireteam is a sophisticated orchestration framework that manages three specialized agents in an infinite cycle of planning, execution, and review until project completion:
+Fireteam provides adaptive task execution using Claude Agent SDK. It automatically estimates task complexity and selects the appropriate execution strategy:
 
-- **Planner Agent**: Creates and updates project plans
-- **Executor Agent**: Executes planned tasks
-- **Reviewer Agent**: Assesses progress and estimates completion
-
-## Architecture
-
-```
-Orchestrator (Infinite Loop)
-    ↓
-[Plan] → [Execute] → [Review] → [Git Commit]
-    ↑___________________________________|
-```
-
-### Key Features
-
-- **Autonomous Operation**: Runs continuously until project completion
-- **Git Integration**: Automatic repo initialization, branching, commits, and pushing
-- **State Isolation**: Clean state separation between projects to prevent contamination
-- **Completion Validation**: Triple-check validation system (3 consecutive >95% reviews)
-- **Error Recovery**: Automatic retry logic and graceful degradation
-- **Production Focus**: Emphasis on production-ready code with comprehensive testing
+| Complexity | Mode | Phases |
+|------------|------|--------|
+| TRIVIAL | SINGLE_TURN | Direct execution, minimal tools |
+| SIMPLE | SIMPLE | Execute only |
+| MODERATE | MODERATE | Execute + single review |
+| COMPLEX | FULL | Plan + execute + validation reviews |
 
 ## Installation
 
-1. **Prerequisites**
-   - Python 3.12+
-   - Git
-   - Claude CLI ([installation guide](https://docs.claude.com/en/docs/claude-code/installation))
+```bash
+pip install fireteam
+```
 
-2. **Setup**
-   ```bash
-   cd /home/claude/fireteam
-   bash setup.sh
-   source ~/.bashrc  # or restart your shell
-   ```
+Requires Python 3.10+ and a valid `ANTHROPIC_API_KEY` environment variable.
 
 ## Usage
 
-### Starting a Project
+### Basic Usage
 
-```bash
-start-agent --project-dir /path/to/project --prompt "Your project goal here"
+```python
+import asyncio
+from fireteam import execute
+
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Fix the bug in auth.py",
+    context="Error logs: NullPointerException at line 42",
+)
+
+if result.success:
+    print(f"Completed: {result.output}")
+    print(f"Completion: {result.completion_percentage}%")
+else:
+    print(f"Failed: {result.error}")
 ```
 
-Example:
-```bash
-start-agent --project-dir ~/my-calculator --prompt "Build a Python command-line calculator with support for basic arithmetic operations"
+### Specify Execution Mode
+
+```python
+from fireteam import execute, ExecutionMode
+
+# Force a specific mode
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Refactor the authentication module",
+    mode=ExecutionMode.FULL,  # Use full plan+execute+review cycle
+)
 ```
 
-### Checking Progress
+### Complexity Estimation
 
-```bash
-agent-progress
+```python
+from fireteam import estimate_complexity, ComplexityLevel
+
+complexity = await estimate_complexity(
+    goal="Add logging to the auth module",
+    context="Existing logging in other modules uses Python logging",
+)
+
+print(f"Estimated complexity: {complexity}")
+# ComplexityLevel.SIMPLE
 ```
 
-This shows:
-- Current status (running/stopped)
-- Project information
-- Current cycle number
-- Completion percentage
-- Recent activity logs
+## Execution Modes
 
-### Stopping the System
+### SINGLE_TURN
+For trivial tasks like fixing typos or adding comments. Single SDK call with minimal tools.
 
-```bash
-stop-agent
+### SIMPLE
+For simple tasks. Execute only, no review phase.
+
+### MODERATE
+For moderate tasks. Execute + single review to assess completion.
+
+### FULL
+For complex tasks. Full cycle:
+1. **Planning**: Analyze goal and create implementation plan
+2. **Execution**: Implement the plan
+3. **Validation**: Multiple reviews until 3 consecutive >95% completion ratings
+
+## API Reference
+
+### `execute()`
+
+```python
+async def execute(
+    project_dir: str | Path,
+    goal: str,
+    context: str | None = None,
+    mode: ExecutionMode | None = None,  # Auto-detect if None
+    run_tests: bool = True,
+) -> ExecutionResult
 ```
 
-This gracefully shuts down the orchestrator and all running agents.
+### `ExecutionResult`
 
-## How It Works
+```python
+@dataclass
+class ExecutionResult:
+    success: bool
+    mode: ExecutionMode
+    output: str | None = None
+    error: str | None = None
+    completion_percentage: int = 0
+    metadata: dict = field(default_factory=dict)
+```
 
-### Initialization
+### `estimate_complexity()`
 
-1. Creates/validates Git repository in project directory
-2. Creates timestamped branch (e.g., `agent-20240315-143022`)
-3. Initializes clean project state
-
-### Cycle Execution
-
-Each cycle consists of three phases:
-
-1. **Planning Phase**
-   - Planner agent reviews goal, previous plan, and recent results
-   - Creates or updates project plan
-   - Breaks down remaining work into actionable tasks
-
-2. **Execution Phase**
-   - Executor agent implements tasks from the plan
-   - Writes actual, working code (no placeholders)
-   - Tests implementations
-   - Documents work
-
-3. **Review Phase**
-   - Reviewer agent examines the codebase
-   - Tests functionality
-   - Estimates completion percentage (0-100%)
-   - Identifies gaps or issues
-
-4. **Git Commit**
-   - Commits all changes with descriptive message
-   - Pushes to remote if origin exists
-
-### Completion Logic
-
-- System runs infinite cycles until completion
-- When Reviewer estimates >95% complete: enter validation mode
-- Validation requires 3 consecutive reviews confirming >95%
-- Each validation review takes a fresh, critical look
-- Upon completion: system stops and logs success
-
-## State Management
-
-State is stored in `state/current.json` (runtime data directory) and includes:
-
-- `project_dir`: Absolute path to project
-- `goal`: Project objective
-- `status`: Current phase (planning/executing/reviewing)
-- `cycle_number`: Current cycle count
-- `completion_percentage`: Latest estimate (0-100)
-- `validation_checks`: Consecutive validation passes
-- `git_branch`: Current branch name
-- `current_plan`: Latest plan
-- `last_execution_result`: Latest execution output
-- `last_review`: Latest review output
-
-**Important**: State is completely reset between projects to prevent cross-contamination.
+```python
+async def estimate_complexity(
+    goal: str,
+    context: str | None = None,
+) -> ComplexityLevel
+```
 
 ## Configuration
 
-Edit `src/config.py` to customize:
+Configure via environment variables:
 
-- `MAX_RETRIES`: Number of retry attempts for failed agent calls (default: 3)
-- `COMPLETION_THRESHOLD`: Percentage to trigger validation (default: 95)
-- `VALIDATION_CHECKS_REQUIRED`: Consecutive checks needed (default: 3)
-- `LOG_LEVEL`: Logging verbosity (default: INFO)
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ANTHROPIC_API_KEY` | (required) | API key for Claude |
+| `FIRETEAM_LOG_LEVEL` | INFO | Logging verbosity |
+| `FIRETEAM_COMPLETION_THRESHOLD` | 95 | Minimum completion % for FULL mode |
+| `FIRETEAM_VALIDATION_CHECKS` | 3 | Consecutive checks needed in FULL mode |
 
-## Logging
+## Quality Hooks
 
-Logs are stored in `logs/`:
+Fireteam includes SDK hooks for quality enforcement:
 
-- `orchestrator_YYYYMMDD_HHMMSS.log`: Per-run orchestrator logs
-- `system.log`: Combined system output (when running in background)
+- **QUALITY_HOOKS**: Run tests after edits, block user questions
+- **AUTONOMOUS_HOOKS**: Block all user interaction
+- **DEBUG_HOOKS**: Log all tool usage
+
+```python
+from fireteam import execute, QUALITY_HOOKS
+
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Add feature",
+    run_tests=True,  # Enables QUALITY_HOOKS
+)
+```
 
 ## Project Structure
 
 ```
 fireteam/
-├── src/                    # Source code directory
-│   ├── orchestrator.py    # Main orchestration loop
-│   ├── config.py          # Configuration settings
-│   ├── __init__.py
-│   ├── agents/
-│   │   ├── __init__.py
-│   │   ├── base.py        # Base agent class
-│   │   ├── planner.py     # Planner agent
-│   │   ├── executor.py    # Executor agent
-│   │   └── reviewer.py    # Reviewer agent
-│   └── state/
-│       └── manager.py     # State management module
-├── state/                 # Runtime state data (gitignored)
-│   └── current.json       # Active project state
-├── cli/
-│   ├── start-agent        # Start system
-│   ├── stop-agent         # Stop system
-│   └── agent-progress     # Check status
-├── logs/                  # Log directory
-├── service/
-│   └── claude-agent.service  # Systemd service file
-├── setup.sh               # Installation script
-└── README.md             # This file
+├── src/
+│   ├── __init__.py      # Public API exports
+│   ├── api.py           # Core execute() function
+│   ├── complexity.py    # Complexity estimation
+│   ├── config.py        # Configuration
+│   └── hooks.py         # SDK hooks for quality
+├── tests/
+│   ├── test_api.py      # API tests
+│   ├── test_complexity.py
+│   ├── test_hooks.py
+│   └── test_integration.py
+└── pyproject.toml
 ```
 
-## Troubleshooting
-
-### System won't start
-
-- Check Claude CLI is installed: `claude --version`
-- Ensure project directory is accessible
-- Check logs in `logs/system.log`
-
-### Agents failing repeatedly
-
-- Check Claude CLI credentials
-- Verify network connectivity
-- Review agent logs for specific errors
-- Ensure sufficient disk space
-
-### State corruption
-
-- Stop the system: `stop-agent`
-- Remove state file: `rm state/current.json`
-- Restart with fresh state
-
-### Git issues
-
-- Ensure git is configured: `git config --list`
-- Check remote access: `git remote -v` (in project dir)
-- Verify credentials for pushing
-
-## Best Practices
-
-1. **Clear Goals**: Provide specific, detailed project goals
-2. **Monitor Progress**: Check `agent-progress` periodically
-3. **Review Commits**: Examine git commits to understand changes
-4. **Iterate on Plans**: Let the system adapt through multiple cycles
-5. **Trust Validation**: The triple-check ensures quality
-
-## Advanced Usage
-
-### Multiple Projects
-
-Each project maintains isolated state. To work on multiple projects:
+## Development
 
 ```bash
-# Start project 1
-start-agent --project-dir ~/project1 --prompt "Goal 1"
+# Clone and install dev dependencies
+git clone https://github.com/darkresearch/fireteam
+cd fireteam
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
 
-# Wait for completion or stop
-stop-agent
-
-# Start project 2 (completely fresh state)
-start-agent --project-dir ~/project2 --prompt "Goal 2"
+# Run tests
+pytest tests/ -v
 ```
-
-### Custom Branch Names
-
-The system automatically creates timestamped branches. To continue from a specific commit:
-
-1. Manually checkout desired branch in project directory
-2. System will create new branch from that point
-
-### Remote Repositories
-
-To push to a remote:
-
-```bash
-cd /path/to/project
-git remote add origin <url>
-# System will automatically push subsequent commits
-```
-
-## Technical Details
-
-### Agent Communication
-
-Agents don't communicate directly. The orchestrator:
-- Passes outputs as inputs to the next agent
-- Maintains state in shared state file
-- Ensures proper sequencing
-
-### Claude CLI Integration
-
-Agents invoke Claude CLI with:
-```bash
-claude --dangerously-skip-permissions --prompt "<prompt>" --cwd <project-dir>
-```
-
-The `--dangerously-skip-permissions` flag enables fully autonomous operation.
-
-### Error Handling
-
-- Each agent call has retry logic (3 attempts by default)
-- Exponential backoff between retries
-- Graceful degradation on persistent failures
-- Comprehensive logging for debugging
-
-## Contributing
-
-This is a production system. Contributions should:
-- Follow Python best practices (PEP 8)
-- Include error handling
-- Update documentation
-- Maintain backward compatibility
 
 ## License
 
-MIT License - See LICENSE file for details
-
-## Support
-
-- Documentation: [Claude Code Docs](https://docs.claude.com/en/docs/claude-code)
-- Issues: Report via project repository
-- Sub-agents: [Sub-agent Documentation](https://docs.claude.com/en/docs/claude-code/sub-agents)
-
-## Version
-
-1.0.0 - Initial release
+MIT License
