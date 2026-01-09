@@ -185,7 +185,7 @@ class TestExecute:
             yield mock_message
 
         with patch("fireteam.api.estimate_complexity", return_value=ComplexityLevel.TRIVIAL):
-            with patch("fireteam.api.query", mock_query):
+            with patch("fireteam.loops.query", mock_query):
                 result = await execute(
                     project_dir=project_dir,
                     goal="Fix the typo",
@@ -203,7 +203,7 @@ class TestExecute:
         async def mock_query(*args, **kwargs):
             yield mock_message
 
-        with patch("fireteam.api.query", mock_query):
+        with patch("fireteam.loops.query", mock_query):
             result = await execute(
                 project_dir=project_dir,
                 goal="Fix the bug",
@@ -221,7 +221,7 @@ class TestExecute:
         async def mock_query(*args, **kwargs):
             yield mock_message
 
-        with patch("fireteam.api.query", mock_query):
+        with patch("fireteam.loops.query", mock_query):
             result = await execute(
                 project_dir=project_dir,
                 goal="Fix typo",
@@ -239,7 +239,7 @@ class TestExecute:
             raise Exception("SDK error")
             yield  # Never reached
 
-        with patch("fireteam.api.query", mock_query):
+        with patch("fireteam.loops.query", mock_query):
             result = await execute(
                 project_dir=project_dir,
                 goal="Do something",
@@ -261,7 +261,7 @@ class TestExecute:
             mock_message.result = "Done."
             yield mock_message
 
-        with patch("fireteam.api.query", mock_query):
+        with patch("fireteam.loops.query", mock_query):
             await execute(
                 project_dir=project_dir,
                 goal="Fix bug",
@@ -283,7 +283,7 @@ class TestExecute:
             captured_options = options
             yield mock_message
 
-        with patch("fireteam.api.query", mock_query):
+        with patch("fireteam.loops.query", mock_query):
             await execute(
                 project_dir=str(project_dir),
                 goal="Task",

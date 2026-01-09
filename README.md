@@ -68,13 +68,21 @@ result = await execute(
 ```python
 from fireteam import estimate_complexity, ComplexityLevel
 
+# Quick estimation (no codebase access)
 complexity = await estimate_complexity(
     goal="Add logging to the auth module",
     context="Existing logging in other modules uses Python logging",
 )
 
+# Accurate estimation with codebase exploration
+# Claude uses Glob, Grep, Read to understand the project
+complexity = await estimate_complexity(
+    goal="Refactor the authentication system",
+    project_dir="/path/to/project",
+)
+
 print(f"Estimated complexity: {complexity}")
-# ComplexityLevel.SIMPLE -> routes to SINGLE_TURN mode
+# ComplexityLevel.MODERATE -> routes to MODERATE mode
 ```
 
 ## Execution Modes
@@ -140,6 +148,7 @@ class ExecutionResult:
 async def estimate_complexity(
     goal: str,
     context: str = "",
+    project_dir: str | Path | None = None,  # Enables codebase exploration
 ) -> ComplexityLevel
 ```
 

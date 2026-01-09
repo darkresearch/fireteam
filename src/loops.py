@@ -1,6 +1,7 @@
 """
-Execution loop implementations for fireteam.
+Execution implementations for fireteam.
 
+SINGLE_TURN: direct SDK call, no loop
 MODERATE: execute → review loop until complete
 FULL: plan → execute → parallel reviews loop until complete
 """
@@ -21,12 +22,69 @@ from .models import (
     PhaseType,
     ReviewResult,
 )
+from .prompts.builder import build_prompt
 
 
 # Tool permission sets per phase
 PLAN_TOOLS = ["Glob", "Grep", "Read"]
 EXECUTE_TOOLS = ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 REVIEW_TOOLS = ["Read", "Glob", "Grep", "Bash"]
+
+
+async def single_turn(
+    project_dir: Path,
+    goal: str,
+    context: str = "",
+    hooks: dict | None = None,
+    log: logging.Logger | None = None,
+) -> ExecutionResult:
+    """
+    SINGLE_TURN mode: direct SDK call, no loop.
+
+    For trivial and simple tasks that don't need iteration.
+    """
+    log = log or logging.getLogger("fireteam")
+    log.info("SINGLE_TURN: Direct SDK call")
+
+    prompt = build_prompt(
+        phase=PhaseType.EXECUTE,
+        goal=goal,
+        context=context,
+    )
+
+    options = ClaudeAgentOptions(
+        allowed_tools=EXECUTE_TOOLS,
+        permission_mode=config.SDK_PERMISSION_MODE,
+        model=config.SDK_MODEL,
+        cwd=str(project_dir),
+        setting_sources=config.SDK_SETTING_SOURCES,
+        hooks=hooks,
+        max_turns=10,  # Limit for trivial tasks
+    )
+
+    try:
+        result_text = ""
+        async for message in query(prompt=prompt, options=options):
+            if hasattr(message, "result"):
+                result_text = message.result
+            elif hasattr(message, "content"):
+                if isinstance(message.content, str):
+                    result_text += message.content
+                elif isinstance(message.content, list):
+                    for block in message.content:
+                        if hasattr(block, "text"):
+                            result_text += block.text
+
+        return ExecutionResult(
+            success=True,
+            mode=ExecutionMode.SINGLE_TURN,
+            output=result_text,
+            completion_percentage=100,
+            iterations=1,
+        )
+    except Exception as e:
+        log.error(f"Single turn failed: {e}")
+        return ExecutionResult(success=False, mode=ExecutionMode.SINGLE_TURN, error=str(e))
 
 
 async def run_phase(
@@ -90,8 +148,6 @@ async def run_single_review(
     threshold: int = 95,
 ) -> ReviewResult:
     """Run a single reviewer and return structured result."""
-    from .prompts.builder import build_prompt
-
     prompt = build_prompt(
         phase=PhaseType.REVIEW,
         goal=goal,
@@ -169,8 +225,6 @@ async def moderate_loop(
 
     Feedback from each review flows to the next execution.
     """
-    from .prompts.builder import build_prompt
-
     cfg = cfg or LoopConfig(parallel_reviewers=1, majority_required=1)
     log = log or logging.getLogger("fireteam")
     state = IterationState()
@@ -263,8 +317,6 @@ async def full_loop(
 
     Plan is created once, then execute-review loops with feedback.
     """
-    from .prompts.builder import build_prompt
-
     cfg = cfg or LoopConfig(parallel_reviewers=3, majority_required=2)
     log = log or logging.getLogger("fireteam")
     state = IterationState()

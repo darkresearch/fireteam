@@ -28,7 +28,7 @@ class TestComplexityToExecutionFlow:
             async def mock_query(*args, **kwargs):
                 yield mock_message
 
-            with patch("fireteam.api.query", mock_query):
+            with patch("fireteam.loops.query", mock_query):
                 result = await execute(
                     project_dir=project_dir,
                     goal="fix typo in readme",
@@ -57,7 +57,7 @@ class TestComplexityToExecutionFlow:
 
         with patch("fireteam.api.estimate_complexity", return_value=ComplexityLevel.COMPLEX):
             with patch("fireteam.loops.query", mock_query):
-                with patch("fireteam.api.query", mock_query):
+                with patch("fireteam.loops.query", mock_query):
                     result = await execute(
                         project_dir=project_dir,
                         goal="redesign the authentication system",
@@ -83,7 +83,7 @@ class TestExecutionWithContext:
             mock_message.result = "Fixed based on crash logs."
             yield mock_message
 
-        with patch("fireteam.api.query", mock_query):
+        with patch("fireteam.loops.query", mock_query):
             await execute(
                 project_dir=project_dir,
                 goal="fix the crash",
@@ -111,7 +111,7 @@ class TestHooksIntegration:
             mock_message.result = "Done."
             yield mock_message
 
-        with patch("fireteam.api.query", mock_query):
+        with patch("fireteam.loops.query", mock_query):
             await execute(
                 project_dir=project_dir,
                 goal="add feature",
@@ -134,7 +134,7 @@ class TestHooksIntegration:
             mock_message.result = "Done."
             yield mock_message
 
-        with patch("fireteam.api.query", mock_query):
+        with patch("fireteam.loops.query", mock_query):
             await execute(
                 project_dir=project_dir,
                 goal="add feature",
@@ -340,7 +340,7 @@ class TestErrorHandling:
             raise Exception("API rate limit exceeded")
             yield  # Never reached
 
-        with patch("fireteam.api.query", mock_query):
+        with patch("fireteam.loops.query", mock_query):
             result = await execute(
                 project_dir=project_dir,
                 goal="do something",

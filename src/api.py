@@ -17,13 +17,11 @@ Usage:
 import logging
 from pathlib import Path
 
-from claude_agent_sdk import query, ClaudeAgentOptions
-
 from . import config
 from .complexity import ComplexityLevel, estimate_complexity
 from .hooks import QUALITY_HOOKS, create_test_hooks
-from .models import ExecutionMode, ExecutionResult, LoopConfig, PhaseType
-from .loops import moderate_loop, full_loop, run_phase
+from .models import ExecutionMode, ExecutionResult, LoopConfig
+from .loops import single_turn, moderate_loop, full_loop
 
 
 # Map complexity levels to execution modes
@@ -74,7 +72,7 @@ async def execute(
     # Auto-detect mode if not specified
     if mode is None:
         log.info("Estimating task complexity...")
-        complexity = await estimate_complexity(goal, context)
+        complexity = await estimate_complexity(goal, context, project_dir=project_dir)
         mode = COMPLEXITY_TO_MODE[complexity]
         log.info(f"Complexity: {complexity.value} -> Mode: {mode.value}")
 
@@ -83,7 +81,7 @@ async def execute(
 
     # Dispatch based on mode
     if mode == ExecutionMode.SINGLE_TURN:
-        return await _single_turn(project_dir, goal, context, hooks, log)
+        return await single_turn(project_dir, goal, context, hooks, log)
 
     elif mode == ExecutionMode.MODERATE:
         cfg = LoopConfig(
@@ -103,52 +101,3 @@ async def execute(
 
     else:
         return ExecutionResult(success=False, mode=mode, error=f"Unknown mode: {mode}")
-
-
-async def _single_turn(
-    project_dir: Path,
-    goal: str,
-    context: str,
-    hooks: dict | None,
-    log: logging.Logger,
-) -> ExecutionResult:
-    """Trivial task - single SDK call, no loop."""
-    log.info("SINGLE_TURN: Direct SDK call")
-
-    prompt = f"Task: {goal}"
-    if context:
-        prompt += f"\n\nContext:\n{context}"
-
-    options = ClaudeAgentOptions(
-        allowed_tools=["Read", "Write", "Edit", "Bash", "Glob", "Grep"],
-        permission_mode=config.SDK_PERMISSION_MODE,
-        model=config.SDK_MODEL,
-        cwd=str(project_dir),
-        setting_sources=config.SDK_SETTING_SOURCES,
-        hooks=hooks,
-        max_turns=10,  # Limit for trivial tasks
-    )
-
-    try:
-        result_text = ""
-        async for message in query(prompt=prompt, options=options):
-            if hasattr(message, "result"):
-                result_text = message.result
-            elif hasattr(message, "content"):
-                if isinstance(message.content, str):
-                    result_text += message.content
-                elif isinstance(message.content, list):
-                    for block in message.content:
-                        if hasattr(block, "text"):
-                            result_text += block.text
-
-        return ExecutionResult(
-            success=True,
-            mode=ExecutionMode.SINGLE_TURN,
-            output=result_text,
-            completion_percentage=100,
-            iterations=1,
-        )
-    except Exception as e:
-        log.error(f"Single turn failed: {e}")
-        return ExecutionResult(success=False, mode=ExecutionMode.SINGLE_TURN, error=str(e))

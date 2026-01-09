@@ -185,8 +185,8 @@ class TestEstimateComplexity:
         assert "None provided" in captured_prompt
 
     @pytest.mark.asyncio
-    async def test_uses_no_tools(self):
-        """Estimation uses no tools (just needs model response)."""
+    async def test_uses_no_tools_without_project_dir(self):
+        """Without project_dir, estimation uses no tools."""
         mock_message = MagicMock()
         mock_message.result = "SIMPLE"
         captured_options = None
@@ -202,8 +202,8 @@ class TestEstimateComplexity:
         assert captured_options.allowed_tools == []
 
     @pytest.mark.asyncio
-    async def test_uses_single_turn(self):
-        """Estimation uses max_turns=1."""
+    async def test_uses_single_turn_without_project_dir(self):
+        """Without project_dir, estimation uses max_turns=1."""
         mock_message = MagicMock()
         mock_message.result = "SIMPLE"
         captured_options = None
@@ -217,3 +217,39 @@ class TestEstimateComplexity:
             await estimate_complexity("task")
 
         assert captured_options.max_turns == 1
+
+    @pytest.mark.asyncio
+    async def test_uses_exploration_tools_with_project_dir(self, project_dir):
+        """With project_dir, estimation uses read-only exploration tools."""
+        mock_message = MagicMock()
+        mock_message.result = "MODERATE"
+        captured_options = None
+
+        async def mock_query(prompt, options):
+            nonlocal captured_options
+            captured_options = options
+            yield mock_message
+
+        with patch("fireteam.complexity.query", mock_query):
+            await estimate_complexity("refactor auth", project_dir=project_dir)
+
+        assert set(captured_options.allowed_tools) == {"Glob", "Grep", "Read"}
+        assert captured_options.permission_mode == "plan"
+
+    @pytest.mark.asyncio
+    async def test_sets_cwd_with_project_dir(self, project_dir):
+        """With project_dir, estimation sets cwd for tool access."""
+        mock_message = MagicMock()
+        mock_message.result = "SIMPLE"
+        captured_options = None
+
+        async def mock_query(prompt, options):
+            nonlocal captured_options
+            captured_options = options
+            yield mock_message
+
+        with patch("fireteam.complexity.query", mock_query):
+            await estimate_complexity("task", project_dir=project_dir)
+
+        from pathlib import Path
+        assert Path(captured_options.cwd).is_absolute()
