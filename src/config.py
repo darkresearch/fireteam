@@ -1,5 +1,7 @@
 """
 Configuration settings for Fireteam.
+
+Minimal configuration - most behavior comes from SDK defaults and CLAUDE.md.
 """
 
 import os
@@ -7,73 +9,24 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
-# Look in repo root (parent of src directory)
 env_file = Path(__file__).parent.parent / ".env"
 if env_file.exists():
     load_dotenv(env_file)
 
-# System paths - configurable via FIRETEAM_DIR environment variable
-# Defaults to /home/claude/fireteam for standalone mode
-# Can be set to /app for containerized environments (e.g., terminal-bench)
-SYSTEM_DIR = os.getenv("FIRETEAM_DIR", "/home/claude/fireteam")
-STATE_DIR = os.path.join(SYSTEM_DIR, "state")
-LOGS_DIR = os.path.join(SYSTEM_DIR, "logs")
-CLI_DIR = os.path.join(SYSTEM_DIR, "cli")
-
 # Claude Agent SDK configuration
-# Note: API key is lazy-loaded to allow --help and other non-API operations
-def get_anthropic_api_key():
-    """Get ANTHROPIC_API_KEY, raising error only when actually needed."""
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise ValueError(
-            "ANTHROPIC_API_KEY environment variable must be set. "
-            "Set it in your environment or in .env file."
-        )
-    return api_key
-
-# SDK options
+SDK_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-opus-4-5-20251101")
 SDK_ALLOWED_TOOLS = ["Read", "Write", "Bash", "Edit", "Grep", "Glob"]
-# Autonomous operation
 SDK_PERMISSION_MODE = "bypassPermissions"
-# Using latest claude sonnet 4.5
-SDK_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-5-20250929")
+SDK_SETTING_SOURCES = ["project"]  # Auto-load CLAUDE.md
 
-# Agent configuration
-MAX_RETRIES = 3
-RETRY_DELAY = 5  # seconds
+# Completion validation
+COMPLETION_THRESHOLD = 95  # percentage required
+VALIDATION_CHECKS_REQUIRED = 3  # consecutive reviews needed
 
-# Agent timeouts (in seconds)
-# Can be overridden via FIRETEAM_AGENT_TIMEOUT_* env vars (e.g., FIRETEAM_AGENT_TIMEOUT_PLANNER=120)
-# Shorter timeouts in CI to fail fast instead of hanging
-DEFAULT_TIMEOUT = int(os.getenv("FIRETEAM_DEFAULT_TIMEOUT", "600"))  # 10 minutes default
-AGENT_TIMEOUTS = {
-    "planner": int(os.getenv("FIRETEAM_AGENT_TIMEOUT_PLANNER", DEFAULT_TIMEOUT)),
-    "reviewer": int(os.getenv("FIRETEAM_AGENT_TIMEOUT_REVIEWER", DEFAULT_TIMEOUT)),
-    "executor": int(os.getenv("FIRETEAM_AGENT_TIMEOUT_EXECUTOR", str(DEFAULT_TIMEOUT * 3)))  # 30 min default
-}
-
-# Completion thresholds
-COMPLETION_THRESHOLD = 95  # percentage
-VALIDATION_CHECKS_REQUIRED = 3  # consecutive checks needed
-
-# Git configuration
-GIT_USER_NAME = os.environ.get("GIT_USER_NAME", "fireteam")
-GIT_USER_EMAIL = os.environ.get("GIT_USER_EMAIL", "fireteam@darkresearch.ai")
+# Loop configuration
+# None = infinite iterations (default), set via FIRETEAM_MAX_ITERATIONS env var
+_max_iter = os.getenv("FIRETEAM_MAX_ITERATIONS")
+MAX_ITERATIONS: int | None = int(_max_iter) if _max_iter else None
 
 # Logging
-LOG_LEVEL = os.getenv("LOG_LEVEL", os.getenv("FIRETEAM_LOG_LEVEL", "INFO")).upper()
-LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-
-# Sudo password for system operations (optional)
-# Set in .env file: SUDO_PASSWORD=your_password_here
-SUDO_PASSWORD = os.getenv("SUDO_PASSWORD", None)
-
-# Memory configuration
-MEMORY_DIR = os.path.join(SYSTEM_DIR, "memory")
-MEMORY_EMBEDDING_MODEL = "Qwen/Qwen3-Embedding-0.6B"
-MEMORY_SEARCH_LIMIT = 10  # How many memories to retrieve per query
-
-def has_sudo_access():
-    """Check if sudo password is available."""
-    return SUDO_PASSWORD is not None
+LOG_LEVEL = os.getenv("FIRETEAM_LOG_LEVEL", "INFO").upper()

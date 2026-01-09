@@ -1,0 +1,146 @@
+---
+title: execute()
+description: Execute a task with adaptive complexity handling
+---
+
+# execute()
+
+The main function for executing tasks. Automatically estimates complexity and selects the appropriate execution strategy.
+
+## Signature
+
+```python
+async def execute(
+    project_dir: str | Path,
+    goal: str,
+    context: str | None = None,
+    mode: ExecutionMode | None = None,
+    run_tests: bool = True,
+) -> ExecutionResult
+```
+
+## Parameters
+
+<ParamField path="project_dir" type="str | Path" required>
+  Path to the project directory. Will be resolved to an absolute path.
+</ParamField>
+
+<ParamField path="goal" type="str" required>
+  The task to accomplish. Should be clear and specific.
+</ParamField>
+
+<ParamField path="context" type="str | None" default="None">
+  Additional context to help Claude understand the task. Can include error logs, requirements, or relevant information.
+</ParamField>
+
+<ParamField path="mode" type="ExecutionMode | None" default="None">
+  Execution mode to use. If `None`, complexity is estimated and mode is selected automatically.
+</ParamField>
+
+<ParamField path="run_tests" type="bool" default="True">
+  Whether to run tests after file edits. When `True`, quality hooks are enabled.
+</ParamField>
+
+## Returns
+
+Returns an `ExecutionResult` with the following fields:
+
+```python
+@dataclass
+class ExecutionResult:
+    success: bool           # Whether the task completed successfully
+    mode: ExecutionMode     # The execution mode used
+    output: str | None      # Execution output
+    error: str | None       # Error message if failed
+    completion_percentage: int  # 0-100 completion estimate
+    metadata: dict          # Additional info (plan, review, etc.)
+```
+
+## Examples
+
+### Basic Usage
+
+```python
+from fireteam import execute
+
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Fix the login bug",
+)
+
+if result.success:
+    print(f"Done! Output: {result.output}")
+```
+
+### With Context
+
+```python
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Fix the authentication error",
+    context="""
+    Error from logs:
+    TypeError: 'NoneType' object is not subscriptable
+    at auth.py:42 in validate_token()
+    """,
+)
+```
+
+### Specify Mode
+
+```python
+from fireteam import execute, ExecutionMode
+
+# Force full planning cycle
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Refactor the user module",
+    mode=ExecutionMode.FULL,
+)
+```
+
+### Disable Tests
+
+```python
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Add experimental feature",
+    run_tests=False,
+)
+```
+
+## Execution Flow
+
+1. **Complexity Estimation** (if mode not specified)
+   - Analyzes goal and context
+   - Returns TRIVIAL, SIMPLE, MODERATE, or COMPLEX
+
+2. **Mode Selection**
+   - TRIVIAL → SINGLE_TURN
+   - SIMPLE → SIMPLE
+   - MODERATE → MODERATE
+   - COMPLEX → FULL
+
+3. **Execution** (varies by mode)
+   - SINGLE_TURN: Direct execution
+   - SIMPLE: Execute only
+   - MODERATE: Execute + review
+   - FULL: Plan + execute + validation reviews
+
+4. **Result**
+   - Returns ExecutionResult with success status, output, and metadata
+
+## Error Handling
+
+The function catches exceptions and returns them in the result:
+
+```python
+result = await execute(
+    project_dir="/nonexistent/path",
+    goal="Do something",
+)
+
+if not result.success:
+    print(f"Error: {result.error}")
+    # Error: Project directory not found
+```

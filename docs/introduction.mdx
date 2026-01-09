@@ -1,186 +1,75 @@
 ---
-title: "Introduction"
-description: "A lightweight multi-agent wrapper around Claude that enables perpetual execution with objective completion criteria"
+title: Introduction
+description: Multi-phase autonomous task execution with Claude
 ---
 
-## What is Fireteam?
+# Fireteam
 
-Fireteam is a lightweight wrapper around Claude that enables perpetual execution. It's a multi-agent orchestration system we built internally and decided to open-source.
-
-**The problem:** Claude (and other AI assistants) stop when they decide they're "done" - often prematurely. You can't control when they stop or enforce objective completion criteria.
-
-**Our solution:** Fireteam orchestrates four specialized Claude instances in a loop with an objective review system:
-
-- **Planner**: Analyzes the codebase and creates/updates project plans
-- **Executor**: Implements code based on the plan
-- **Reviewer**: Scores completion percentage (0-100%) against the original goal
-- **Orchestrator**: Manages the cycle and enforces completion criteria
-
-The system runs in an infinite loop until it achieves 95%+ completion three consecutive times. This validation requirement prevents premature stopping and enables runs lasting hours, days, or longer.
-
-<Info>
-**Why "Fireteam"?** In military terminology, a fireteam is the smallest unit - typically four people. This reflects our minimal multi-agent architecture: four Claude instances working together.
-</Info>
-
-## How It Works
-
-```
-Orchestrator (Infinite Loop)
-    ↓
-[Plan] → [Execute] → [Review] → [Git Commit]
-    ↑___________________________________|
-```
-
-1. **Planning Phase**: Analyzes the goal and creates actionable tasks
-2. **Execution Phase**: Implements code based on the plan
-3. **Review Phase**: Scores completion (0-100%) based on the original goal
-4. **Git Commit**: Commits all changes
-5. **Loop**: Repeat until validation criteria met (default: 3 consecutive cycles ≥95%)
-
-The loop continues indefinitely until the completion threshold is met consistently. With default settings, this means three consecutive reviews scoring ≥95%.
+Fireteam is a Python library for adaptive task execution using Claude Agent SDK. It automatically estimates task complexity and selects the appropriate execution strategy.
 
 ## Key Features
 
 <CardGroup cols={2}>
-  <Card title="Infinite Loop" icon="infinity">
-    Runs until completion criteria are met, regardless of duration
+  <Card title="Adaptive Execution" icon="brain">
+    Automatically estimates task complexity and selects the best execution mode
   </Card>
-  <Card title="Multi-Cycle Validation" icon="check-double">
-    Requires consistent completion scores across multiple cycles
+  <Card title="Multi-Phase Workflow" icon="arrows-rotate">
+    Plan, execute, and review phases for complex tasks
   </Card>
-  <Card title="Configurable Thresholds" icon="sliders">
-    Completion criteria are configurable, not subjective
+  <Card title="Quality Hooks" icon="shield-check">
+    Built-in hooks for running tests and enforcing quality
   </Card>
-  <Card title="Git Integration" icon="code-branch">
-    Every cycle creates a commit with progress tracking
-  </Card>
-  <Card title="Objective Scoring" icon="percent">
-    Reviewer scores against original goal (0-100%)
-  </Card>
-  <Card title="State Isolation" icon="database">
-    Clean state separation between projects
+  <Card title="Simple API" icon="code">
+    One function to execute any task: `execute()`
   </Card>
 </CardGroup>
 
-## What Can Fireteam Build?
+## How It Works
 
-Fireteam works on projects that Claude can build, but with the ability to iterate over multiple cycles:
+When you call `execute()`, Fireteam:
 
-### Python Projects
-- **CLI Tools**: Command-line applications with argument parsing, file I/O
-- **APIs**: REST APIs with FastAPI, Flask, including authentication and validation
-- **Web Scrapers**: BeautifulSoup-based scrapers with error handling
-- **Data Tools**: CSV/JSON analyzers, data processors with pandas
-- **Database Apps**: SQLite CRUD applications with proper schema design
+1. **Estimates complexity** - Analyzes the goal to determine if it's trivial, simple, moderate, or complex
+2. **Selects execution mode** - Maps complexity to the appropriate execution strategy
+3. **Executes the task** - Runs the appropriate phases (plan, execute, review)
+4. **Returns results** - Provides success status, output, and completion percentage
 
-### TypeScript/Node.js Projects
-- **CLI Tools**: TypeScript command-line applications
-- **API Integrations**: GitHub, cryptocurrency, weather, and other API clients
-- **Testing Frameworks**: Comprehensive test suites with proper coverage
+```python
+from fireteam import execute
 
-<Warning>
-TypeScript projects may require additional setup time for Node.js installation. Python projects typically complete faster due to pre-installed runtime.
-</Warning>
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Fix the authentication bug",
+)
 
-## Example Projects
+print(f"Success: {result.success}")
+print(f"Completion: {result.completion_percentage}%")
+```
 
-### Bitcoin Price Checker
-A CLI tool that fetches current Bitcoin price from CoinGecko API with:
-- API key management
-- Rate limiting and retry logic
-- Error handling
-- Formatted console output
+## Execution Modes
 
-### REST API Server
-A complete FastAPI note-taking server with:
-- Full CRUD operations
-- Request validation
-- Error handling
-- Database integration
+| Complexity | Mode | Phases |
+|------------|------|--------|
+| TRIVIAL | SINGLE_TURN | Direct execution |
+| SIMPLE | SIMPLE | Execute only |
+| MODERATE | MODERATE | Execute + review |
+| COMPLEX | FULL | Plan + execute + validation reviews |
 
-### Task Manager CLI
-A SQLite-based task management system with:
-- Database schema design
-- CRUD operations
-- Command-line interface
-- Data persistence
+## When to Use Fireteam
 
-## Key Characteristics
+Fireteam is ideal for:
 
-**Perpetual execution:** Runs in an infinite loop until completion criteria are met. We've had runs exceeding 37 hours.
-
-**Configurable stopping criteria:** You set the completion threshold (default: 95%) and validation requirements (default: 3 consecutive passes). The system enforces these objectively.
-
-**Cycle-based validation:** Each cycle produces a completion score (0-100%). Single high scores aren't sufficient - the system requires consistent quality across multiple cycles.
-
-**Git integration:** Every cycle creates a commit, providing a complete history of the development process.
-
-**No placeholder code:** The Reviewer scoring penalizes incomplete implementations, so the system tends to produce working code rather than stubs.
-
-## Use Cases
-
-<AccordionGroup>
-  <Accordion title="Rapid Prototyping">
-    Build MVPs and proof-of-concepts in hours instead of days. Perfect for validating ideas quickly.
-  </Accordion>
-
-  <Accordion title="Learning Projects">
-    Generate complete, working examples to learn new technologies. Study the code Fireteam produces.
-  </Accordion>
-
-  <Accordion title="Automation Tools">
-    Create CLI tools, web scrapers, and automation scripts without writing boilerplate.
-  </Accordion>
-
-  <Accordion title="API Clients">
-    Build type-safe API integrations with proper error handling and retry logic.
-  </Accordion>
-
-  <Accordion title="Testing & Documentation">
-    Generate comprehensive test suites and documentation for existing projects.
-  </Accordion>
-</AccordionGroup>
-
-## Getting Started
-
-Ready to deploy your first Fireteam?
-
-<CardGroup cols={2}>
-  <Card title="Quickstart Guide" icon="rocket" href="/quickstart">
-    Get Fireteam running in 5 minutes
-  </Card>
-  <Card title="Architecture Deep Dive" icon="diagram-project" href="/core-concepts/architecture">
-    Understand how the system works
-  </Card>
-  <Card title="Installation Guide" icon="download" href="/installation/installation">
-    Detailed setup instructions
-  </Card>
-  <Card title="Configuration" icon="gear" href="/configuration/config-file">
-    Customize timeouts and thresholds
-  </Card>
-</CardGroup>
-
-## Open Source
-
-Fireteam is open source and available on GitHub:
-
-[https://github.com/darkresearch/fireteam](https://github.com/darkresearch/fireteam)
-
-Contributions, issues, and feedback are welcome!
+- **Autonomous task execution** - Let Claude complete tasks without constant supervision
+- **Complex refactoring** - Multi-file changes with validation
+- **Feature implementation** - Plan, implement, and verify new features
+- **Bug fixing** - Analyze, fix, and confirm resolution
 
 ## Next Steps
 
-<Steps>
-  <Step title="Read the Quickstart">
-    Follow the [Quickstart Guide](/quickstart) to install and run your first project
-  </Step>
-  <Step title="Understand the Architecture">
-    Learn how agents work together in the [Core Concepts](/core-concepts/architecture) section
-  </Step>
-  <Step title="Configure Your System">
-    Optimize timeouts and thresholds in [Configuration](/configuration/config-file)
-  </Step>
-  <Step title="Monitor Your Projects">
-    Track progress with [fireteam-status](/cli-tools/fireteam-status)
-  </Step>
-</Steps>
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Get started with Fireteam in 5 minutes
+  </Card>
+  <Card title="API Reference" icon="book" href="/api/execute">
+    Full API documentation
+  </Card>
+</CardGroup>

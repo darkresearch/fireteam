@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fireteam"
+version = "0.1.0"
+description = "Multi-phase autonomous task execution with complexity estimation, planning, execution, and review"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "claude-agent-sdk>=0.1.4",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+]
+
+[tool.setuptools]
+packages = ["fireteam"]
+
+[tool.setuptools.package-dir]
+fireteam = "src"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+markers = [
+    "unit: Unit tests (fast, no external dependencies)",
+    "integration: Integration tests (require API key, use --run-integration)",
+    "slow: Slow running tests",
+]

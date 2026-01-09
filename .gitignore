@@ -15,6 +15,12 @@ __pycache__/
 *.so
 .Python
 
+# Build artifacts
+*.egg-info/
+dist/
+build/
+.eggs/
+
 # Virtual environments
 venv/
 env/

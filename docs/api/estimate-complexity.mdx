@@ -1,0 +1,137 @@
+---
+title: estimate_complexity()
+description: Estimate task complexity before execution
+---
+
+# estimate_complexity()
+
+Estimates the complexity of a task. Used internally by `execute()` when no mode is specified, but can also be called directly.
+
+## Signature
+
+```python
+async def estimate_complexity(
+    goal: str,
+    context: str | None = None,
+) -> ComplexityLevel
+```
+
+## Parameters
+
+<ParamField path="goal" type="str" required>
+  The task to analyze.
+</ParamField>
+
+<ParamField path="context" type="str | None" default="None">
+  Additional context about the task.
+</ParamField>
+
+## Returns
+
+Returns a `ComplexityLevel` enum value:
+
+```python
+class ComplexityLevel(Enum):
+    TRIVIAL = "trivial"    # Single-line changes
+    SIMPLE = "simple"      # Self-contained tasks
+    MODERATE = "moderate"  # Multi-file changes
+    COMPLEX = "complex"    # Architectural changes
+```
+
+## Examples
+
+### Basic Usage
+
+```python
+from fireteam import estimate_complexity
+
+complexity = await estimate_complexity(
+    goal="Fix the typo in README.md",
+)
+# Returns: ComplexityLevel.TRIVIAL
+```
+
+### With Context
+
+```python
+complexity = await estimate_complexity(
+    goal="Add user authentication",
+    context="Using FastAPI with existing User model and database",
+)
+# Returns: ComplexityLevel.MODERATE
+```
+
+### Use Result for Mode Selection
+
+```python
+from fireteam import estimate_complexity, execute, ExecutionMode, ComplexityLevel
+
+complexity = await estimate_complexity(
+    goal="Implement new feature",
+)
+
+# Custom mode selection logic
+if complexity == ComplexityLevel.COMPLEX:
+    mode = ExecutionMode.FULL
+else:
+    mode = ExecutionMode.SIMPLE
+
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Implement new feature",
+    mode=mode,
+)
+```
+
+## Complexity Guidelines
+
+### TRIVIAL
+
+- Fix typos
+- Add comments
+- Simple formatting
+
+```python
+await estimate_complexity("Fix typo in README")
+# → ComplexityLevel.TRIVIAL
+```
+
+### SIMPLE
+
+- Single function implementation
+- Add logging
+- Fix obvious bugs
+
+```python
+await estimate_complexity("Add logging to auth module")
+# → ComplexityLevel.SIMPLE
+```
+
+### MODERATE
+
+- Refactor a module
+- Add feature with tests
+- Fix complex bug
+
+```python
+await estimate_complexity("Refactor user service")
+# → ComplexityLevel.MODERATE
+```
+
+### COMPLEX
+
+- Architectural changes
+- New subsystems
+- Major refactoring
+
+```python
+await estimate_complexity("Redesign authentication system")
+# → ComplexityLevel.COMPLEX
+```
+
+## Implementation Notes
+
+- Uses a single Claude API call with no tools
+- Response is parsed to extract complexity level
+- Defaults to SIMPLE if response is unclear
+- Handles case-insensitive responses

@@ -1,0 +1,9 @@
+{
+  "hooks": [
+    {
+      "event": "UserPromptSubmit",
+      "matcher": "*",
+      "command": "python -m fireteam.claude_hooks.user_prompt_submit"
+    }
+  ]
+}

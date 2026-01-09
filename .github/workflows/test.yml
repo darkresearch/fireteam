@@ -4,88 +4,76 @@ on:
   pull_request:
     branches: [ main ]
   push:
-    branches: [ main ]  # Only run on direct pushes to main
+    branches: [ main ]
 
 jobs:
   fast-tests:
     name: Fast Tests (Unit + Lightweight)
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python 3.12
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-    
+
     - name: Install uv
       run: curl -LsSf https://astral.sh/uv/install.sh | sh
-    
+
     - name: Create virtual environment
       run: uv venv
-    
+
     - name: Install dependencies
       run: |
         source .venv/bin/activate
-        uv pip install -r requirements.txt
-    
-    - name: Run all fast tests
+        uv pip install -e ".[dev]"
+
+    - name: Run unit tests
       run: |
         source .venv/bin/activate
-        pytest tests/ -m "not slow and not e2e and not integration" -v --tb=short
+        pytest tests/ -v --tb=short
 
   e2e-tests:
     name: End-to-End Tests (API)
     runs-on: ubuntu-latest
-    timeout-minutes: 20  # Fail fast if tests hang
-    # Run on main branch and e/* branches for testing
+    timeout-minutes: 20
     if: |
-      github.ref == 'refs/heads/main' || 
+      github.ref == 'refs/heads/main' ||
       startsWith(github.ref, 'refs/heads/e/') ||
       startsWith(github.head_ref, 'e/')
-    
+
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-    
-    - name: Install Claude CLI
-      run: |
-        npm install -g @anthropic-ai/claude-code
-        echo "Claude CLI installed at: $(which claude)"
-        claude --version
-    
+
     - name: Set up Python 3.12
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-    
+
     - name: Install uv
       run: curl -LsSf https://astral.sh/uv/install.sh | sh
-    
+
     - name: Create virtual environment
       run: uv venv
-    
+
     - name: Install dependencies
       run: |
         source .venv/bin/activate
-        uv pip install -r requirements.txt
-    
-    - name: Run E2E tests
-      timeout-minutes: 15  # Per-step timeout
+        uv pip install -e ".[dev]"
+
+    - name: Run integration tests
+      timeout-minutes: 15
       env:
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        PYTHONUNBUFFERED: "1"  # Force immediate output
+        PYTHONUNBUFFERED: "1"
       run: |
         source .venv/bin/activate
-        echo "Starting e2e tests at $(date)"
-        pytest tests/ -m "e2e" -v --tb=short -s --log-cli-level=INFO
-        echo "E2E tests completed at $(date)"
-    
+        echo "Starting integration tests at $(date)"
+        pytest tests/ --run-integration -v --tb=short -s
+        echo "Integration tests completed at $(date)"
+
     - name: Upload logs on failure
       if: failure()
       uses: actions/upload-artifact@v4
@@ -95,48 +83,3 @@ jobs:
           /tmp/fireteam-test-*/
           tests/**/*.log
         retention-days: 7
-
-  integration-tests:
-    name: Terminal-bench Integration
-    runs-on: ubuntu-latest
-    # Temporarily disabled - needs debugging
-    if: false
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-    
-    - name: Set up Docker
-      uses: docker/setup-buildx-action@v3
-    
-    - name: Install uv
-      run: curl -LsSf https://astral.sh/uv/install.sh | sh
-    
-    - name: Install terminal-bench
-      run: uv tool install terminal-bench
-    
-    - name: Create virtual environment
-      run: uv venv
-    
-    - name: Install dependencies
-      run: |
-        source .venv/bin/activate
-        uv pip install -r requirements.txt
-    
-    - name: Install Fireteam adapter
-      run: |
-        source .venv/bin/activate
-        cd benchmark
-        uv pip install -e .
-    
-    - name: Run terminal-bench integration test
-      env:
-        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      run: |
-        source .venv/bin/activate
-        pytest tests/ -m "integration" -v --tb=short
-
