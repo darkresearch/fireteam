@@ -16,10 +16,10 @@ Fireteam estimates task complexity and routes to the appropriate execution strat
 ## Installation
 
 ```bash
-pip install fireteam
+uv add fireteam
 ```
 
-Requires Python 3.10+ and a valid `ANTHROPIC_API_KEY` environment variable.
+Requires Python 3.12+ and a valid `ANTHROPIC_API_KEY` environment variable.
 
 ## Usage
 
@@ -213,11 +213,10 @@ fireteam/
 # Clone and install dev dependencies
 git clone https://github.com/darkresearch/fireteam
 cd fireteam
-uv venv && source .venv/bin/activate
-uv pip install -e ".[dev]"
+uv sync --extra dev
 
 # Run tests
-pytest tests/ -v
+uv run pytest tests/ -v
 ```
 
 ## License

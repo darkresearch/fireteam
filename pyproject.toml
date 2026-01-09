@@ -7,7 +7,7 @@ name = "fireteam"
 version = "0.1.0"
 description = "Multi-phase autonomous task execution with complexity estimation, planning, execution, and review"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "claude-agent-sdk>=0.1.4",
     "python-dotenv>=1.0.0",
