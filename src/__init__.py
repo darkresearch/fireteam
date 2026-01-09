@@ -14,7 +14,8 @@ Usage:
     )
 """
 
-from .api import execute, ExecutionMode, ExecutionResult
+from .api import execute
+from .models import ExecutionMode, ExecutionResult
 from .complexity import ComplexityLevel, estimate_complexity
 from .hooks import QUALITY_HOOKS, AUTONOMOUS_HOOKS, create_test_hooks
 

@@ -4,17 +4,9 @@ import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock, AsyncMock
 
-from fireteam.api import (
-    execute,
-    ExecutionMode,
-    ExecutionResult,
-    COMPLEXITY_TO_MODE,
-    EXECUTOR_PROMPT,
-    REVIEWER_PROMPT,
-    PLANNER_PROMPT,
-    _extract_completion,
-    _run_query,
-)
+from fireteam.api import execute, COMPLEXITY_TO_MODE
+from fireteam.models import ExecutionMode, ExecutionResult, _extract_completion, _extract_issues
+from fireteam.prompts import EXECUTOR_PROMPT, REVIEWER_PROMPT, PLANNER_PROMPT
 from fireteam.complexity import ComplexityLevel
 
 
@@ -24,13 +16,12 @@ class TestExecutionMode:
     def test_modes_exist(self):
         """All expected execution modes exist."""
         assert ExecutionMode.SINGLE_TURN.value == "single_turn"
-        assert ExecutionMode.SIMPLE.value == "simple"
         assert ExecutionMode.MODERATE.value == "moderate"
         assert ExecutionMode.FULL.value == "full"
 
     def test_modes_count(self):
-        """Exactly 4 execution modes exist."""
-        assert len(ExecutionMode) == 4
+        """Exactly 3 execution modes exist (SIMPLE removed)."""
+        assert len(ExecutionMode) == 3
 
 
 class TestExecutionResult:
@@ -40,12 +31,12 @@ class TestExecutionResult:
         """Can create successful result."""
         result = ExecutionResult(
             success=True,
-            mode=ExecutionMode.SIMPLE,
+            mode=ExecutionMode.MODERATE,
             output="Done",
             completion_percentage=100,
         )
         assert result.success is True
-        assert result.mode == ExecutionMode.SIMPLE
+        assert result.mode == ExecutionMode.MODERATE
         assert result.output == "Done"
         assert result.completion_percentage == 100
 
@@ -61,11 +52,12 @@ class TestExecutionResult:
 
     def test_default_values(self):
         """Default values are correct."""
-        result = ExecutionResult(success=True, mode=ExecutionMode.SIMPLE)
+        result = ExecutionResult(success=True, mode=ExecutionMode.SINGLE_TURN)
         assert result.output is None
         assert result.error is None
         assert result.completion_percentage == 0
         assert result.metadata == {}
+        assert result.iterations == 0
 
 
 class TestComplexityToMode:
@@ -75,9 +67,9 @@ class TestComplexityToMode:
         """TRIVIAL maps to SINGLE_TURN."""
         assert COMPLEXITY_TO_MODE[ComplexityLevel.TRIVIAL] == ExecutionMode.SINGLE_TURN
 
-    def test_simple_maps_to_simple(self):
-        """SIMPLE maps to SIMPLE."""
-        assert COMPLEXITY_TO_MODE[ComplexityLevel.SIMPLE] == ExecutionMode.SIMPLE
+    def test_simple_maps_to_single_turn(self):
+        """SIMPLE now maps to SINGLE_TURN (merged)."""
+        assert COMPLEXITY_TO_MODE[ComplexityLevel.SIMPLE] == ExecutionMode.SINGLE_TURN
 
     def test_moderate_maps_to_moderate(self):
         """MODERATE maps to MODERATE."""
@@ -105,6 +97,10 @@ class TestPrompts:
         """Reviewer prompt exists and asks for completion percentage."""
         assert len(REVIEWER_PROMPT) > 0
         assert "COMPLETION" in REVIEWER_PROMPT
+
+    def test_reviewer_prompt_has_issues_format(self):
+        """Reviewer prompt includes ISSUES section format."""
+        assert "ISSUES" in REVIEWER_PROMPT
 
     def test_planner_prompt_exists(self):
         """Planner prompt exists and asks for analysis."""
@@ -141,6 +137,41 @@ class TestExtractCompletion:
         assert _extract_completion(text) == 50
 
 
+class TestExtractIssues:
+    """Tests for issues extraction."""
+
+    def test_extracts_issues_list(self):
+        """Extracts issues from ISSUES section."""
+        text = """Review complete.
+
+ISSUES:
+- Missing error handling
+- Tests not added
+- Documentation incomplete
+
+COMPLETION: 70%"""
+        issues = _extract_issues(text)
+        assert len(issues) == 3
+        assert "Missing error handling" in issues
+        assert "Tests not added" in issues
+
+    def test_handles_asterisk_bullets(self):
+        """Handles * bullets in issues."""
+        text = """ISSUES:
+* Issue one
+* Issue two
+
+COMPLETION: 80%"""
+        issues = _extract_issues(text)
+        assert len(issues) == 2
+
+    def test_empty_when_no_issues_section(self):
+        """Returns empty list when no ISSUES section."""
+        text = "COMPLETION: 100%"
+        issues = _extract_issues(text)
+        assert issues == []
+
+
 class TestExecute:
     """Tests for main execute function."""
 
@@ -153,15 +184,15 @@ class TestExecute:
         async def mock_query(*args, **kwargs):
             yield mock_message
 
-        with patch("fireteam.api.estimate_complexity", return_value=ComplexityLevel.SIMPLE):
+        with patch("fireteam.api.estimate_complexity", return_value=ComplexityLevel.TRIVIAL):
             with patch("fireteam.api.query", mock_query):
                 result = await execute(
                     project_dir=project_dir,
-                    goal="Fix the bug",
+                    goal="Fix the typo",
                     mode=None,
                     run_tests=False,
                 )
-                assert result.mode == ExecutionMode.SIMPLE
+                assert result.mode == ExecutionMode.SINGLE_TURN
 
     @pytest.mark.asyncio
     async def test_uses_specified_mode(self, project_dir):
@@ -199,51 +230,7 @@ class TestExecute:
             )
             assert result.success is True
             assert result.completion_percentage == 100
-
-    @pytest.mark.asyncio
-    async def test_simple_mode(self, project_dir):
-        """SIMPLE mode executes without review."""
-        mock_message = MagicMock()
-        mock_message.result = "Executed the task."
-
-        async def mock_query(*args, **kwargs):
-            yield mock_message
-
-        with patch("fireteam.api.query", mock_query):
-            result = await execute(
-                project_dir=project_dir,
-                goal="Add logging",
-                mode=ExecutionMode.SIMPLE,
-                run_tests=False,
-            )
-            assert result.success is True
-            assert result.mode == ExecutionMode.SIMPLE
-
-    @pytest.mark.asyncio
-    async def test_moderate_mode_includes_review(self, project_dir):
-        """MODERATE mode includes execution and review."""
-        call_count = 0
-
-        async def mock_query(prompt, options):
-            nonlocal call_count
-            call_count += 1
-            mock_message = MagicMock()
-            if call_count == 1:
-                mock_message.result = "Executed."
-            else:
-                mock_message.result = "COMPLETION: 90%"
-            yield mock_message
-
-        with patch("fireteam.api.query", mock_query):
-            result = await execute(
-                project_dir=project_dir,
-                goal="Refactor module",
-                mode=ExecutionMode.MODERATE,
-                run_tests=False,
-            )
-            assert result.success is True
-            assert call_count == 2  # Execution + Review
-            assert "review" in result.metadata or result.completion_percentage > 0
+            assert result.iterations == 1
 
     @pytest.mark.asyncio
     async def test_handles_execution_error(self, project_dir):
@@ -256,7 +243,7 @@ class TestExecute:
             result = await execute(
                 project_dir=project_dir,
                 goal="Do something",
-                mode=ExecutionMode.SIMPLE,
+                mode=ExecutionMode.SINGLE_TURN,
                 run_tests=False,
             )
             assert result.success is False
@@ -305,54 +292,3 @@ class TestExecute:
             )
             # Should be absolute path
             assert Path(captured_options.cwd).is_absolute()
-
-
-class TestRunQuery:
-    """Tests for _run_query helper."""
-
-    @pytest.mark.asyncio
-    async def test_extracts_result_attribute(self):
-        """Extracts result from message with result attribute."""
-        mock_message = MagicMock()
-        mock_message.result = "The result."
-
-        async def mock_query(*args, **kwargs):
-            yield mock_message
-
-        with patch("fireteam.api.query", mock_query):
-            options = MagicMock()
-            result = await _run_query("prompt", options)
-            assert result == "The result."
-
-    @pytest.mark.asyncio
-    async def test_extracts_content_string(self):
-        """Extracts content when it's a string."""
-        mock_message = MagicMock(spec=["content"])
-        mock_message.content = "String content."
-        del mock_message.result  # No result attribute
-
-        async def mock_query(*args, **kwargs):
-            yield mock_message
-
-        with patch("fireteam.api.query", mock_query):
-            options = MagicMock()
-            result = await _run_query("prompt", options)
-            assert "String content" in result
-
-    @pytest.mark.asyncio
-    async def test_extracts_content_list_with_text(self):
-        """Extracts text from content list."""
-        text_block = MagicMock()
-        text_block.text = "Text from block."
-
-        mock_message = MagicMock(spec=["content"])
-        mock_message.content = [text_block]
-        del mock_message.result
-
-        async def mock_query(*args, **kwargs):
-            yield mock_message
-
-        with patch("fireteam.api.query", mock_query):
-            options = MagicMock()
-            result = await _run_query("prompt", options)
-            assert "Text from block" in result
