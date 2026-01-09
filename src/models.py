@@ -88,7 +88,7 @@ class IterationState:
 @dataclass
 class LoopConfig:
     """Configuration for execution loops."""
-    max_iterations: int = 5
+    max_iterations: int | None = None  # None = infinite (default)
     completion_threshold: int = 95
     parallel_reviewers: int = 1  # 1 for MODERATE, 3 for FULL
     majority_required: int = 1   # 1 for MODERATE, 2 for FULL

@@ -47,11 +47,19 @@ else:
 from fireteam import execute, ExecutionMode
 
 # Force full mode with planning and parallel reviews
+# Loops infinitely until complete (default)
 result = await execute(
     project_dir="/path/to/project",
     goal="Refactor the authentication module",
     mode=ExecutionMode.FULL,
-    max_iterations=10,  # Allow more iterations for complex tasks
+)
+
+# Or limit iterations if needed
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Refactor the authentication module",
+    mode=ExecutionMode.FULL,
+    max_iterations=10,  # Stop after 10 iterations if not complete
 )
 ```
 
@@ -83,7 +91,7 @@ while not complete:
     if completion >= 95%:
         complete = True
 ```
-Loops until a single reviewer says >95% complete, or max iterations reached.
+Loops **indefinitely** until a single reviewer says >95% complete. Set `max_iterations` to limit.
 
 ### FULL
 For complex tasks requiring planning and consensus:
@@ -95,7 +103,7 @@ while not complete:
     if 2 of 3 say >= 95%:
         complete = True
 ```
-Plans once, then loops execute->review until majority (2/3) consensus.
+Plans once, then loops **indefinitely** until majority (2/3) consensus. Set `max_iterations` to limit.
 
 ## API Reference
 
@@ -108,7 +116,7 @@ async def execute(
     context: str = "",
     mode: ExecutionMode | None = None,  # Auto-detect if None
     run_tests: bool = True,
-    max_iterations: int = 5,
+    max_iterations: int | None = None,  # None = infinite (default)
 ) -> ExecutionResult
 ```
 
@@ -142,6 +150,7 @@ Environment variables:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `ANTHROPIC_API_KEY` | (required) | API key for Claude |
+| `FIRETEAM_MAX_ITERATIONS` | (none) | Max loop iterations. Unset = infinite. |
 | `FIRETEAM_LOG_LEVEL` | INFO | Logging verbosity |
 
 ## Quality Hooks
@@ -166,6 +175,10 @@ result = await execute(
 
 ```
 fireteam/
+├── .claude-plugin/
+│   ├── plugin.json      # Claude Code plugin manifest
+│   └── commands/
+│       └── fireteam.md  # /fireteam command definition
 ├── src/
 │   ├── __init__.py      # Public API exports
 │   ├── api.py           # Core execute() function

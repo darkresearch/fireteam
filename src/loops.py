@@ -6,6 +6,7 @@ FULL: plan → execute → parallel reviews loop until complete
 """
 
 import asyncio
+import itertools
 import logging
 from pathlib import Path
 
@@ -164,19 +165,23 @@ async def moderate_loop(
 
     Loop continues until:
     1. Single reviewer says >= threshold, OR
-    2. Max iterations reached
+    2. Max iterations reached (if set)
 
     Feedback from each review flows to the next execution.
     """
     from .prompts.builder import build_prompt
 
-    cfg = cfg or LoopConfig(max_iterations=5, parallel_reviewers=1, majority_required=1)
+    cfg = cfg or LoopConfig(parallel_reviewers=1, majority_required=1)
     log = log or logging.getLogger("fireteam")
     state = IterationState()
 
-    for iteration in range(1, cfg.max_iterations + 1):
+    # Use infinite counter if max_iterations is None, otherwise bounded range
+    counter = itertools.count(1) if cfg.max_iterations is None else range(1, cfg.max_iterations + 1)
+    max_display = "∞" if cfg.max_iterations is None else cfg.max_iterations
+
+    for iteration in counter:
         state.iteration = iteration
-        log.info(f"MODERATE iteration {iteration}/{cfg.max_iterations}")
+        log.info(f"MODERATE iteration {iteration}/{max_display}")
 
         # === EXECUTE ===
         exec_prompt = build_prompt(
@@ -223,7 +228,7 @@ async def moderate_loop(
                 metadata={"review_history": state.review_history},
             )
 
-    # Max iterations reached
+    # Max iterations reached (only reachable if max_iterations is set)
     last_completion = 0
     if state.review_history:
         last_reviews = state.review_history[-1].get("reviews", [])
@@ -236,7 +241,7 @@ async def moderate_loop(
         output=state.execution_output,
         error=f"Did not reach {cfg.completion_threshold}% after {cfg.max_iterations} iterations",
         completion_percentage=last_completion,
-        iterations=cfg.max_iterations,
+        iterations=cfg.max_iterations or state.iteration,
         metadata={"review_history": state.review_history},
     )
 
@@ -254,15 +259,13 @@ async def full_loop(
 
     Loop continues until:
     1. Majority (2 of 3) reviewers say >= threshold, OR
-    2. Max iterations reached
+    2. Max iterations reached (if set)
 
     Plan is created once, then execute-review loops with feedback.
     """
     from .prompts.builder import build_prompt
 
-    cfg = cfg or LoopConfig(
-        max_iterations=5, parallel_reviewers=3, majority_required=2
-    )
+    cfg = cfg or LoopConfig(parallel_reviewers=3, majority_required=2)
     log = log or logging.getLogger("fireteam")
     state = IterationState()
 
@@ -286,9 +289,13 @@ async def full_loop(
         )
 
     # === EXECUTE-REVIEW LOOP ===
-    for iteration in range(1, cfg.max_iterations + 1):
+    # Use infinite counter if max_iterations is None, otherwise bounded range
+    counter = itertools.count(1) if cfg.max_iterations is None else range(1, cfg.max_iterations + 1)
+    max_display = "∞" if cfg.max_iterations is None else cfg.max_iterations
+
+    for iteration in counter:
         state.iteration = iteration
-        log.info(f"FULL iteration {iteration}/{cfg.max_iterations}")
+        log.info(f"FULL iteration {iteration}/{max_display}")
 
         # === EXECUTE ===
         exec_prompt = build_prompt(
@@ -355,7 +362,7 @@ async def full_loop(
                 },
             )
 
-    # Max iterations reached
+    # Max iterations reached (only reachable if max_iterations is set)
     avg_completion = 0
     if state.review_history:
         last_reviews = state.review_history[-1].get("reviews", [])
@@ -368,7 +375,7 @@ async def full_loop(
         output=state.execution_output,
         error=f"Did not achieve majority completion after {cfg.max_iterations} iterations",
         completion_percentage=avg_completion,
-        iterations=cfg.max_iterations,
+        iterations=cfg.max_iterations or state.iteration,
         metadata={
             "plan": state.plan,
             "review_history": state.review_history,

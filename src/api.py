@@ -43,7 +43,7 @@ async def execute(
     context: str = "",
     run_tests: bool = True,
     test_command: list[str] | None = None,
-    max_iterations: int = 5,
+    max_iterations: int | None = None,
     logger: logging.Logger | None = None,
 ) -> ExecutionResult:
     """
@@ -56,7 +56,7 @@ async def execute(
         context: Additional context (crash logs, etc.)
         run_tests: Run tests after code changes (default: True)
         test_command: Custom test command (auto-detected if None)
-        max_iterations: Maximum loop iterations for MODERATE/FULL modes
+        max_iterations: Maximum loop iterations for MODERATE/FULL modes (None = infinite)
         logger: Optional logger
 
     Returns:
@@ -78,13 +78,16 @@ async def execute(
         mode = COMPLEXITY_TO_MODE[complexity]
         log.info(f"Complexity: {complexity.value} -> Mode: {mode.value}")
 
+    # Use config default if max_iterations not explicitly provided
+    effective_max_iterations = max_iterations if max_iterations is not None else config.MAX_ITERATIONS
+
     # Dispatch based on mode
     if mode == ExecutionMode.SINGLE_TURN:
         return await _single_turn(project_dir, goal, context, hooks, log)
 
     elif mode == ExecutionMode.MODERATE:
         cfg = LoopConfig(
-            max_iterations=max_iterations,
+            max_iterations=effective_max_iterations,
             parallel_reviewers=1,
             majority_required=1,
         )
@@ -92,7 +95,7 @@ async def execute(
 
     elif mode == ExecutionMode.FULL:
         cfg = LoopConfig(
-            max_iterations=max_iterations,
+            max_iterations=effective_max_iterations,
             parallel_reviewers=3,
             majority_required=2,
         )
