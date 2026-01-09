@@ -1,17 +1,17 @@
 # Fireteam
 
-Multi-phase autonomous task execution with complexity estimation, planning, execution, and review.
+Adaptive task execution using Claude Agent SDK with complexity-based routing and loop-until-complete behavior.
 
 ## Overview
 
-Fireteam provides adaptive task execution using Claude Agent SDK. It automatically estimates task complexity and selects the appropriate execution strategy:
+Fireteam estimates task complexity and routes to the appropriate execution strategy:
 
-| Complexity | Mode | Phases |
-|------------|------|--------|
-| TRIVIAL | SINGLE_TURN | Direct execution, minimal tools |
-| SIMPLE | SIMPLE | Execute only |
-| MODERATE | MODERATE | Execute + single review |
-| COMPLEX | FULL | Plan + execute + validation reviews |
+| Complexity | Mode | Behavior |
+|------------|------|----------|
+| TRIVIAL | SINGLE_TURN | Direct execution, single pass |
+| SIMPLE | SINGLE_TURN | Direct execution, single pass |
+| MODERATE | MODERATE | Execute -> review loop until >95% complete |
+| COMPLEX | FULL | Plan once, then execute -> 3 parallel reviews loop until 2/3 say >95% |
 
 ## Installation
 
@@ -26,7 +26,6 @@ Requires Python 3.10+ and a valid `ANTHROPIC_API_KEY` environment variable.
 ### Basic Usage
 
 ```python
-import asyncio
 from fireteam import execute
 
 result = await execute(
@@ -36,7 +35,7 @@ result = await execute(
 )
 
 if result.success:
-    print(f"Completed: {result.output}")
+    print(f"Completed in {result.iterations} iterations")
     print(f"Completion: {result.completion_percentage}%")
 else:
     print(f"Failed: {result.error}")
@@ -47,11 +46,12 @@ else:
 ```python
 from fireteam import execute, ExecutionMode
 
-# Force a specific mode
+# Force full mode with planning and parallel reviews
 result = await execute(
     project_dir="/path/to/project",
     goal="Refactor the authentication module",
-    mode=ExecutionMode.FULL,  # Use full plan+execute+review cycle
+    mode=ExecutionMode.FULL,
+    max_iterations=10,  # Allow more iterations for complex tasks
 )
 ```
 
@@ -66,25 +66,36 @@ complexity = await estimate_complexity(
 )
 
 print(f"Estimated complexity: {complexity}")
-# ComplexityLevel.SIMPLE
+# ComplexityLevel.SIMPLE -> routes to SINGLE_TURN mode
 ```
 
 ## Execution Modes
 
 ### SINGLE_TURN
-For trivial tasks like fixing typos or adding comments. Single SDK call with minimal tools.
-
-### SIMPLE
-For simple tasks. Execute only, no review phase.
+For trivial and simple tasks. Single SDK call, no review loop.
 
 ### MODERATE
-For moderate tasks. Execute + single review to assess completion.
+For moderate tasks requiring validation:
+```
+while not complete:
+    execute()
+    completion = review()
+    if completion >= 95%:
+        complete = True
+```
+Loops until a single reviewer says >95% complete, or max iterations reached.
 
 ### FULL
-For complex tasks. Full cycle:
-1. **Planning**: Analyze goal and create implementation plan
-2. **Execution**: Implement the plan
-3. **Validation**: Multiple reviews until 3 consecutive >95% completion ratings
+For complex tasks requiring planning and consensus:
+```
+plan()  # Once at start
+while not complete:
+    execute()
+    reviews = run_3_parallel_reviewers()
+    if 2 of 3 say >= 95%:
+        complete = True
+```
+Plans once, then loops execute->review until majority (2/3) consensus.
 
 ## API Reference
 
@@ -94,9 +105,10 @@ For complex tasks. Full cycle:
 async def execute(
     project_dir: str | Path,
     goal: str,
-    context: str | None = None,
+    context: str = "",
     mode: ExecutionMode | None = None,  # Auto-detect if None
     run_tests: bool = True,
+    max_iterations: int = 5,
 ) -> ExecutionResult
 ```
 
@@ -110,6 +122,7 @@ class ExecutionResult:
     output: str | None = None
     error: str | None = None
     completion_percentage: int = 0
+    iterations: int = 0
     metadata: dict = field(default_factory=dict)
 ```
 
@@ -118,20 +131,18 @@ class ExecutionResult:
 ```python
 async def estimate_complexity(
     goal: str,
-    context: str | None = None,
+    context: str = "",
 ) -> ComplexityLevel
 ```
 
 ## Configuration
 
-Configure via environment variables:
+Environment variables:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `ANTHROPIC_API_KEY` | (required) | API key for Claude |
 | `FIRETEAM_LOG_LEVEL` | INFO | Logging verbosity |
-| `FIRETEAM_COMPLETION_THRESHOLD` | 95 | Minimum completion % for FULL mode |
-| `FIRETEAM_VALIDATION_CHECKS` | 3 | Consecutive checks needed in FULL mode |
 
 ## Quality Hooks
 
@@ -142,12 +153,12 @@ Fireteam includes SDK hooks for quality enforcement:
 - **DEBUG_HOOKS**: Log all tool usage
 
 ```python
-from fireteam import execute, QUALITY_HOOKS
+from fireteam import execute
 
 result = await execute(
     project_dir="/path/to/project",
     goal="Add feature",
-    run_tests=True,  # Enables QUALITY_HOOKS
+    run_tests=True,  # Enables QUALITY_HOOKS (default)
 )
 ```
 
@@ -158,14 +169,19 @@ fireteam/
 ├── src/
 │   ├── __init__.py      # Public API exports
 │   ├── api.py           # Core execute() function
+│   ├── models.py        # Data models (ExecutionMode, ExecutionResult, etc.)
+│   ├── loops.py         # Loop implementations (moderate_loop, full_loop)
 │   ├── complexity.py    # Complexity estimation
 │   ├── config.py        # Configuration
-│   └── hooks.py         # SDK hooks for quality
+│   ├── hooks.py         # SDK hooks for quality
+│   └── prompts/
+│       ├── __init__.py  # Prompt loader
+│       ├── builder.py   # Prompt building with feedback injection
+│       ├── executor.md  # Executor agent prompt
+│       ├── reviewer.md  # Reviewer agent prompt
+│       ├── planner.md   # Planner agent prompt
+│       └── complexity.md # Complexity estimation prompt
 ├── tests/
-│   ├── test_api.py      # API tests
-│   ├── test_complexity.py
-│   ├── test_hooks.py
-│   └── test_integration.py
 └── pyproject.toml
 ```
 
@@ -175,9 +191,8 @@ fireteam/
 # Clone and install dev dependencies
 git clone https://github.com/darkresearch/fireteam
 cd fireteam
-python -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
+uv venv && source .venv/bin/activate
+uv pip install -e ".[dev]"
 
 # Run tests
 pytest tests/ -v
