@@ -1,0 +1,36 @@
+#!/bin/bash
+set -e
+
+# Install Python 3.12+ and pip
+if command -v apk &> /dev/null; then
+    # Alpine Linux
+    apk add --no-cache python3 py3-pip git
+elif command -v apt-get &> /dev/null; then
+    # Debian/Ubuntu
+    apt-get update
+    apt-get install -y python3 python3-pip python3-venv git curl
+else
+    echo "Unsupported distribution" >&2
+    exit 1
+fi
+
+# Install uv for fast package management
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+
+# Create virtual environment
+python3 -m venv /opt/fireteam-venv
+source /opt/fireteam-venv/bin/activate
+
+# Install fireteam from GitHub
+uv pip install git+https://github.com/darkresearch/fireteam.git
+
+# Create a wrapper script that uses the venv
+cat > /usr/local/bin/run-fireteam <<'WRAPPER'
+#!/bin/bash
+source /opt/fireteam-venv/bin/activate
+exec python3 "$@"
+WRAPPER
+chmod +x /usr/local/bin/run-fireteam
+
+echo "Fireteam installed successfully"

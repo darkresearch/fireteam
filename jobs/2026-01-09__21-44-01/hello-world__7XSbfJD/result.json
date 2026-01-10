@@ -1,0 +1,92 @@
+{
+    "id": "c7488ecc-0af9-469d-92f9-5c7afa55f563",
+    "task_name": "hello-world",
+    "trial_name": "hello-world__7XSbfJD",
+    "trial_uri": "file:///Users/osprey/repos/dark/fireteam/jobs/2026-01-09__21-44-01/hello-world__7XSbfJD",
+    "task_id": {
+        "git_url": "https://github.com/laude-institute/harbor.git",
+        "git_commit_id": "HEAD",
+        "path": "examples/tasks/hello-world"
+    },
+    "source": "hello-world",
+    "task_checksum": "372f063cd131b7c0f4cc8facdae5a0b62b3b41aa53283b1c6699fb7ec4c96b08",
+    "config": {
+        "task": {
+            "path": "examples/tasks/hello-world",
+            "git_url": "https://github.com/laude-institute/harbor.git",
+            "git_commit_id": "HEAD",
+            "overwrite": false,
+            "download_dir": null,
+            "source": "hello-world"
+        },
+        "trial_name": "hello-world__7XSbfJD",
+        "trials_dir": "jobs/2026-01-09__21-44-01",
+        "timeout_multiplier": 1.0,
+        "agent": {
+            "name": null,
+            "import_path": "benchmark.harbor_adapter:FireteamAgent",
+            "model_name": "anthropic/claude-sonnet-4-20250514",
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "kwargs": {}
+        },
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": true,
+            "delete": true,
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "kwargs": {}
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "job_id": "c5ac0259-1409-463f-9b4a-67987e80d0c7"
+    },
+    "agent_info": {
+        "name": "fireteam",
+        "version": "unknown",
+        "model_info": {
+            "name": "claude-sonnet-4-20250514",
+            "provider": "anthropic"
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": 0,
+        "n_cache_tokens": null,
+        "n_output_tokens": 0,
+        "cost_usd": null,
+        "rollout_details": null,
+        "metadata": null
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 0.0
+        }
+    },
+    "exception_info": null,
+    "started_at": "2026-01-09T21:44:02.299860",
+    "finished_at": "2026-01-09T21:46:02.145581",
+    "environment_setup": {
+        "started_at": "2026-01-09T21:44:02.300472",
+        "finished_at": "2026-01-09T21:44:03.224536"
+    },
+    "agent_setup": {
+        "started_at": "2026-01-09T21:44:03.224580",
+        "finished_at": "2026-01-09T21:44:25.918197"
+    },
+    "agent_execution": {
+        "started_at": "2026-01-09T21:44:25.918276",
+        "finished_at": "2026-01-09T21:45:54.958503"
+    },
+    "verifier": {
+        "started_at": "2026-01-09T21:45:54.958591",
+        "finished_at": "2026-01-09T21:46:00.725888"
+    }
+}

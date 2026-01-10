@@ -1,0 +1,23 @@
+bash: cannot set terminal process group (-1): Inappropriate ioctl for device
+bash: no job control in this shell
+Traceback (most recent call last):
+  File "<string>", line 13, in <module>
+  File "/opt/fireteam-venv/lib/python3.12/site-packages/fireteam/__init__.py", line 17, in <module>
+    from .api import execute
+  File "/opt/fireteam-venv/lib/python3.12/site-packages/fireteam/api.py", line 21, in <module>
+    from .complexity import ComplexityLevel, estimate_complexity
+  File "/opt/fireteam-venv/lib/python3.12/site-packages/fireteam/complexity.py", line 17, in <module>
+    from .prompts import COMPLEXITY_PROMPT
+ModuleNotFoundError: No module named 'fireteam.prompts'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<string>", line 16, in <module>
+  File "/opt/fireteam-venv/lib/python3.12/site-packages/fireteam/__init__.py", line 17, in <module>
+    from .api import execute
+  File "/opt/fireteam-venv/lib/python3.12/site-packages/fireteam/api.py", line 21, in <module>
+    from .complexity import ComplexityLevel, estimate_complexity
+  File "/opt/fireteam-venv/lib/python3.12/site-packages/fireteam/complexity.py", line 17, in <module>
+    from .prompts import COMPLEXITY_PROMPT
+ModuleNotFoundError: No module named 'fireteam.prompts'

@@ -1,0 +1,33 @@
+{
+    "id": "786f2d5f-f80e-430b-bf9e-0866b3e5affd",
+    "started_at": "2026-01-09T21:46:48.213550",
+    "finished_at": "2026-01-09T22:02:49.393933",
+    "n_total_trials": 1,
+    "stats": {
+        "n_trials": 1,
+        "n_errors": 1,
+        "evals": {
+            "fireteam__claude-sonnet-4-20250514__terminal-bench": {
+                "n_trials": 1,
+                "n_errors": 1,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "gpt2-codegolf__7MeaJ4V"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "AgentTimeoutError": [
+                        "gpt2-codegolf__7MeaJ4V"
+                    ]
+                }
+            }
+        }
+    }
+}

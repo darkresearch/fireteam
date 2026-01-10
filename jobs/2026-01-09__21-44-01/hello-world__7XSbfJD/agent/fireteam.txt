@@ -1,0 +1,6 @@
+Running fireteam on: /app
+Instruction: Create a file called hello.txt with "Hello, world!" as the content.
+...
+
+Result: success
+Completion: 100%

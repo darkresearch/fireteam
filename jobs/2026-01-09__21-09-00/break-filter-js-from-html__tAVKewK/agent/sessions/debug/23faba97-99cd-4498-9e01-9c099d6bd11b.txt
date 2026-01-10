@@ -1,0 +1,1217 @@
+2026-01-10T04:23:26.710Z [ERROR] Failed to save config with lock: Error: ENOENT: no such file or directory, lstat '/logs/agent/sessions/.claude.json'
+2026-01-10T04:23:26.712Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019006712
+2026-01-10T04:23:26.712Z [DEBUG] Setting permissions for new file: 600
+2026-01-10T04:23:26.713Z [DEBUG] Temp file written successfully, size: 82 bytes
+2026-01-10T04:23:26.713Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019006712 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:26.713Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:26.719Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019006719
+2026-01-10T04:23:26.719Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:26.720Z [DEBUG] Temp file written successfully, size: 130 bytes
+2026-01-10T04:23:26.720Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:26.720Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019006719 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:26.720Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:26.720Z [DEBUG] [init] configureGlobalMTLS starting
+2026-01-10T04:23:26.721Z [DEBUG] [init] configureGlobalMTLS complete
+2026-01-10T04:23:26.721Z [DEBUG] [init] configureGlobalAgents starting
+2026-01-10T04:23:26.721Z [DEBUG] [init] configureGlobalAgents complete
+2026-01-10T04:23:26.724Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019006724
+2026-01-10T04:23:26.724Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:26.725Z [DEBUG] Temp file written successfully, size: 167 bytes
+2026-01-10T04:23:26.725Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:26.725Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019006724 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:26.725Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:26.727Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019006727
+2026-01-10T04:23:26.727Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:26.728Z [DEBUG] Temp file written successfully, size: 202 bytes
+2026-01-10T04:23:26.728Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:26.728Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019006727 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:26.728Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:26.731Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019006731
+2026-01-10T04:23:26.731Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:26.731Z [DEBUG] Temp file written successfully, size: 239 bytes
+2026-01-10T04:23:26.731Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:26.731Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019006731 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:26.732Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:26.769Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-01-10T04:23:26.769Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-01-10T04:23:26.769Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-01-10T04:23:26.772Z [DEBUG] [STARTUP] Loading MCP configs...
+2026-01-10T04:23:26.774Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-01-10T04:23:26.774Z [DEBUG] Total LSP servers loaded: 0
+2026-01-10T04:23:26.774Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2026-01-10T04:23:26.774Z [DEBUG] LSP manager initialized with 0 servers
+2026-01-10T04:23:26.774Z [DEBUG] LSP server manager initialized successfully
+2026-01-10T04:23:26.774Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-01-10T04:23:26.775Z [DEBUG] [STARTUP] MCP configs loaded in 2ms
+2026-01-10T04:23:26.781Z [DEBUG] [STARTUP] Running setup()...
+2026-01-10T04:23:26.867Z [DEBUG] Loading skills from: managed=/etc/claude-code/.claude/skills, user=/logs/agent/sessions/skills, project=[]
+2026-01-10T04:23:26.916Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-01-10T04:23:26.964Z [DEBUG] Writing to temp file: /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json.tmp.1244.1768019006964
+2026-01-10T04:23:26.965Z [DEBUG] Temp file written successfully, size: 2 bytes
+2026-01-10T04:23:26.965Z [DEBUG] Renaming /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json.tmp.1244.1768019006964 to /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json
+2026-01-10T04:23:26.965Z [DEBUG] File /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json written atomically
+2026-01-10T04:23:26.968Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-01-10T04:23:26.968Z [DEBUG] Total plugin skills loaded: 0
+2026-01-10T04:23:26.968Z [DEBUG] Total plugin commands loaded: 0
+2026-01-10T04:23:26.968Z [DEBUG] Registered 0 hooks from 0 plugins
+2026-01-10T04:23:26.982Z [DEBUG] [STARTUP] setup() completed in 201ms
+2026-01-10T04:23:26.982Z [DEBUG] [STARTUP] Loading commands and agents...
+2026-01-10T04:23:26.988Z [DEBUG] Total plugin agents loaded: 0
+2026-01-10T04:23:26.988Z [DEBUG] Loaded 0 unique skills (managed: 0, user: 0, project: 0, legacy commands: 0)
+2026-01-10T04:23:26.990Z [DEBUG] getSkills returning: 0 skill dir commands, 0 plugin skills, 0 bundled skills
+2026-01-10T04:23:26.991Z [DEBUG] [STARTUP] Commands and agents loaded in 9ms
+2026-01-10T04:23:27.075Z [DEBUG] Initialized versioned plugins system with 0 plugins
+2026-01-10T04:23:27.106Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2026-01-10T04:23:27.106Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:27.106Z [DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+2026-01-10T04:23:27.120Z [DEBUG] Total plugin output styles loaded: 0
+2026-01-10T04:23:27.208Z [DEBUG] Creating shell snapshot for bash (/bin/bash)
+2026-01-10T04:23:27.209Z [DEBUG] Looking for shell config file: /root/.bashrc
+2026-01-10T04:23:27.209Z [DEBUG] Snapshots directory: /logs/agent/sessions/shell-snapshots
+2026-01-10T04:23:27.211Z [DEBUG] Creating snapshot at: /logs/agent/sessions/shell-snapshots/snapshot-bash-1768019007209-kj4l3m.sh
+2026-01-10T04:23:27.211Z [DEBUG] Shell binary exists: true
+2026-01-10T04:23:27.211Z [DEBUG] Execution timeout: 10000ms
+2026-01-10T04:23:27.215Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=/root/.nvm/versions/node/v22.21.1/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg)
+2026-01-10T04:23:27.262Z [DEBUG] Skills and commands included in Skill tool:
+2026-01-10T04:23:27.265Z [DEBUG] Getting matching hook commands for SubagentStart with query: Explore
+2026-01-10T04:23:27.265Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:27.265Z [DEBUG] Matched 0 unique hooks for query "Explore" (0 before deduplication)
+2026-01-10T04:23:27.266Z [DEBUG] Getting matching hook commands for SubagentStart with query: Plan
+2026-01-10T04:23:27.266Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:27.266Z [DEBUG] Matched 0 unique hooks for query "Plan" (0 before deduplication)
+2026-01-10T04:23:27.266Z [DEBUG] Getting matching hook commands for SubagentStart with query: Bash
+2026-01-10T04:23:27.266Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:27.266Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:23:27.268Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:23:27.268Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:23:27.278Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:23:27.281Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:23:27.281Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:23:27.281Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:23:27.281Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:23:27.292Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-01-10T04:23:27.292Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:27.292Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-01-10T04:23:27.477Z [DEBUG] Remote settings: No settings found (404)
+2026-01-10T04:23:27.478Z [DEBUG] Programmatic settings change notification for policySettings
+2026-01-10T04:23:27.478Z [DEBUG] Plugin hooks: reloading due to policySettings change
+2026-01-10T04:23:27.481Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-01-10T04:23:27.485Z [DEBUG] Registered 0 hooks from 0 plugins
+2026-01-10T04:23:27.564Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019007564
+2026-01-10T04:23:27.565Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:27.566Z [DEBUG] Temp file written successfully, size: 415 bytes
+2026-01-10T04:23:27.566Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:27.566Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019007564 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:27.566Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:27.569Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019007569
+2026-01-10T04:23:27.569Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:27.569Z [DEBUG] Temp file written successfully, size: 451 bytes
+2026-01-10T04:23:27.570Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:27.570Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019007569 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:27.570Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:27.573Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019007573
+2026-01-10T04:23:27.573Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:27.574Z [DEBUG] Temp file written successfully, size: 479 bytes
+2026-01-10T04:23:27.574Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:27.574Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019007573 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:27.574Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:27.578Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019007578
+2026-01-10T04:23:27.578Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:27.579Z [DEBUG] Temp file written successfully, size: 531 bytes
+2026-01-10T04:23:27.579Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:27.579Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019007578 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:27.579Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:27.586Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019007586
+2026-01-10T04:23:27.586Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:27.587Z [DEBUG] Temp file written successfully, size: 570 bytes
+2026-01-10T04:23:27.588Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:27.588Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019007586 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:27.588Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:27.595Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019007595
+2026-01-10T04:23:27.595Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:27.596Z [DEBUG] Temp file written successfully, size: 608 bytes
+2026-01-10T04:23:27.596Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:27.596Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019007595 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:27.597Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:27.604Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019007604
+2026-01-10T04:23:27.604Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:27.605Z [DEBUG] Temp file written successfully, size: 647 bytes
+2026-01-10T04:23:27.605Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:27.605Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019007604 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:27.605Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:27.608Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019007608
+2026-01-10T04:23:27.608Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:27.609Z [DEBUG] Temp file written successfully, size: 677 bytes
+2026-01-10T04:23:27.609Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:27.609Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019007608 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:27.609Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:27.662Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019007662
+2026-01-10T04:23:27.662Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:27.663Z [DEBUG] Temp file written successfully, size: 707 bytes
+2026-01-10T04:23:27.663Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:27.663Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019007662 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:27.663Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:27.666Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019007666
+2026-01-10T04:23:27.666Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:27.666Z [DEBUG] Temp file written successfully, size: 753 bytes
+2026-01-10T04:23:27.666Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:27.666Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019007666 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:27.666Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:27.668Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:23:27.668Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:23:27.668Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:23:27.669Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:23:27.673Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019007673
+2026-01-10T04:23:27.673Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:27.673Z [DEBUG] Temp file written successfully, size: 803 bytes
+2026-01-10T04:23:27.673Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:27.673Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019007673 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:27.673Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:27.679Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:23:27.679Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:23:27.679Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:23:27.681Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019007681
+2026-01-10T04:23:27.681Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:27.682Z [DEBUG] Temp file written successfully, size: 849 bytes
+2026-01-10T04:23:27.682Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:27.682Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019007681 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:27.682Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:27.685Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:23:27.685Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:23:27.686Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:23:27.686Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:23:27.686Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:23:27.686Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:23:27.687Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:23:27.687Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:23:27.687Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:23:27.787Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.1244.1768019007787
+2026-01-10T04:23:27.787Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:23:27.788Z [DEBUG] Temp file written successfully, size: 916 bytes
+2026-01-10T04:23:27.788Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:27.788Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.1244.1768019007787 to /logs/agent/sessions/.claude.json
+2026-01-10T04:23:27.788Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:23:28.362Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:23:28.435Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:23:29.006Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:23:29.038Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:23:29.769Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:23:29.770Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:23:29.770Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:29.770Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:23:29.793Z [DEBUG] [Agent: Bash] Reached max turns limit (1)
+2026-01-10T04:23:29.923Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2026-01-10T04:23:29.923Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:29.923Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-01-10T04:23:31.009Z [DEBUG] Shell snapshot created successfully (240978 bytes)
+2026-01-10T04:23:32.506Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2026-01-10T04:23:32.507Z [DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+2026-01-10T04:23:32.507Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:32.507Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-01-10T04:23:32.513Z [DEBUG] Writing to temp file: /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json.tmp.1244.1768019012513
+2026-01-10T04:23:32.513Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:23:32.513Z [DEBUG] Temp file written successfully, size: 461 bytes
+2026-01-10T04:23:32.513Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:32.513Z [DEBUG] Renaming /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json.tmp.1244.1768019012513 to /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json
+2026-01-10T04:23:32.514Z [DEBUG] File /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json written atomically
+2026-01-10T04:23:32.516Z [DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+2026-01-10T04:23:32.516Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:32.516Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-01-10T04:23:32.524Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:23:32.524Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:23:32.524Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:23:32.524Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:23:32.528Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:23:32.532Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:23:32.532Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:23:32.532Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:23:33.126Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2026-01-10T04:23:33.126Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:33.127Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-01-10T04:23:33.620Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:23:34.818Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2026-01-10T04:23:34.819Z [DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+2026-01-10T04:23:34.819Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:34.819Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-01-10T04:23:34.820Z [DEBUG] Writing to temp file: /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json.tmp.1244.1768019014820
+2026-01-10T04:23:34.821Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:23:34.821Z [DEBUG] Temp file written successfully, size: 465 bytes
+2026-01-10T04:23:34.821Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:34.821Z [DEBUG] Renaming /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json.tmp.1244.1768019014820 to /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json
+2026-01-10T04:23:34.821Z [DEBUG] File /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json written atomically
+2026-01-10T04:23:34.824Z [DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+2026-01-10T04:23:34.824Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:34.824Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-01-10T04:23:34.830Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:23:34.830Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:23:34.830Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:23:34.830Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:23:34.834Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:23:34.838Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:23:34.838Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:23:34.838Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:23:35.976Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:23:36.411Z [DEBUG] executePreToolHooks called for tool: Read
+2026-01-10T04:23:36.411Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-01-10T04:23:36.411Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:36.411Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-01-10T04:23:36.422Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-01-10T04:23:36.422Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:36.422Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-01-10T04:23:36.430Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:23:36.430Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:23:36.430Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:23:36.430Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:23:36.436Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:23:36.440Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:23:36.440Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:23:36.440Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:23:37.416Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:23:38.235Z [DEBUG] executePreToolHooks called for tool: Read
+2026-01-10T04:23:38.235Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-01-10T04:23:38.235Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:38.235Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-01-10T04:23:38.241Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-01-10T04:23:38.241Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:38.241Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-01-10T04:23:38.251Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:23:38.251Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:23:38.251Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:23:38.251Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:23:38.255Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:23:38.260Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:23:38.260Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:23:38.260Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:23:39.421Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:23:42.012Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2026-01-10T04:23:42.012Z [DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+2026-01-10T04:23:42.012Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:42.012Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-01-10T04:23:42.014Z [DEBUG] Writing to temp file: /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json.tmp.1244.1768019022014
+2026-01-10T04:23:42.014Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:23:42.014Z [DEBUG] Temp file written successfully, size: 467 bytes
+2026-01-10T04:23:42.014Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:42.014Z [DEBUG] Renaming /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json.tmp.1244.1768019022014 to /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json
+2026-01-10T04:23:42.014Z [DEBUG] File /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json written atomically
+2026-01-10T04:23:42.017Z [DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+2026-01-10T04:23:42.017Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:42.017Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-01-10T04:23:42.024Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:23:42.024Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:23:42.024Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:23:42.024Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:23:42.028Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:23:42.032Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:23:42.033Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:23:42.033Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:23:42.998Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:23:50.157Z [DEBUG] executePreToolHooks called for tool: Write
+2026-01-10T04:23:50.158Z [DEBUG] Getting matching hook commands for PreToolUse with query: Write
+2026-01-10T04:23:50.158Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:50.158Z [DEBUG] Matched 0 unique hooks for query "Write" (0 before deduplication)
+2026-01-10T04:23:50.208Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019030208
+2026-01-10T04:23:50.209Z [DEBUG] Temp file written successfully, size: 354 bytes
+2026-01-10T04:23:50.209Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019030208 to /app/out.html
+2026-01-10T04:23:50.209Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:23:50.212Z [DEBUG] Getting matching hook commands for PostToolUse with query: Write
+2026-01-10T04:23:50.213Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:50.213Z [DEBUG] Matched 0 unique hooks for query "Write" (0 before deduplication)
+2026-01-10T04:23:50.222Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:23:50.222Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:23:50.222Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:23:50.222Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:23:50.228Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:23:50.232Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:23:50.232Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:23:50.232Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:23:51.142Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:23:59.151Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:23:59.153Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:23:59.153Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:59.153Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:23:59.160Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019039160
+2026-01-10T04:23:59.160Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:23:59.160Z [DEBUG] Temp file written successfully, size: 497 bytes
+2026-01-10T04:23:59.160Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:23:59.160Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019039160 to /app/out.html
+2026-01-10T04:23:59.160Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:23:59.165Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:23:59.165Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:23:59.165Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:23:59.175Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:23:59.175Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:23:59.175Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:23:59.175Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:23:59.187Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:23:59.195Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:23:59.195Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:23:59.195Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:00.273Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:05.792Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:24:05.793Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:24:05.793Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:05.793Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:24:05.797Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019045797
+2026-01-10T04:24:05.797Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:24:05.797Z [DEBUG] Temp file written successfully, size: 272 bytes
+2026-01-10T04:24:05.797Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:24:05.797Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019045797 to /app/out.html
+2026-01-10T04:24:05.797Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:24:05.802Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:24:05.802Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:05.802Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:24:05.810Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:24:05.810Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:24:05.810Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:24:05.810Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:24:05.816Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:24:05.821Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:05.821Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:05.822Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:06.660Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:10.539Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2026-01-10T04:24:10.540Z [DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+2026-01-10T04:24:10.540Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:10.540Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-01-10T04:24:10.544Z [DEBUG] Writing to temp file: /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json.tmp.1244.1768019050544
+2026-01-10T04:24:10.544Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:24:10.545Z [DEBUG] Temp file written successfully, size: 469 bytes
+2026-01-10T04:24:10.545Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:24:10.545Z [DEBUG] Renaming /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json.tmp.1244.1768019050544 to /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json
+2026-01-10T04:24:10.545Z [DEBUG] File /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json written atomically
+2026-01-10T04:24:10.548Z [DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+2026-01-10T04:24:10.548Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:10.548Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-01-10T04:24:10.556Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:24:10.556Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:24:10.556Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:24:10.556Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:24:10.561Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:24:10.565Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:10.565Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:10.566Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:11.711Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:12.366Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:24:12.367Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:24:12.367Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:12.367Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:12.373Z [DEBUG] tree-sitter: WASM files not found
+2026-01-10T04:24:12.385Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:24:12.386Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:12.386Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:12.386Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:12.796Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:12.863Z [DEBUG] No session environment scripts found
+2026-01-10T04:24:15.713Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:24:15.714Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:15.714Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:15.715Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:15.715Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-01-10T04:24:15.715Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:15.715Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:15.726Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:24:15.726Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:24:15.726Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:24:15.726Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:24:15.732Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:24:15.738Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:15.738Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:15.739Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:16.073Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:16.765Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:18.330Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:24:18.330Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:24:18.330Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:18.330Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:18.334Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:24:18.335Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:18.335Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:18.335Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:20.113Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:23.071Z [DEBUG] Getting matching hook commands for PostToolUseFailure with query: Bash
+2026-01-10T04:24:23.071Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:23.071Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:23.080Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:24:23.080Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:24:23.080Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:24:23.080Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:24:23.086Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:24:23.091Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:23.091Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:23.092Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:24.009Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:25.978Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:24:25.979Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:24:25.979Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:25.979Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:28.586Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:24:28.587Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:28.587Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:28.588Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:28.588Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-01-10T04:24:28.588Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:28.588Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:28.602Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:24:28.602Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:24:28.602Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:24:28.602Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:24:28.607Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:24:28.615Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:28.615Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:28.615Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:29.419Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:29.877Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:30.534Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:24:30.534Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:24:30.534Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:30.535Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:30.537Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:24:30.538Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:30.538Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:30.538Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:30.856Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:33.712Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:24:33.713Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:33.713Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:33.714Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:33.714Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-01-10T04:24:33.714Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:33.714Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:33.727Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:24:33.727Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:24:33.727Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:24:33.727Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:24:33.732Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:24:33.738Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:33.738Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:33.739Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:34.043Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:35.009Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:35.299Z [DEBUG] executePreToolHooks called for tool: Read
+2026-01-10T04:24:35.299Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-01-10T04:24:35.299Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:35.299Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-01-10T04:24:35.304Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-01-10T04:24:35.304Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:35.304Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-01-10T04:24:35.312Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:24:35.312Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:24:35.312Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:24:35.312Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:24:35.317Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:24:35.324Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:35.324Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:35.324Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:36.336Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:39.149Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:24:39.150Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:24:39.150Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:39.150Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:41.782Z [DEBUG] Getting matching hook commands for PostToolUseFailure with query: Bash
+2026-01-10T04:24:41.782Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:41.782Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:41.790Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:24:41.790Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:24:41.790Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:24:41.790Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:24:41.794Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:24:41.800Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:41.800Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:41.801Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:43.041Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:43.682Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:24:43.682Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:24:43.682Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:43.682Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:46.306Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:24:46.307Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:46.307Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:46.308Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:46.308Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-01-10T04:24:46.308Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:46.308Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:46.323Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:24:46.323Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:24:46.323Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:24:46.323Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:24:46.330Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:24:46.336Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:46.336Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:46.337Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:46.718Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:47.701Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:48.236Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:24:48.236Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:24:48.236Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:48.236Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:51.180Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:24:51.182Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:51.182Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:51.183Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:51.184Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-01-10T04:24:51.184Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:51.184Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:51.199Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:24:51.199Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:24:51.199Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:24:51.199Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:24:51.206Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:24:51.214Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:51.214Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:51.214Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:51.521Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:51.988Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:53.916Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:24:53.917Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:24:53.917Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:24:53.917Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:24:53.922Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:24:53.922Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:24:53.923Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:53.923Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:53.924Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:24:53.924Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:24:53.924Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:53.924Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:24:54.257Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:24:54.287Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:25:10.940Z [DEBUG] Getting matching hook commands for PostToolUseFailure with query: Bash
+2026-01-10T04:25:10.940Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:25:10.940Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:25:10.949Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:25:10.949Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:25:10.949Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:25:10.949Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:25:10.954Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:25:10.961Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:25:10.961Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:25:10.962Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:25:12.654Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:25:19.879Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:25:19.880Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:25:19.880Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:25:19.880Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:25:19.884Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019119884
+2026-01-10T04:25:19.884Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:25:19.884Z [DEBUG] Temp file written successfully, size: 592 bytes
+2026-01-10T04:25:19.884Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:25:19.884Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019119884 to /app/out.html
+2026-01-10T04:25:19.884Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:25:19.888Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:25:19.888Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:25:19.888Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:25:19.896Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:25:19.896Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:25:19.896Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:25:19.896Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:25:19.901Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:25:19.908Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:25:19.908Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:25:19.910Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:25:20.908Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:25:27.760Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:25:27.761Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:25:27.761Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:25:27.761Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:25:27.764Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019127764
+2026-01-10T04:25:27.764Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:25:27.764Z [DEBUG] Temp file written successfully, size: 618 bytes
+2026-01-10T04:25:27.764Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:25:27.764Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019127764 to /app/out.html
+2026-01-10T04:25:27.764Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:25:27.769Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:25:27.769Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:25:27.769Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:25:27.778Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:25:27.778Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:25:27.778Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:25:27.778Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:25:27.782Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:25:27.788Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:25:27.788Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:25:27.789Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:25:28.892Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:25:31.511Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:25:31.515Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:25:31.515Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:25:31.515Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:25:34.308Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:25:34.310Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:25:34.310Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:25:34.311Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:25:34.311Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-01-10T04:25:34.311Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:25:34.311Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:25:34.327Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:25:34.327Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:25:34.327Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:25:34.327Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:25:34.331Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:25:34.337Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:25:34.337Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:25:34.338Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:25:34.652Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:25:35.348Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:25:43.618Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:25:43.618Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:25:43.618Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:25:43.618Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:25:43.621Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019143621
+2026-01-10T04:25:43.621Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:25:43.621Z [DEBUG] Temp file written successfully, size: 756 bytes
+2026-01-10T04:25:43.621Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:25:43.621Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019143621 to /app/out.html
+2026-01-10T04:25:43.622Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:25:43.625Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:25:43.625Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:25:43.625Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:25:43.633Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:25:43.633Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:25:43.633Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:25:43.633Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:25:43.642Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:25:43.650Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:25:43.650Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:25:43.651Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:25:44.724Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:25:54.387Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:25:54.388Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:25:54.388Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:25:54.388Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:25:54.391Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019154391
+2026-01-10T04:25:54.391Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:25:54.391Z [DEBUG] Temp file written successfully, size: 691 bytes
+2026-01-10T04:25:54.391Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:25:54.391Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019154391 to /app/out.html
+2026-01-10T04:25:54.391Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:25:54.396Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:25:54.396Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:25:54.396Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:25:54.405Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:25:54.405Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:25:54.405Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:25:54.405Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:25:54.411Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:25:54.419Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:25:54.419Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:25:54.420Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:25:55.287Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:26:02.961Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:26:02.961Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:26:02.961Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:26:02.961Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:26:02.964Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019162964
+2026-01-10T04:26:02.964Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:26:02.965Z [DEBUG] Temp file written successfully, size: 690 bytes
+2026-01-10T04:26:02.965Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:26:02.965Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019162964 to /app/out.html
+2026-01-10T04:26:02.965Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:26:02.968Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:26:02.968Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:26:02.968Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:26:02.976Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:26:02.976Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:26:02.976Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:26:02.976Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:26:02.982Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:26:02.989Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:26:02.989Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:26:02.989Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:26:04.125Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:26:11.235Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:26:11.236Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:26:11.236Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:26:11.236Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:26:11.238Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019171238
+2026-01-10T04:26:11.238Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:26:11.238Z [DEBUG] Temp file written successfully, size: 668 bytes
+2026-01-10T04:26:11.238Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:26:11.238Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019171238 to /app/out.html
+2026-01-10T04:26:11.238Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:26:11.241Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:26:11.241Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:26:11.241Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:26:11.250Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:26:11.250Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:26:11.250Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:26:11.250Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:26:11.256Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:26:11.264Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:26:11.264Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:26:11.265Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:26:12.296Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:26:14.039Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:26:14.040Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:26:14.040Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:26:14.040Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:26:30.340Z [DEBUG] Getting matching hook commands for PostToolUseFailure with query: Bash
+2026-01-10T04:26:30.340Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:26:30.340Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:26:30.351Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:26:30.351Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:26:30.351Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:26:30.351Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:26:30.357Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:26:30.366Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:26:30.366Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:26:30.366Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:26:31.404Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:26:39.996Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:26:39.997Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:26:39.997Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:26:39.997Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:26:39.999Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019199999
+2026-01-10T04:26:39.999Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:26:39.999Z [DEBUG] Temp file written successfully, size: 645 bytes
+2026-01-10T04:26:39.999Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:26:39.999Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019199999 to /app/out.html
+2026-01-10T04:26:39.999Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:26:40.003Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:26:40.003Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:26:40.003Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:26:40.014Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:26:40.014Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:26:40.014Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:26:40.014Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:26:40.021Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:26:40.030Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:26:40.030Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:26:40.031Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:26:41.089Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:26:49.047Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:26:49.048Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:26:49.048Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:26:49.048Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:26:49.053Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019209053
+2026-01-10T04:26:49.053Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:26:49.053Z [DEBUG] Temp file written successfully, size: 811 bytes
+2026-01-10T04:26:49.053Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:26:49.053Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019209053 to /app/out.html
+2026-01-10T04:26:49.053Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:26:49.058Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:26:49.058Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:26:49.058Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:26:49.068Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:26:49.068Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:26:49.068Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:26:49.068Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:26:49.072Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:26:49.083Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:26:49.083Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:26:49.084Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:26:50.187Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:26:58.788Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:26:58.789Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:26:58.789Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:26:58.789Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:26:58.791Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019218791
+2026-01-10T04:26:58.791Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:26:58.791Z [DEBUG] Temp file written successfully, size: 814 bytes
+2026-01-10T04:26:58.791Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:26:58.791Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019218791 to /app/out.html
+2026-01-10T04:26:58.791Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:26:58.796Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:26:58.796Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:26:58.796Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:26:58.803Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:26:58.803Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:26:58.803Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:26:58.803Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:26:58.810Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:26:58.819Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:26:58.819Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:26:58.820Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:26:59.918Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:27:09.411Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:27:09.412Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:27:09.412Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:27:09.412Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:27:09.416Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019229416
+2026-01-10T04:27:09.416Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:27:09.416Z [DEBUG] Temp file written successfully, size: 976 bytes
+2026-01-10T04:27:09.416Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:27:09.416Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019229416 to /app/out.html
+2026-01-10T04:27:09.416Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:27:09.421Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:27:09.421Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:27:09.421Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:27:09.430Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:27:09.430Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:27:09.430Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:27:09.430Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:27:09.436Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:27:09.446Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:27:09.446Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:27:09.447Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:27:10.580Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:27:12.721Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:27:12.721Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:27:12.721Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:27:12.721Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:27:29.272Z [DEBUG] Getting matching hook commands for PostToolUseFailure with query: Bash
+2026-01-10T04:27:29.272Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:27:29.272Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:27:29.282Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:27:29.282Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:27:29.282Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:27:29.282Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:27:29.286Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:27:29.296Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:27:29.296Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:27:29.296Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:27:30.972Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:27:39.355Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:27:39.356Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:27:39.356Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:27:39.356Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:27:39.359Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019259359
+2026-01-10T04:27:39.359Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:27:39.359Z [DEBUG] Temp file written successfully, size: 802 bytes
+2026-01-10T04:27:39.359Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:27:39.359Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019259359 to /app/out.html
+2026-01-10T04:27:39.359Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:27:39.364Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:27:39.364Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:27:39.364Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:27:39.374Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:27:39.374Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:27:39.374Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:27:39.374Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:27:39.384Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:27:39.391Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:27:39.391Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:27:39.392Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:27:40.745Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:27:42.693Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:27:42.694Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:27:42.694Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:27:42.694Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:27:58.957Z [DEBUG] Getting matching hook commands for PostToolUseFailure with query: Bash
+2026-01-10T04:27:58.957Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:27:58.957Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:27:58.969Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:27:58.969Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:27:58.969Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:27:58.969Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:27:58.974Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:27:58.983Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:27:58.983Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:27:58.984Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:28:00.079Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:28:01.573Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:28:01.574Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:28:01.574Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:01.574Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:28:04.374Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:28:04.376Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:28:04.376Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:28:04.376Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:28:04.377Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-01-10T04:28:04.377Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:04.377Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:28:04.395Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:28:04.395Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:28:04.395Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:28:04.395Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:28:04.399Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:28:04.408Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:28:04.408Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:28:04.409Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:28:05.063Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:28:05.357Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:28:15.423Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:28:15.424Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:28:15.424Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:15.424Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:28:15.427Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019295427
+2026-01-10T04:28:15.427Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:28:15.427Z [DEBUG] Temp file written successfully, size: 958 bytes
+2026-01-10T04:28:15.427Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:28:15.427Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019295427 to /app/out.html
+2026-01-10T04:28:15.427Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:28:15.430Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:28:15.430Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:15.430Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:28:15.439Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:28:15.439Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:28:15.439Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:28:15.439Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:28:15.448Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:28:15.459Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:28:15.459Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:28:15.460Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:28:16.766Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:28:22.421Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:28:22.422Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:28:22.422Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:22.422Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:28:22.424Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019302424
+2026-01-10T04:28:22.424Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:28:22.424Z [DEBUG] Temp file written successfully, size: 254 bytes
+2026-01-10T04:28:22.424Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:28:22.424Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019302424 to /app/out.html
+2026-01-10T04:28:22.424Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:28:22.428Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:28:22.428Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:22.428Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:28:22.436Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:28:22.436Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:28:22.436Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:28:22.436Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:28:22.440Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:28:22.451Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:28:22.451Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:28:22.451Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:28:23.689Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:28:25.754Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:28:25.755Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:28:25.755Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:25.755Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:28:27.586Z [DEBUG] Metrics opt-out API response: enabled=true, vcsLinking=false
+2026-01-10T04:28:27.683Z [DEBUG] BigQuery metrics exported successfully
+2026-01-10T04:28:27.683Z [DEBUG] "BigQuery API Response: {\n  \"accepted_count\": 12,\n  \"rejected_count\": 0\n}"
+2026-01-10T04:28:28.568Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:28:28.569Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:28:28.569Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:28:28.569Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:28:28.570Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-01-10T04:28:28.570Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:28.570Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:28:28.586Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:28:28.586Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:28:28.586Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:28:28.586Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:28:28.593Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:28:28.602Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:28:28.602Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:28:28.603Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:28:28.910Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:28:29.736Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:28:32.184Z [DEBUG] executePreToolHooks called for tool: Read
+2026-01-10T04:28:32.184Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-01-10T04:28:32.184Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:32.184Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-01-10T04:28:32.188Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-01-10T04:28:32.188Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:32.188Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-01-10T04:28:32.195Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:28:32.195Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:28:32.195Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:28:32.195Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:28:32.200Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:28:32.206Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:28:32.206Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:28:32.206Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:28:33.302Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:28:39.123Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:28:39.124Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:28:39.124Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:39.124Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:28:39.128Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019319128
+2026-01-10T04:28:39.128Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:28:39.128Z [DEBUG] Temp file written successfully, size: 478 bytes
+2026-01-10T04:28:39.128Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:28:39.128Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019319128 to /app/out.html
+2026-01-10T04:28:39.128Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:28:39.131Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:28:39.131Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:39.131Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:28:39.139Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:28:39.139Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:28:39.139Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:28:39.139Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:28:39.144Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:28:39.155Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:28:39.155Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:28:39.156Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:28:40.283Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:28:42.019Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:28:42.020Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:28:42.020Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:42.020Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:28:44.830Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:28:44.831Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:28:44.831Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:28:44.832Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:28:44.832Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-01-10T04:28:44.832Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:44.832Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:28:44.848Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:28:44.848Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:28:44.848Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:28:44.848Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:28:44.853Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:28:44.860Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:28:44.860Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:28:44.861Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:28:45.149Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:28:45.762Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:28:51.086Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:28:51.087Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:28:51.087Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:51.087Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:28:51.090Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019331090
+2026-01-10T04:28:51.090Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:28:51.090Z [DEBUG] Temp file written successfully, size: 257 bytes
+2026-01-10T04:28:51.090Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:28:51.090Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019331090 to /app/out.html
+2026-01-10T04:28:51.090Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:28:51.094Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:28:51.094Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:51.094Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:28:51.102Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:28:51.102Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:28:51.102Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:28:51.102Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:28:51.107Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:28:51.117Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:28:51.117Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:28:51.118Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:28:52.517Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:28:53.733Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:28:53.734Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:28:53.734Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:28:53.734Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:29:10.051Z [DEBUG] Getting matching hook commands for PostToolUseFailure with query: Bash
+2026-01-10T04:29:10.051Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:29:10.051Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:29:10.059Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:29:10.059Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:29:10.059Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:29:10.059Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:29:10.065Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:29:10.076Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:29:10.076Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:29:10.076Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:29:10.995Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:29:17.145Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:29:17.146Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:29:17.146Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:29:17.146Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:29:17.148Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019357148
+2026-01-10T04:29:17.148Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:29:17.149Z [DEBUG] Temp file written successfully, size: 644 bytes
+2026-01-10T04:29:17.149Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:29:17.149Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019357148 to /app/out.html
+2026-01-10T04:29:17.149Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:29:17.152Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:29:17.152Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:29:17.152Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:29:17.164Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:29:17.164Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:29:17.164Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:29:17.164Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:29:17.172Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:29:17.185Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:29:17.185Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:29:17.185Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:29:18.306Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:29:25.732Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:29:25.733Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:29:25.733Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:29:25.733Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:29:25.737Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019365737
+2026-01-10T04:29:25.737Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:29:25.737Z [DEBUG] Temp file written successfully, size: 408 bytes
+2026-01-10T04:29:25.737Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:29:25.737Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019365737 to /app/out.html
+2026-01-10T04:29:25.737Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:29:25.740Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:29:25.740Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:29:25.740Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:29:25.751Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:29:25.751Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:29:25.751Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:29:25.751Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:29:25.755Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:29:25.766Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:29:25.766Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:29:25.767Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:29:27.084Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:29:29.035Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:29:29.036Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:29:29.036Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:29:29.036Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:29:31.861Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:29:31.862Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:29:31.862Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:29:31.863Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:29:31.864Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-01-10T04:29:31.864Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:29:31.864Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:29:31.882Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:29:31.882Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:29:31.882Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:29:31.882Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:29:31.888Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:29:31.901Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:29:31.901Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:29:31.902Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:29:32.184Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:29:33.066Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:29:38.770Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-01-10T04:29:38.771Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-01-10T04:29:38.771Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:29:38.771Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:29:38.774Z [DEBUG] Writing to temp file: /app/out.html.tmp.1244.1768019378774
+2026-01-10T04:29:38.774Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:29:38.774Z [DEBUG] Temp file written successfully, size: 738 bytes
+2026-01-10T04:29:38.774Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:29:38.774Z [DEBUG] Renaming /app/out.html.tmp.1244.1768019378774 to /app/out.html
+2026-01-10T04:29:38.774Z [DEBUG] File /app/out.html written atomically
+2026-01-10T04:29:38.779Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-01-10T04:29:38.779Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:29:38.779Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-01-10T04:29:38.788Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:29:38.788Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:29:38.789Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:29:38.789Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:29:38.796Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:29:38.810Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:29:38.810Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:29:38.812Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:29:40.280Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:29:41.698Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-01-10T04:29:41.699Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-01-10T04:29:41.699Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:29:41.699Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:29:58.150Z [DEBUG] Getting matching hook commands for PostToolUseFailure with query: Bash
+2026-01-10T04:29:58.150Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:29:58.150Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:29:58.161Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:29:58.161Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:29:58.161Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:29:58.161Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:29:58.167Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:29:58.182Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:29:58.182Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:29:58.183Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:29:59.705Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:30:02.229Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2026-01-10T04:30:02.230Z [DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+2026-01-10T04:30:02.230Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:30:02.230Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-01-10T04:30:02.232Z [DEBUG] Writing to temp file: /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json.tmp.1244.1768019402232
+2026-01-10T04:30:02.232Z [DEBUG] Preserving file permissions: 100644
+2026-01-10T04:30:02.232Z [DEBUG] Temp file written successfully, size: 2 bytes
+2026-01-10T04:30:02.232Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:30:02.232Z [DEBUG] Renaming /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json.tmp.1244.1768019402232 to /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json
+2026-01-10T04:30:02.232Z [DEBUG] File /logs/agent/sessions/todos/23faba97-99cd-4498-9e01-9c099d6bd11b-agent-23faba97-99cd-4498-9e01-9c099d6bd11b.json written atomically
+2026-01-10T04:30:02.235Z [DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+2026-01-10T04:30:02.235Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:30:02.235Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-01-10T04:30:02.243Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:30:02.243Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:30:02.243Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:30:02.243Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:30:02.248Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:30:02.258Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:30:02.258Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:30:02.258Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:30:03.438Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:30:10.936Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2026-01-10T04:30:10.936Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:30:10.936Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-01-10T04:30:10.938Z [DEBUG] Getting matching hook commands for SessionEnd with query: other
+2026-01-10T04:30:10.938Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:30:10.938Z [DEBUG] Matched 0 unique hooks for query "other" (0 before deduplication)

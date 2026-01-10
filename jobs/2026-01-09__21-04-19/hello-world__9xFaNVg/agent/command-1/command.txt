@@ -1,0 +1,2 @@
+claude --verbose --output-format stream-json -p 'Create a file called hello.txt with "Hello, world!" as the content.
+' --allowedTools Bash Edit Write Read Glob Grep LS WebFetch NotebookEdit NotebookRead TodoRead TodoWrite Agent Skill SlashCommand Task WebSearch 2>&1 </dev/null | tee /logs/agent/claude-code.txt

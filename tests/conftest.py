@@ -106,6 +106,7 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "unit: Unit tests (fast, no external deps)")
     config.addinivalue_line("markers", "integration: Integration tests (require API key)")
     config.addinivalue_line("markers", "slow: Slow running tests")
+    config.addinivalue_line("markers", "smoke: Smoke tests (run fireteam against fixture projects)")
 
 
 def pytest_collection_modifyitems(config, items):

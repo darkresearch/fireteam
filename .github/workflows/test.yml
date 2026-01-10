@@ -61,7 +61,7 @@ jobs:
       run: |
         source .venv/bin/activate
         echo "Starting integration tests at $(date)"
-        pytest tests/ --run-integration -v --tb=short -s
+        pytest tests/ --run-integration -v --tb=short -s --ignore=tests/e2e/test_smoke.py
         echo "Integration tests completed at $(date)"
 
     - name: Upload logs on failure
@@ -69,6 +69,50 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: e2e-test-logs
+        path: |
+          /tmp/fireteam-test-*/
+          tests/**/*.log
+        retention-days: 7
+
+  smoke-tests:
+    name: Smoke Tests (Full Agent Loops)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: |
+      github.ref == 'refs/heads/main' ||
+      startsWith(github.ref, 'refs/heads/e/') ||
+      startsWith(github.head_ref, 'e/')
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install uv
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+    - name: Install dependencies
+      run: uv sync --extra dev
+
+    - name: Run smoke tests
+      timeout-minutes: 40
+      env:
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        PYTHONUNBUFFERED: "1"
+      run: |
+        source .venv/bin/activate
+        echo "Starting smoke tests at $(date)"
+        pytest tests/e2e/test_smoke.py --run-integration -v --tb=short -s
+        echo "Smoke tests completed at $(date)"
+
+    - name: Upload logs on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: smoke-test-logs
         path: |
           /tmp/fireteam-test-*/
           tests/**/*.log

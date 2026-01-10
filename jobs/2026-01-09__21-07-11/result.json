@@ -1,0 +1,29 @@
+{
+    "id": "f3a03457-4a03-4f6a-bbb7-1ba2a73ba835",
+    "started_at": "2026-01-09T21:07:11.970282",
+    "finished_at": "2026-01-09T21:07:26.035694",
+    "n_total_trials": 1,
+    "stats": {
+        "n_trials": 1,
+        "n_errors": 0,
+        "evals": {
+            "oracle__hello-world": {
+                "n_trials": 1,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "mean": 1.0
+                    }
+                ],
+                "reward_stats": {
+                    "reward": {
+                        "1.0": [
+                            "hello-world__HLSpYNu"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        }
+    }
+}

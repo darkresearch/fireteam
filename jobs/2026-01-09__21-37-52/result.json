@@ -1,0 +1,29 @@
+{
+    "id": "b3b91593-7a21-4896-b152-001cb61acc74",
+    "started_at": "2026-01-09T21:37:52.418651",
+    "finished_at": "2026-01-09T21:38:15.144347",
+    "n_total_trials": 1,
+    "stats": {
+        "n_trials": 1,
+        "n_errors": 0,
+        "evals": {
+            "fireteam__claude-sonnet-4-20250514__hello-world": {
+                "n_trials": 1,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "hello-world__oGNmXbb"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        }
+    }
+}

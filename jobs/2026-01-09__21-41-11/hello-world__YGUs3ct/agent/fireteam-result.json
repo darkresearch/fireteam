@@ -1,0 +1,7 @@
+{
+  "success": false,
+  "mode": "full",
+  "output": null,
+  "error": "Execution failed on iteration 1: Command failed with exit code 1 (exit code: 1)\nError output: Check stderr output for details",
+  "completion_percentage": 0
+}

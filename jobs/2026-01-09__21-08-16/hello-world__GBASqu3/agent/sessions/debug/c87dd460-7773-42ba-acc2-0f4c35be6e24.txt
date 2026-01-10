@@ -1,0 +1,230 @@
+2026-01-10T04:08:33.503Z [ERROR] Failed to save config with lock: Error: ENOENT: no such file or directory, lstat '/logs/agent/sessions/.claude.json'
+2026-01-10T04:08:33.504Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113504
+2026-01-10T04:08:33.504Z [DEBUG] Setting permissions for new file: 600
+2026-01-10T04:08:33.504Z [DEBUG] Temp file written successfully, size: 82 bytes
+2026-01-10T04:08:33.504Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113504 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.504Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.509Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113509
+2026-01-10T04:08:33.509Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.509Z [DEBUG] Temp file written successfully, size: 130 bytes
+2026-01-10T04:08:33.509Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.509Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113509 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.509Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.510Z [DEBUG] [init] configureGlobalMTLS starting
+2026-01-10T04:08:33.510Z [DEBUG] [init] configureGlobalMTLS complete
+2026-01-10T04:08:33.510Z [DEBUG] [init] configureGlobalAgents starting
+2026-01-10T04:08:33.510Z [DEBUG] [init] configureGlobalAgents complete
+2026-01-10T04:08:33.512Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113512
+2026-01-10T04:08:33.512Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.513Z [DEBUG] Temp file written successfully, size: 167 bytes
+2026-01-10T04:08:33.513Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.513Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113512 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.513Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.516Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113516
+2026-01-10T04:08:33.516Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.517Z [DEBUG] Temp file written successfully, size: 202 bytes
+2026-01-10T04:08:33.517Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.517Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113516 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.517Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.522Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113521
+2026-01-10T04:08:33.522Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.522Z [DEBUG] Temp file written successfully, size: 239 bytes
+2026-01-10T04:08:33.522Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.522Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113521 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.522Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.555Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-01-10T04:08:33.555Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-01-10T04:08:33.555Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-01-10T04:08:33.556Z [DEBUG] [STARTUP] Loading MCP configs...
+2026-01-10T04:08:33.558Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-01-10T04:08:33.558Z [DEBUG] Total LSP servers loaded: 0
+2026-01-10T04:08:33.558Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2026-01-10T04:08:33.558Z [DEBUG] LSP manager initialized with 0 servers
+2026-01-10T04:08:33.558Z [DEBUG] LSP server manager initialized successfully
+2026-01-10T04:08:33.558Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-01-10T04:08:33.558Z [DEBUG] [STARTUP] MCP configs loaded in 2ms
+2026-01-10T04:08:33.561Z [DEBUG] [STARTUP] Running setup()...
+2026-01-10T04:08:33.576Z [DEBUG] Loading skills from: managed=/etc/claude-code/.claude/skills, user=/logs/agent/sessions/skills, project=[]
+2026-01-10T04:08:33.584Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-01-10T04:08:33.591Z [DEBUG] Writing to temp file: /logs/agent/sessions/todos/c87dd460-7773-42ba-acc2-0f4c35be6e24-agent-c87dd460-7773-42ba-acc2-0f4c35be6e24.json.tmp.3994.1768018113591
+2026-01-10T04:08:33.591Z [DEBUG] Temp file written successfully, size: 2 bytes
+2026-01-10T04:08:33.591Z [DEBUG] Renaming /logs/agent/sessions/todos/c87dd460-7773-42ba-acc2-0f4c35be6e24-agent-c87dd460-7773-42ba-acc2-0f4c35be6e24.json.tmp.3994.1768018113591 to /logs/agent/sessions/todos/c87dd460-7773-42ba-acc2-0f4c35be6e24-agent-c87dd460-7773-42ba-acc2-0f4c35be6e24.json
+2026-01-10T04:08:33.592Z [DEBUG] File /logs/agent/sessions/todos/c87dd460-7773-42ba-acc2-0f4c35be6e24-agent-c87dd460-7773-42ba-acc2-0f4c35be6e24.json written atomically
+2026-01-10T04:08:33.593Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-01-10T04:08:33.593Z [DEBUG] Total plugin skills loaded: 0
+2026-01-10T04:08:33.593Z [DEBUG] Total plugin commands loaded: 0
+2026-01-10T04:08:33.593Z [DEBUG] Registered 0 hooks from 0 plugins
+2026-01-10T04:08:33.599Z [DEBUG] [STARTUP] setup() completed in 38ms
+2026-01-10T04:08:33.599Z [DEBUG] [STARTUP] Loading commands and agents...
+2026-01-10T04:08:33.603Z [DEBUG] Total plugin agents loaded: 0
+2026-01-10T04:08:33.603Z [DEBUG] Loaded 0 unique skills (managed: 0, user: 0, project: 0, legacy commands: 0)
+2026-01-10T04:08:33.604Z [DEBUG] getSkills returning: 0 skill dir commands, 0 plugin skills, 0 bundled skills
+2026-01-10T04:08:33.605Z [DEBUG] [STARTUP] Commands and agents loaded in 6ms
+2026-01-10T04:08:33.615Z [DEBUG] Initialized versioned plugins system with 0 plugins
+2026-01-10T04:08:33.620Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2026-01-10T04:08:33.620Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:08:33.620Z [DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+2026-01-10T04:08:33.625Z [DEBUG] Total plugin output styles loaded: 0
+2026-01-10T04:08:33.639Z [DEBUG] Creating shell snapshot for bash (/bin/bash)
+2026-01-10T04:08:33.639Z [DEBUG] Looking for shell config file: /root/.bashrc
+2026-01-10T04:08:33.639Z [DEBUG] Snapshots directory: /logs/agent/sessions/shell-snapshots
+2026-01-10T04:08:33.640Z [DEBUG] Creating snapshot at: /logs/agent/sessions/shell-snapshots/snapshot-bash-1768018113639-ehe962.sh
+2026-01-10T04:08:33.640Z [DEBUG] Shell binary exists: true
+2026-01-10T04:08:33.640Z [DEBUG] Execution timeout: 10000ms
+2026-01-10T04:08:33.641Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=/root/.nvm/versions/node/v22.21.1/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/arm64-linux/rg)
+2026-01-10T04:08:33.651Z [DEBUG] Skills and commands included in Skill tool:
+2026-01-10T04:08:33.652Z [DEBUG] Getting matching hook commands for SubagentStart with query: Explore
+2026-01-10T04:08:33.652Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:08:33.652Z [DEBUG] Matched 0 unique hooks for query "Explore" (0 before deduplication)
+2026-01-10T04:08:33.653Z [DEBUG] Getting matching hook commands for SubagentStart with query: Plan
+2026-01-10T04:08:33.653Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:08:33.653Z [DEBUG] Matched 0 unique hooks for query "Plan" (0 before deduplication)
+2026-01-10T04:08:33.653Z [DEBUG] Getting matching hook commands for SubagentStart with query: Bash
+2026-01-10T04:08:33.653Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:08:33.653Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-01-10T04:08:33.654Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:08:33.654Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:08:33.659Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:08:33.661Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:08:33.661Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:08:33.661Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:08:33.661Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:08:33.666Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-01-10T04:08:33.666Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:08:33.666Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-01-10T04:08:33.675Z [DEBUG] Shell snapshot created successfully (1754 bytes)
+2026-01-10T04:08:33.755Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113755
+2026-01-10T04:08:33.755Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.756Z [DEBUG] Temp file written successfully, size: 415 bytes
+2026-01-10T04:08:33.756Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.756Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113755 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.757Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.760Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113759
+2026-01-10T04:08:33.760Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.760Z [DEBUG] Temp file written successfully, size: 451 bytes
+2026-01-10T04:08:33.760Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.760Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113759 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.760Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.763Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113763
+2026-01-10T04:08:33.763Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.764Z [DEBUG] Temp file written successfully, size: 479 bytes
+2026-01-10T04:08:33.764Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.764Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113763 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.764Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.768Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113768
+2026-01-10T04:08:33.768Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.769Z [DEBUG] Temp file written successfully, size: 531 bytes
+2026-01-10T04:08:33.769Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.769Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113768 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.769Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.772Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113772
+2026-01-10T04:08:33.772Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.772Z [DEBUG] Temp file written successfully, size: 570 bytes
+2026-01-10T04:08:33.772Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.772Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113772 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.773Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.776Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113776
+2026-01-10T04:08:33.776Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.777Z [DEBUG] Temp file written successfully, size: 608 bytes
+2026-01-10T04:08:33.777Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.777Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113776 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.777Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.779Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113779
+2026-01-10T04:08:33.779Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.780Z [DEBUG] Temp file written successfully, size: 647 bytes
+2026-01-10T04:08:33.780Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.780Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113779 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.780Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.783Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113783
+2026-01-10T04:08:33.783Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.783Z [DEBUG] Temp file written successfully, size: 677 bytes
+2026-01-10T04:08:33.783Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.783Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113783 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.784Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.786Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113786
+2026-01-10T04:08:33.786Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.787Z [DEBUG] Temp file written successfully, size: 707 bytes
+2026-01-10T04:08:33.787Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.787Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113786 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.787Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.791Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113791
+2026-01-10T04:08:33.791Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.793Z [DEBUG] Temp file written successfully, size: 753 bytes
+2026-01-10T04:08:33.793Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.793Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113791 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.794Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.795Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:08:33.795Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:08:33.796Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:08:33.796Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-01-10T04:08:33.800Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113800
+2026-01-10T04:08:33.800Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.800Z [DEBUG] Temp file written successfully, size: 803 bytes
+2026-01-10T04:08:33.801Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.801Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113800 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.801Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.805Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:08:33.805Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:08:33.806Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:08:33.808Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113808
+2026-01-10T04:08:33.808Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.808Z [DEBUG] Temp file written successfully, size: 849 bytes
+2026-01-10T04:08:33.808Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.808Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113808 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.809Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:33.812Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:08:33.812Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:08:33.813Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:08:33.813Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:08:33.813Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:08:33.813Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:08:33.814Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:08:33.814Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:08:33.814Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:08:33.847Z [DEBUG] Remote settings: No settings found (404)
+2026-01-10T04:08:33.847Z [DEBUG] Programmatic settings change notification for policySettings
+2026-01-10T04:08:33.847Z [DEBUG] Plugin hooks: reloading due to policySettings change
+2026-01-10T04:08:33.848Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-01-10T04:08:33.850Z [DEBUG] Registered 0 hooks from 0 plugins
+2026-01-10T04:08:33.855Z [DEBUG] Writing to temp file: /logs/agent/sessions/.claude.json.tmp.3994.1768018113855
+2026-01-10T04:08:33.855Z [DEBUG] Preserving file permissions: 100600
+2026-01-10T04:08:33.855Z [DEBUG] Temp file written successfully, size: 916 bytes
+2026-01-10T04:08:33.856Z [DEBUG] Applied original permissions to temp file
+2026-01-10T04:08:33.856Z [DEBUG] Renaming /logs/agent/sessions/.claude.json.tmp.3994.1768018113855 to /logs/agent/sessions/.claude.json
+2026-01-10T04:08:33.856Z [DEBUG] File /logs/agent/sessions/.claude.json written atomically
+2026-01-10T04:08:34.385Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:08:34.872Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:08:34.985Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:08:35.009Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:08:36.166Z [DEBUG] executePreToolHooks called for tool: Write
+2026-01-10T04:08:36.167Z [DEBUG] Getting matching hook commands for PreToolUse with query: Write
+2026-01-10T04:08:36.167Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:08:36.167Z [DEBUG] Matched 0 unique hooks for query "Write" (0 before deduplication)
+2026-01-10T04:08:36.174Z [DEBUG] Writing to temp file: /app/hello.txt.tmp.3994.1768018116174
+2026-01-10T04:08:36.200Z [DEBUG] Temp file written successfully, size: 13 bytes
+2026-01-10T04:08:36.200Z [DEBUG] Renaming /app/hello.txt.tmp.3994.1768018116174 to /app/hello.txt
+2026-01-10T04:08:36.200Z [DEBUG] File /app/hello.txt written atomically
+2026-01-10T04:08:36.203Z [DEBUG] Getting matching hook commands for PostToolUse with query: Write
+2026-01-10T04:08:36.203Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:08:36.203Z [DEBUG] Matched 0 unique hooks for query "Write" (0 before deduplication)
+2026-01-10T04:08:36.209Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-01-10T04:08:36.209Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-01-10T04:08:36.209Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-01-10T04:08:36.209Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-01-10T04:08:36.213Z [DEBUG] Tool search disabled: MCPSearchTool is not available (may have been disallowed via disallowedTools).
+2026-01-10T04:08:36.215Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-01-10T04:08:36.215Z [DEBUG] [API:auth] OAuth token check starting
+2026-01-10T04:08:36.215Z [DEBUG] [API:auth] OAuth token check complete
+2026-01-10T04:08:36.339Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2026-01-10T04:08:36.339Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:08:36.339Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-01-10T04:08:36.407Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2026-01-10T04:08:36.407Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:08:36.407Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-01-10T04:08:37.179Z [DEBUG] Stream started - received first chunk
+2026-01-10T04:08:37.691Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2026-01-10T04:08:37.691Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:08:37.691Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-01-10T04:08:37.693Z [DEBUG] Getting matching hook commands for SessionEnd with query: other
+2026-01-10T04:08:37.693Z [DEBUG] Found 0 hook matchers in settings
+2026-01-10T04:08:37.693Z [DEBUG] Matched 0 unique hooks for query "other" (0 before deduplication)

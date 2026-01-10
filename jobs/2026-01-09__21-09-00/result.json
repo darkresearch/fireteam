@@ -1,0 +1,35 @@
+{
+    "id": "760158c0-4c7a-4dd2-ad8c-c3b311271793",
+    "started_at": "2026-01-09T21:09:09.158803",
+    "finished_at": null,
+    "n_total_trials": 89,
+    "stats": {
+        "n_trials": 3,
+        "n_errors": 1,
+        "evals": {
+            "claude-code__claude-sonnet-4-20250514__terminal-bench": {
+                "n_trials": 2,
+                "n_errors": 1,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "gpt2-codegolf__czLRTPN",
+                            "llm-inference-batching-scheduler__oxDaQvt"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "RewardFileNotFoundError": [
+                        "break-filter-js-from-html__tAVKewK"
+                    ]
+                }
+            }
+        }
+    },
+    "trial_results": []
+}

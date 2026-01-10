@@ -1,0 +1,6 @@
+bash: cannot set terminal process group (-1): Inappropriate ioctl for device
+bash: no job control in this shell
+  File "<string>", line 19
+    instruction = 'Create a file called hello.txt with "Hello, world!" as the content.
+                  ^
+SyntaxError: unterminated string literal (detected at line 19)

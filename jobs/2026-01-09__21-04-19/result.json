@@ -1,0 +1,29 @@
+{
+    "id": "a3a8e3de-551c-45e1-a6aa-7f6cac546b86",
+    "started_at": "2026-01-09T21:04:20.709216",
+    "finished_at": "2026-01-09T21:04:41.757482",
+    "n_total_trials": 1,
+    "stats": {
+        "n_trials": 1,
+        "n_errors": 0,
+        "evals": {
+            "claude-code__claude-sonnet-4-20250514__hello-world": {
+                "n_trials": 1,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "hello-world__9xFaNVg"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        }
+    }
+}

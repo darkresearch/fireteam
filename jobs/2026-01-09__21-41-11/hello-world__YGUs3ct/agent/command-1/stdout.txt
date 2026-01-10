@@ -1,0 +1,15 @@
+bash: cannot set terminal process group (-1): Inappropriate ioctl for device
+bash: no job control in this shell
+--dangerously-skip-permissions cannot be used with root/sudo privileges for security reasons
+Fatal error in message reader: Command failed with exit code 1 (exit code: 1)
+Error output: Check stderr output for details
+Execution failed: Command failed with exit code 1 (exit code: 1)
+Error output: Check stderr output for details
+Running fireteam on: /app
+Instruction: Create a file called hello.txt with "Hello, world!" as the content.
+...
+
+Result: failed
+Completion: 0%
+Error: Execution failed on iteration 1: Command failed with exit code 1 (exit code: 1)
+Error output: Check stderr output for details

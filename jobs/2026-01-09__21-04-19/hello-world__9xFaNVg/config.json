@@ -1,0 +1,39 @@
+{
+    "task": {
+        "path": "examples/tasks/hello-world",
+        "git_url": "https://github.com/laude-institute/harbor.git",
+        "git_commit_id": "HEAD",
+        "overwrite": false,
+        "download_dir": null,
+        "source": "hello-world"
+    },
+    "trial_name": "hello-world__9xFaNVg",
+    "trials_dir": "jobs/2026-01-09__21-04-19",
+    "timeout_multiplier": 1.0,
+    "agent": {
+        "name": "claude-code",
+        "import_path": null,
+        "model_name": "anthropic/claude-sonnet-4-20250514",
+        "override_timeout_sec": null,
+        "override_setup_timeout_sec": null,
+        "max_timeout_sec": null,
+        "kwargs": {}
+    },
+    "environment": {
+        "type": "docker",
+        "import_path": null,
+        "force_build": false,
+        "delete": true,
+        "override_cpus": null,
+        "override_memory_mb": null,
+        "override_storage_mb": null,
+        "override_gpus": null,
+        "kwargs": {}
+    },
+    "verifier": {
+        "override_timeout_sec": null,
+        "max_timeout_sec": null,
+        "disable": false
+    },
+    "job_id": "a3a8e3de-551c-45e1-a6aa-7f6cac546b86"
+}

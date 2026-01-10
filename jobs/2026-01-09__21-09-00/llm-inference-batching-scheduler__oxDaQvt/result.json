@@ -1,0 +1,92 @@
+{
+    "id": "fd154b43-9e70-46cb-81e7-5f0b36664d14",
+    "task_name": "llm-inference-batching-scheduler",
+    "trial_name": "llm-inference-batching-scheduler__oxDaQvt",
+    "trial_uri": "file:///Users/osprey/repos/dark/fireteam/jobs/2026-01-09__21-09-00/llm-inference-batching-scheduler__oxDaQvt",
+    "task_id": {
+        "git_url": "https://github.com/laude-institute/terminal-bench-2.git",
+        "git_commit_id": "69671fbaac6d67a7ef0dfec016cc38a64ef7a77c",
+        "path": "llm-inference-batching-scheduler"
+    },
+    "source": "terminal-bench",
+    "task_checksum": "3a08e63e0643ea5914eedeecb08cb93a1f0a10b9dc7d19d1f570004af84531c8",
+    "config": {
+        "task": {
+            "path": "llm-inference-batching-scheduler",
+            "git_url": "https://github.com/laude-institute/terminal-bench-2.git",
+            "git_commit_id": "69671fbaac6d67a7ef0dfec016cc38a64ef7a77c",
+            "overwrite": false,
+            "download_dir": null,
+            "source": "terminal-bench"
+        },
+        "trial_name": "llm-inference-batching-scheduler__oxDaQvt",
+        "trials_dir": "jobs/2026-01-09__21-09-00",
+        "timeout_multiplier": 1.0,
+        "agent": {
+            "name": "claude-code",
+            "import_path": null,
+            "model_name": "anthropic/claude-sonnet-4-20250514",
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "kwargs": {}
+        },
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "kwargs": {}
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "job_id": "760158c0-4c7a-4dd2-ad8c-c3b311271793"
+    },
+    "agent_info": {
+        "name": "claude-code",
+        "version": "unknown",
+        "model_info": {
+            "name": "claude-sonnet-4-20250514",
+            "provider": "anthropic"
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null,
+        "rollout_details": null,
+        "metadata": null
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 0.0
+        }
+    },
+    "exception_info": null,
+    "started_at": "2026-01-09T21:10:57.526522",
+    "finished_at": "2026-01-09T21:22:43.323915",
+    "environment_setup": {
+        "started_at": "2026-01-09T21:10:57.529106",
+        "finished_at": "2026-01-09T21:11:00.094191"
+    },
+    "agent_setup": {
+        "started_at": "2026-01-09T21:11:00.094207",
+        "finished_at": "2026-01-09T21:11:16.843548"
+    },
+    "agent_execution": {
+        "started_at": "2026-01-09T21:11:16.843591",
+        "finished_at": "2026-01-09T21:22:34.655454"
+    },
+    "verifier": {
+        "started_at": "2026-01-09T21:22:34.655719",
+        "finished_at": "2026-01-09T21:22:41.888287"
+    }
+}
