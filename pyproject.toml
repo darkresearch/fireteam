@@ -20,10 +20,14 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["fireteam"]
+packages = ["fireteam", "fireteam.prompts"]
 
 [tool.setuptools.package-dir]
 fireteam = "src"
+"fireteam.prompts" = "src/prompts"
+
+[tool.setuptools.package-data]
+"fireteam.prompts" = ["*.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -31,8 +35,11 @@ python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 asyncio_mode = "auto"
+# Exclude fixture projects from test discovery - they have their own test suites
+norecursedirs = ["tests/fixtures/*"]
 markers = [
     "unit: Unit tests (fast, no external dependencies)",
     "integration: Integration tests (require API key, use --run-integration)",
     "slow: Slow running tests",
+    "smoke: Smoke tests (run fireteam against fixture projects)",
 ]
