@@ -16,7 +16,8 @@ if env_file.exists():
 # Claude Agent SDK configuration
 SDK_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-opus-4-5-20251101")
 SDK_ALLOWED_TOOLS = ["Read", "Write", "Bash", "Edit", "Grep", "Glob"]
-SDK_PERMISSION_MODE = "bypassPermissions"
+# Note: bypassPermissions fails as root user, use "default" in containers
+SDK_PERMISSION_MODE = os.getenv("FIRETEAM_PERMISSION_MODE", "bypassPermissions")
 SDK_SETTING_SOURCES = ["project"]  # Auto-load CLAUDE.md
 
 # Completion validation
