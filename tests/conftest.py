@@ -3,31 +3,8 @@
 import pytest
 import tempfile
 import shutil
-import os
-import sys
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock
-
-# Try to import real SDK; mock only if not available
-# This allows integration tests to use the real SDK while unit tests use mocks
-try:
-    import claude_agent_sdk
-    _SDK_AVAILABLE = True
-except ImportError:
-    _SDK_AVAILABLE = False
-
-    # Create a mock ClaudeAgentOptions class that stores kwargs as attributes
-    class MockClaudeAgentOptions:
-        """Mock class that stores constructor kwargs as attributes."""
-        def __init__(self, **kwargs):
-            for key, value in kwargs.items():
-                setattr(self, key, value)
-
-    mock_sdk = MagicMock()
-    mock_sdk.query = AsyncMock()
-    mock_sdk.ClaudeAgentOptions = MockClaudeAgentOptions
-    mock_sdk.HookMatcher = MagicMock()
-    sys.modules["claude_agent_sdk"] = mock_sdk
+from unittest.mock import AsyncMock, MagicMock, patch
 
 
 @pytest.fixture
@@ -64,24 +41,31 @@ def hello():
 
 
 @pytest.fixture
-def mock_sdk_query():
-    """Mock the claude_agent_sdk.query function."""
-    async def mock_query(*args, **kwargs):
-        # Yield a mock message with result
-        class MockMessage:
-            result = "Task completed successfully."
-        yield MockMessage()
+def mock_cli_result():
+    """Create a mock CLIResult for testing."""
+    from fireteam.claude_cli import CLIResult
+    return CLIResult(
+        success=True,
+        output="Task completed successfully.\nCOMPLETION: 100%",
+        session_id="test-session-123",
+    )
 
-    return mock_query
+
+@pytest.fixture
+def mock_cli_query(mock_cli_result):
+    """Mock the run_cli_query function."""
+    async def _mock_query(*args, **kwargs):
+        return mock_cli_result
+    return _mock_query
 
 
 @pytest.fixture
 def mock_execution_result():
     """Create a mock ExecutionResult for testing."""
-    from fireteam.api import ExecutionResult, ExecutionMode
+    from fireteam.models import ExecutionResult, ExecutionMode
     return ExecutionResult(
         success=True,
-        mode=ExecutionMode.SIMPLE,
+        mode=ExecutionMode.SINGLE_TURN,
         output="Task completed.",
         completion_percentage=100,
     )
@@ -97,14 +81,14 @@ def pytest_addoption(parser):
     parser.addoption(
         "--run-integration",
         action="store_true",
-        help="Run integration tests that require API keys"
+        help="Run integration tests that require Claude Code CLI"
     )
 
 
 def pytest_configure(config):
     """Register custom markers."""
     config.addinivalue_line("markers", "unit: Unit tests (fast, no external deps)")
-    config.addinivalue_line("markers", "integration: Integration tests (require API key)")
+    config.addinivalue_line("markers", "integration: Integration tests (require Claude CLI)")
     config.addinivalue_line("markers", "slow: Slow running tests")
 
 
