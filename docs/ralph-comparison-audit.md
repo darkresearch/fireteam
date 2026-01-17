@@ -13,6 +13,7 @@ Both Ralph and Fireteam solve the same core problem: **autonomous, iterative AI-
 |--------|-------|----------|
 | **Language** | Bash/Shell scripts | Python (claude-agent-sdk) |
 | **Target** | Claude Code CLI wrapper | Library + Claude Code plugin |
+| **Authentication** | Uses Claude Code session/credits | Requires separate API key |
 | **Complexity Handling** | Uniform (all tasks same loop) | Adaptive (routes by complexity) |
 | **Exit Detection** | Dual-gate (heuristics + explicit signal) | Reviewer consensus (1 or 3 reviewers) |
 | **Safety Mechanisms** | Circuit breaker, rate limiting | Max iterations, test hooks |
@@ -95,7 +96,32 @@ Ralph is primarily a CLI tool, harder to integrate.
 
 ## Where Ralph Excels
 
-### 1. **Circuit Breaker Pattern** ★★★
+### 1. **Claude Code Session Piggybacking** ★★★★
+Ralph wraps the `claude` CLI, which means it automatically uses:
+- The user's existing Claude Code session
+- The user's existing credits/billing
+- No separate API key required
+- Single source of truth for usage and billing
+
+Fireteam uses `claude-agent-sdk` which makes **direct API calls**, requiring:
+- A separate `ANTHROPIC_API_KEY` environment variable
+- Separate billing to that API account
+- Users need both Claude Code credits AND API credits
+
+**Current Fireteam architecture:**
+```
+Claude Code session (user's credits)
+    ↓ (invokes hook)
+Fireteam plugin (user_prompt_submit.py)
+    ↓ (calls execute())
+claude-agent-sdk → Direct Anthropic API (separate API key/billing)
+```
+
+**This is fundamentally wrong.** Fireteam should piggyback on Claude Code's session so users don't need to manage two separate billing sources.
+
+**This is a critical architectural gap in Fireteam.**
+
+### 2. **Circuit Breaker Pattern** ★★★
 Ralph's circuit breaker is sophisticated:
 - Tracks files changed per loop
 - Detects repeated identical errors
@@ -107,7 +133,7 @@ Fireteam only has `max_iterations` (optional) - it can loop infinitely if review
 
 **This is a significant gap in Fireteam.**
 
-### 2. **Rate Limiting** ★★★
+### 3. **Rate Limiting** ★★★
 Ralph implements per-hour API call quotas:
 - Configurable calls per hour limit
 - Automatic pause when quota exhausted
@@ -118,7 +144,7 @@ Fireteam has no rate limiting - it will happily burn through API quota without b
 
 **This is a significant gap in Fireteam.**
 
-### 3. **Session Continuity** ★★
+### 4. **Session Continuity** ★★
 Ralph preserves context across iterations:
 - 24-hour session expiration
 - Session state tracking
@@ -129,7 +155,7 @@ Fireteam starts fresh each `execute()` call - no cross-session memory.
 
 **Moderate gap - depends on use case.**
 
-### 4. **Dual-Gate Exit Detection** ★★
+### 5. **Dual-Gate Exit Detection** ★★
 Ralph requires BOTH conditions:
 1. Natural language completion indicators (heuristics)
 2. Explicit `EXIT_SIGNAL: true` from Claude
@@ -140,7 +166,7 @@ Fireteam relies solely on reviewer completion percentage (≥95%). The executor'
 
 **Moderate improvement opportunity.**
 
-### 5. **Live Monitoring Dashboard** ★★
+### 6. **Live Monitoring Dashboard** ★★
 Ralph provides tmux-based real-time monitoring:
 - Loop status visualization
 - Progress tracking
@@ -151,7 +177,7 @@ Fireteam only logs to console - no dashboard or monitoring UI.
 
 **Nice-to-have gap.**
 
-### 6. **PRD Import Functionality** ★
+### 7. **PRD Import Functionality** ★
 Ralph can convert documents (MD, JSON, PDF, Word) into structured projects:
 - Analyzes existing documentation
 - Creates PROMPT.md automatically
@@ -161,7 +187,7 @@ Fireteam requires manual goal/context specification.
 
 **Nice-to-have feature.**
 
-### 7. **Explicit Error Classification** ★
+### 8. **Explicit Error Classification** ★
 Ralph's response analyzer has two-stage error filtering:
 - Distinguishes JSON field "error" from actual errors
 - Context-aware pattern matching
@@ -174,6 +200,41 @@ Fireteam doesn't explicitly track error patterns.
 ---
 
 ## Ideas to Pull into Fireteam
+
+### Priority 0: Foundational (Architecture Change Required)
+
+#### 0.1 Use Claude Code Session Instead of Direct API
+**What:** Refactor to use Claude Code CLI instead of claude-agent-sdk direct API calls
+**Why:** Users should not need a separate API key; billing should be unified
+**Impact:** This is an architectural change that affects the core execution model
+
+**Current flow (wrong):**
+```
+Claude Code → Fireteam hook → claude-agent-sdk → Anthropic API (separate billing)
+```
+
+**Target flow (correct):**
+```
+Claude Code → Fireteam hook → claude CLI subprocess → Claude Code session (same billing)
+```
+
+**Implementation approaches:**
+
+1. **Subprocess approach (like Ralph):**
+   - Shell out to `claude` CLI with structured prompts
+   - Parse JSON output
+   - Simpler but loses type safety
+
+2. **SDK with session passthrough:**
+   - Investigate if claude-agent-sdk can accept session tokens
+   - Would preserve type safety if possible
+   - Needs SDK documentation review
+
+3. **Hybrid approach:**
+   - Use CLI for actual execution (billing goes to user's Claude Code)
+   - Use SDK for local-only operations (complexity estimation with caching)
+
+**Recommendation:** Start with subprocess approach for MVP, then optimize.
 
 ### Priority 1: Critical (Safety & Resource Management)
 
@@ -274,11 +335,11 @@ class RateLimiter:
 | Feature | Ralph | Fireteam | Winner | Gap Severity |
 |---------|-------|----------|--------|--------------|
 | Complexity-based routing | No | Yes (4 levels) | **Fireteam** | N/A |
-| SDK integration | CLI wrapper | Native SDK | **Fireteam** | N/A |
 | Parallel reviews | No | Yes (3 reviewers) | **Fireteam** | N/A |
 | Planning phase | No | Yes (FULL mode) | **Fireteam** | N/A |
 | Test feedback injection | Partial | Yes (hooks) | **Fireteam** | N/A |
 | Library-first design | No | Yes | **Fireteam** | N/A |
+| **Uses Claude Code session** | Yes | No (separate API) | **Ralph** | **Critical** |
 | Circuit breaker | Yes (sophisticated) | No | **Ralph** | **Critical** |
 | Rate limiting | Yes | No | **Ralph** | **Critical** |
 | Session continuity | Yes (24h) | No | **Ralph** | Medium |
@@ -291,32 +352,42 @@ class RateLimiter:
 ## Recommendations
 
 ### Immediate Actions (This Sprint)
-1. **Implement circuit breaker** - Prevent infinite loops and API waste
-2. **Add rate limiting** - Budget management for API calls
+1. **Use Claude Code session** - Refactor to piggyback on user's Claude Code session instead of requiring separate API key. This is foundational and blocks adoption.
+2. **Implement circuit breaker** - Prevent infinite loops and API waste
+3. **Add rate limiting** - Budget management for API calls
 
 ### Near-Term (Next 2 Sprints)
-3. **Add progress metrics** - Track files changed, errors per iteration
-4. **Dual-gate exit consideration** - Let executor signal incomplete work
+4. **Add progress metrics** - Track files changed, errors per iteration
+5. **Dual-gate exit consideration** - Let executor signal incomplete work
 
 ### Future Consideration
-5. **Session persistence** - Resume capability
-6. **Monitoring dashboard** - Live execution visibility
+6. **Session persistence** - Resume capability
+7. **Monitoring dashboard** - Live execution visibility
 
 ---
 
 ## Conclusion
 
-Fireteam has the stronger architectural foundation with its SDK integration, complexity routing, and parallel reviewers. However, Ralph has important safety mechanisms (circuit breaker, rate limiting) that Fireteam currently lacks.
+Fireteam has the stronger architectural foundation with its complexity routing and parallel reviewers. However, Ralph has a fundamentally better integration model - it piggybacks on Claude Code's session, which means:
+- Users don't need a separate API key
+- Single billing source
+- No credential management complexity
 
 **The biggest risks in Fireteam today:**
-1. No protection against stuck loops (circuit breaker gap)
-2. No API budget management (rate limiting gap)
+1. **Requires separate API key** - Blocks adoption for users who just have Claude Code
+2. No protection against stuck loops (circuit breaker gap)
+3. No API budget management (rate limiting gap)
 
-These should be addressed before heavy production use to prevent runaway costs and infinite loops.
+The authentication/billing model should be addressed first as it's foundational and affects user adoption.
 
 **Fireteam's moat:**
 - Adaptive complexity routing is a genuine differentiator
-- SDK-native design enables embedding and extension
 - Parallel reviewer consensus provides better validation for complex tasks
+- Clean library design enables embedding and extension
 
-The recommended path is to cherry-pick Ralph's safety mechanisms while preserving Fireteam's architectural advantages.
+**The recommended path:**
+1. Refactor to use Claude Code CLI (like Ralph) for execution
+2. Preserve Fireteam's complexity routing and review logic as orchestration
+3. Add Ralph's safety mechanisms (circuit breaker, rate limiting)
+
+This gives users the best of both worlds: Fireteam's intelligent orchestration with Ralph's simple "just works with Claude Code" integration model.
