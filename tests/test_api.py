@@ -8,6 +8,7 @@ from fireteam.api import execute, COMPLEXITY_TO_MODE
 from fireteam.models import ExecutionMode, ExecutionResult, _extract_completion, _extract_issues
 from fireteam.prompts import EXECUTOR_PROMPT, REVIEWER_PROMPT, PLANNER_PROMPT
 from fireteam.complexity import ComplexityLevel
+from fireteam.claude_cli import CLIResult
 
 
 class TestExecutionMode:
@@ -178,55 +179,61 @@ class TestExecute:
     @pytest.mark.asyncio
     async def test_auto_detects_complexity(self, project_dir):
         """Auto-detects complexity when mode is None."""
-        mock_message = MagicMock()
-        mock_message.result = "Task completed."
+        mock_result = CLIResult(
+            success=True,
+            output="Task completed.",
+            session_id="test-session",
+        )
 
-        async def mock_query(*args, **kwargs):
-            yield mock_message
+        async def mock_cli_query(*args, **kwargs):
+            return mock_result
 
         with patch("fireteam.api.estimate_complexity", return_value=ComplexityLevel.TRIVIAL):
-            with patch("fireteam.loops.query", mock_query):
+            with patch("fireteam.loops.run_cli_query", mock_cli_query):
                 result = await execute(
                     project_dir=project_dir,
                     goal="Fix the typo",
                     mode=None,
-                    run_tests=False,
                 )
                 assert result.mode == ExecutionMode.SINGLE_TURN
 
     @pytest.mark.asyncio
     async def test_uses_specified_mode(self, project_dir):
         """Uses specified mode when provided."""
-        mock_message = MagicMock()
-        mock_message.result = "Task completed."
+        mock_result = CLIResult(
+            success=True,
+            output="Task completed.",
+            session_id="test-session",
+        )
 
-        async def mock_query(*args, **kwargs):
-            yield mock_message
+        async def mock_cli_query(*args, **kwargs):
+            return mock_result
 
-        with patch("fireteam.loops.query", mock_query):
+        with patch("fireteam.loops.run_cli_query", mock_cli_query):
             result = await execute(
                 project_dir=project_dir,
                 goal="Fix the bug",
                 mode=ExecutionMode.SINGLE_TURN,
-                run_tests=False,
             )
             assert result.mode == ExecutionMode.SINGLE_TURN
 
     @pytest.mark.asyncio
     async def test_single_turn_mode(self, project_dir):
-        """SINGLE_TURN mode makes single SDK call."""
-        mock_message = MagicMock()
-        mock_message.result = "Done in one turn."
+        """SINGLE_TURN mode makes single CLI call."""
+        mock_result = CLIResult(
+            success=True,
+            output="Done in one turn.",
+            session_id="test-session",
+        )
 
-        async def mock_query(*args, **kwargs):
-            yield mock_message
+        async def mock_cli_query(*args, **kwargs):
+            return mock_result
 
-        with patch("fireteam.loops.query", mock_query):
+        with patch("fireteam.loops.run_cli_query", mock_cli_query):
             result = await execute(
                 project_dir=project_dir,
                 goal="Fix typo",
                 mode=ExecutionMode.SINGLE_TURN,
-                run_tests=False,
             )
             assert result.success is True
             assert result.completion_percentage == 100
@@ -235,16 +242,20 @@ class TestExecute:
     @pytest.mark.asyncio
     async def test_handles_execution_error(self, project_dir):
         """Handles execution errors gracefully."""
-        async def mock_query(*args, **kwargs):
-            raise Exception("SDK error")
-            yield  # Never reached
+        mock_result = CLIResult(
+            success=False,
+            output="",
+            error="CLI error",
+        )
 
-        with patch("fireteam.loops.query", mock_query):
+        async def mock_cli_query(*args, **kwargs):
+            return mock_result
+
+        with patch("fireteam.loops.run_cli_query", mock_cli_query):
             result = await execute(
                 project_dir=project_dir,
                 goal="Do something",
                 mode=ExecutionMode.SINGLE_TURN,
-                run_tests=False,
             )
             assert result.success is False
             assert result.error is not None
@@ -254,41 +265,44 @@ class TestExecute:
         """Includes context in the prompt when provided."""
         captured_prompt = None
 
-        async def mock_query(prompt, options):
+        async def mock_cli_query(prompt, *args, **kwargs):
             nonlocal captured_prompt
             captured_prompt = prompt
-            mock_message = MagicMock()
-            mock_message.result = "Done."
-            yield mock_message
+            return CLIResult(
+                success=True,
+                output="Done.",
+                session_id="test-session",
+            )
 
-        with patch("fireteam.loops.query", mock_query):
+        with patch("fireteam.loops.run_cli_query", mock_cli_query):
             await execute(
                 project_dir=project_dir,
                 goal="Fix bug",
                 context="Error: NullPointer at line 42",
                 mode=ExecutionMode.SINGLE_TURN,
-                run_tests=False,
             )
             assert "NullPointer" in captured_prompt
 
     @pytest.mark.asyncio
     async def test_resolves_path(self, project_dir):
         """Resolves project_dir to absolute path."""
-        mock_message = MagicMock()
-        mock_message.result = "Done."
-        captured_options = None
+        mock_result = CLIResult(
+            success=True,
+            output="Done.",
+            session_id="test-session",
+        )
+        captured_cwd = None
 
-        async def mock_query(prompt, options):
-            nonlocal captured_options
-            captured_options = options
-            yield mock_message
+        async def mock_cli_query(prompt, phase, cwd, *args, **kwargs):
+            nonlocal captured_cwd
+            captured_cwd = cwd
+            return mock_result
 
-        with patch("fireteam.loops.query", mock_query):
+        with patch("fireteam.loops.run_cli_query", mock_cli_query):
             await execute(
                 project_dir=str(project_dir),
                 goal="Task",
                 mode=ExecutionMode.SINGLE_TURN,
-                run_tests=False,
             )
             # Should be absolute path
-            assert Path(captured_options.cwd).is_absolute()
+            assert Path(captured_cwd).is_absolute()
