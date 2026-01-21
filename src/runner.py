@@ -25,6 +25,7 @@ from .models import ExecutionMode, ExecutionResult
 from .claude_cli import CLISession
 from .circuit_breaker import create_circuit_breaker
 from .rate_limiter import get_rate_limiter
+from .prompt import Prompt, resolve_prompt
 
 
 # Session state file location
@@ -129,7 +130,8 @@ def clear_session_info(session_name: str) -> None:
 
 def start_session(
     project_dir: Path,
-    goal: str,
+    goal: str | None = None,
+    goal_file: str | Path | None = None,
     mode: ExecutionMode | None = None,
     context: str = "",
     max_iterations: int | None = None,
@@ -142,7 +144,8 @@ def start_session(
 
     Args:
         project_dir: Project directory to work in
-        goal: Task goal/description
+        goal: Task goal/description (string)
+        goal_file: Path to goal file (PROMPT.md style)
         mode: Execution mode (auto-detect if None)
         context: Additional context
         max_iterations: Max loop iterations (None = infinite)
@@ -163,21 +166,35 @@ def start_session(
     if session_exists(session_name):
         raise RuntimeError(f"Session '{session_name}' already exists. Use 'attach' or 'kill' first.")
 
+    # Resolve prompt (validates that we have a valid prompt source)
+    prompt = resolve_prompt(
+        goal=goal,
+        goal_file=goal_file,
+        project_dir=project_dir,
+        edit=False,  # Can't do interactive edit when starting tmux session
+    )
+    goal_display = prompt.goal[:100] + "..." if len(prompt.goal) > 100 else prompt.goal
+
     # Create log directory
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_file = LOG_DIR / f"{session_name}_{timestamp}.log"
+
+    # Write the resolved prompt to a temp file for the tmux session to read
+    prompt_file = STATE_DIR / f"{session_name}_prompt.md"
+    STATE_DIR.mkdir(parents=True, exist_ok=True)
+    prompt_file.write_text(prompt.render())
 
     # Build the command to run inside tmux
     mode_arg = f"--mode {mode.value}" if mode else ""
     max_iter_arg = f"--max-iterations {max_iterations}" if max_iterations else ""
     context_arg = f'--context "{context}"' if context else ""
 
-    # Use the fireteam CLI entry point
+    # Use the fireteam CLI entry point with --goal-file
     fireteam_cmd = (
         f"python -m fireteam.runner run "
         f'--project-dir "{project_dir}" '
-        f'--goal "{goal}" '
+        f'--goal-file "{prompt_file}" '
         f"{mode_arg} {max_iter_arg} {context_arg} "
         f'2>&1 | tee "{log_file}"'
     )
@@ -246,7 +263,8 @@ def tail_log(session_name: str, lines: int = 50) -> str:
 
 async def run_autonomous(
     project_dir: Path,
-    goal: str,
+    goal: str | None = None,
+    goal_file: str | Path | None = None,
     mode: ExecutionMode | None = None,
     context: str = "",
     max_iterations: int | None = None,
@@ -256,6 +274,14 @@ async def run_autonomous(
 
     This is the main entry point for autonomous execution.
     Called from within a tmux session.
+
+    Args:
+        project_dir: Project directory to work in
+        goal: Task goal/description (string)
+        goal_file: Path to goal file (PROMPT.md style)
+        mode: Execution mode (auto-detect if None)
+        context: Additional context
+        max_iterations: Max loop iterations (None = infinite)
     """
     log = logging.getLogger("fireteam")
     log.setLevel(logging.INFO)
@@ -268,11 +294,22 @@ async def run_autonomous(
     ))
     log.addHandler(handler)
 
+    # Resolve the prompt
+    prompt = resolve_prompt(
+        goal=goal,
+        goal_file=goal_file,
+        project_dir=project_dir,
+        edit=False,  # Can't do interactive edit in tmux context
+    )
+    goal_text = prompt.render()
+
     log.info("=" * 60)
     log.info("FIRETEAM AUTONOMOUS EXECUTION")
     log.info("=" * 60)
     log.info(f"Project: {project_dir}")
-    log.info(f"Goal: {goal}")
+    log.info(f"Goal: {goal_text[:200]}{'...' if len(goal_text) > 200 else ''}")
+    if prompt.included_files:
+        log.info(f"Included files: {len(prompt.included_files)}")
     log.info(f"Mode: {mode.value if mode else 'auto-detect'}")
     log.info(f"Max iterations: {max_iterations or 'unlimited'}")
     log.info("=" * 60)
@@ -284,7 +321,7 @@ async def run_autonomous(
     try:
         result = await execute(
             project_dir=project_dir,
-            goal=goal,
+            goal=goal_text,
             mode=mode,
             context=context,
             max_iterations=max_iterations,
@@ -327,7 +364,9 @@ def main():
     # Start command
     start_parser = subparsers.add_parser("start", help="Start a new autonomous session")
     start_parser.add_argument("--project-dir", "-p", required=True, help="Project directory")
-    start_parser.add_argument("--goal", "-g", required=True, help="Task goal")
+    start_parser.add_argument("--goal", "-g", help="Task goal (string)")
+    start_parser.add_argument("--goal-file", "-f", help="Path to goal file (PROMPT.md style)")
+    start_parser.add_argument("--edit", "-e", action="store_true", help="Open editor to write goal")
     start_parser.add_argument("--mode", "-m", choices=["single_turn", "moderate", "full"], help="Execution mode")
     start_parser.add_argument("--context", "-c", default="", help="Additional context")
     start_parser.add_argument("--max-iterations", type=int, help="Max iterations")
@@ -336,7 +375,8 @@ def main():
     # Run command (called from within tmux)
     run_parser = subparsers.add_parser("run", help="Run autonomous execution (called from tmux)")
     run_parser.add_argument("--project-dir", "-p", required=True, help="Project directory")
-    run_parser.add_argument("--goal", "-g", required=True, help="Task goal")
+    run_parser.add_argument("--goal", "-g", help="Task goal (string)")
+    run_parser.add_argument("--goal-file", "-f", help="Path to goal file (PROMPT.md style)")
     run_parser.add_argument("--mode", "-m", choices=["single_turn", "moderate", "full"], help="Execution mode")
     run_parser.add_argument("--context", "-c", default="", help="Additional context")
     run_parser.add_argument("--max-iterations", type=int, help="Max iterations")
@@ -361,28 +401,38 @@ def main():
 
     if args.command == "start":
         mode = ExecutionMode(args.mode) if args.mode else None
-        info = start_session(
-            project_dir=Path(args.project_dir),
-            goal=args.goal,
-            mode=mode,
-            context=args.context,
-            max_iterations=args.max_iterations,
-            session_name=args.session_name,
-        )
-        print(f"Started session: {info.session_name}")
-        print(f"Log file: {info.log_file}")
-        print(f"\nTo attach: python -m fireteam.runner attach {info.session_name}")
-        print(f"To view logs: python -m fireteam.runner logs {info.session_name}")
+        try:
+            info = start_session(
+                project_dir=Path(args.project_dir),
+                goal=args.goal,
+                goal_file=args.goal_file,
+                mode=mode,
+                context=args.context,
+                max_iterations=args.max_iterations,
+                session_name=args.session_name,
+            )
+            print(f"Started session: {info.session_name}")
+            print(f"Log file: {info.log_file}")
+            print(f"\nTo attach: python -m fireteam.runner attach {info.session_name}")
+            print(f"To view logs: python -m fireteam.runner logs {info.session_name}")
+        except ValueError as e:
+            print(f"Error: {e}")
+            sys.exit(1)
 
     elif args.command == "run":
         mode = ExecutionMode(args.mode) if args.mode else None
-        asyncio.run(run_autonomous(
-            project_dir=Path(args.project_dir),
-            goal=args.goal,
-            mode=mode,
-            context=args.context,
-            max_iterations=args.max_iterations,
-        ))
+        try:
+            asyncio.run(run_autonomous(
+                project_dir=Path(args.project_dir),
+                goal=args.goal,
+                goal_file=args.goal_file,
+                mode=mode,
+                context=args.context,
+                max_iterations=args.max_iterations,
+            ))
+        except ValueError as e:
+            print(f"Error: {e}")
+            sys.exit(1)
 
     elif args.command == "list":
         sessions = list_sessions()
@@ -393,7 +443,8 @@ def main():
             for s in sessions:
                 print(f"  {s.session_name}")
                 print(f"    Project: {s.project_dir}")
-                print(f"    Goal: {s.goal[:50]}..." if len(s.goal) > 50 else f"    Goal: {s.goal}")
+                goal_display = s.goal or "(from file)"
+                print(f"    Goal: {goal_display[:50]}..." if len(goal_display) > 50 else f"    Goal: {goal_display}")
                 print(f"    Started: {s.started_at}")
                 print()
 

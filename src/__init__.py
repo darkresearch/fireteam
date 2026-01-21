@@ -35,6 +35,7 @@ from .claude_cli import CLISession, CLIResult, ClaudeCLI
 from .circuit_breaker import CircuitBreaker, CircuitState, IterationMetrics, create_circuit_breaker
 from .rate_limiter import RateLimiter, RateLimitExceeded, get_rate_limiter, reset_rate_limiter
 from .runner import start_session, attach_session, kill_session, list_sessions, SessionInfo
+from .prompt import Prompt, resolve_prompt
 
 __all__ = [
     # Main API
@@ -65,4 +66,7 @@ __all__ = [
     "kill_session",
     "list_sessions",
     "SessionInfo",
+    # Prompt
+    "Prompt",
+    "resolve_prompt",
 ]
