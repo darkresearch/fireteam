@@ -349,45 +349,66 @@ class RateLimiter:
 
 ---
 
-## Recommendations
+## Implementation Status
 
-### Immediate Actions (This Sprint)
-1. **Use Claude Code session** - Refactor to piggyback on user's Claude Code session instead of requiring separate API key. This is foundational and blocks adoption.
-2. **Implement circuit breaker** - Prevent infinite loops and API waste
-3. **Add rate limiting** - Budget management for API calls
+**All gaps have been closed.** The following features have been implemented:
 
-### Near-Term (Next 2 Sprints)
-4. **Add progress metrics** - Track files changed, errors per iteration
-5. **Dual-gate exit consideration** - Let executor signal incomplete work
+| Gap | Status | Implementation |
+|-----|--------|----------------|
+| Claude Code session | ✅ DONE | `claude_cli.py` - wraps `claude` CLI |
+| Circuit breaker | ✅ DONE | `circuit_breaker.py` - warns on stuck loops |
+| Rate limiting | ✅ DONE | `rate_limiter.py` - 100 calls/hour default |
+| Dual-gate exit | ✅ DONE | `WORK_COMPLETE:` signal in loops.py |
+| Session continuity | ✅ DONE | Uses Claude Code's `--resume` |
+| Live monitoring | ✅ DONE | `runner.py` - tmux-based execution |
 
-### Future Consideration
-6. **Session persistence** - Resume capability
-7. **Monitoring dashboard** - Live execution visibility
+### New Architecture
+
+```
+Before (SDK direct):
+Claude Code → Fireteam → claude-agent-sdk → Anthropic API (separate billing)
+
+After (CLI wrapper):
+Claude Code → Fireteam → claude CLI subprocess → Claude Code session (same billing)
+```
+
+### CLI Commands
+
+```bash
+# Start autonomous session in tmux
+fireteam start --project-dir /path --goal "Complete the feature"
+
+# List running sessions
+fireteam list
+
+# Attach to session for live monitoring
+fireteam attach fireteam-myproject
+
+# View recent logs
+fireteam logs fireteam-myproject -n 100
+
+# Terminate session
+fireteam kill fireteam-myproject
+```
 
 ---
 
 ## Conclusion
 
-Fireteam has the stronger architectural foundation with its complexity routing and parallel reviewers. However, Ralph has a fundamentally better integration model - it piggybacks on Claude Code's session, which means:
-- Users don't need a separate API key
-- Single billing source
-- No credential management complexity
+Fireteam now has feature parity with Ralph's safety mechanisms while maintaining its architectural advantages:
 
-**The biggest risks in Fireteam today:**
-1. **Requires separate API key** - Blocks adoption for users who just have Claude Code
-2. No protection against stuck loops (circuit breaker gap)
-3. No API budget management (rate limiting gap)
+**Fireteam's advantages over Ralph:**
+- Adaptive complexity routing (trivial → complex)
+- Parallel reviewer consensus (3 reviewers, 2/3 majority)
+- Clean Python library API for embedding
+- Type-safe, async-native codebase
 
-The authentication/billing model should be addressed first as it's foundational and affects user adoption.
+**Ralph's features now in Fireteam:**
+- Claude Code session piggybacking (unified billing)
+- Circuit breaker (stuck loop detection)
+- Rate limiting (API budget management)
+- Tmux-based autonomous execution
+- Session continuity
+- Dual-gate exit detection
 
-**Fireteam's moat:**
-- Adaptive complexity routing is a genuine differentiator
-- Parallel reviewer consensus provides better validation for complex tasks
-- Clean library design enables embedding and extension
-
-**The recommended path:**
-1. Refactor to use Claude Code CLI (like Ralph) for execution
-2. Preserve Fireteam's complexity routing and review logic as orchestration
-3. Add Ralph's safety mechanisms (circuit breaker, rate limiting)
-
-This gives users the best of both worlds: Fireteam's intelligent orchestration with Ralph's simple "just works with Claude Code" integration model.
+**Result:** Fireteam's intelligent orchestration + Ralph's "just works with Claude Code" integration model.
