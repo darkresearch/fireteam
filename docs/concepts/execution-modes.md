@@ -20,14 +20,8 @@ FULL         →  Plan → Execute → 3 Reviews → loop until 2/3 say ≥95%
 - No review phase
 - Fastest execution
 
-```python
-from fireteam import execute, ExecutionMode
-
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Fix the typo in README.md",
-    mode=ExecutionMode.SINGLE_TURN,
-)
+```bash
+fireteam run -m single_turn
 ```
 
 ## MODERATE Mode
@@ -40,16 +34,8 @@ result = await execute(
 - Loops until reviewer says ≥95% complete
 - Feedback from reviews flows to next iteration
 
-```python
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Refactor the user service",
-    mode=ExecutionMode.MODERATE,
-)
-
-# Result includes review info
-print(result.completion_percentage)  # e.g., 96
-print(result.iterations)             # Number of execute→review cycles
+```bash
+fireteam run -m moderate
 ```
 
 ## FULL Mode
@@ -62,16 +48,8 @@ print(result.iterations)             # Number of execute→review cycles
 3. **Review Phase**: 3 parallel reviewers assess completion
 4. **Loop**: Continue until 2 of 3 reviewers say ≥95% complete
 
-```python
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Redesign the authentication system",
-    mode=ExecutionMode.FULL,
-)
-
-# Result includes all phases
-print(result.metadata.get("plan"))  # Implementation plan
-print(result.completion_percentage)  # Should be ≥95%
+```bash
+fireteam start -m full
 ```
 
 ### Why 3 Parallel Reviewers?
@@ -97,49 +75,28 @@ This respects Claude's judgment - if the executor believes more work is needed, 
 
 Let Fireteam choose based on complexity estimation:
 
-```python
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Your task here",
-    # mode not specified - auto-detect
-)
-
-print(f"Used mode: {result.mode}")
+```bash
+fireteam start  # Mode auto-detected from task complexity
 ```
 
 ### Manual Override
 
 Force a specific mode:
 
-```python
+```bash
 # Be thorough with a simple task
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Add a comment",
-    mode=ExecutionMode.FULL,
-)
+fireteam start -m full
 
 # Be quick with a moderate task
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Refactor module",
-    mode=ExecutionMode.SINGLE_TURN,
-)
+fireteam start -m single_turn
 ```
 
 ## Iteration Limits
 
 By default, MODERATE and FULL modes loop indefinitely until completion. Set a limit:
 
-```python
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Complex refactoring",
-    max_iterations=10,  # Stop after 10 iterations
-)
-
-if not result.success and result.iterations >= 10:
-    print("Hit iteration limit before completion")
+```bash
+fireteam start --max-iterations 10
 ```
 
 ## Tool Access by Phase

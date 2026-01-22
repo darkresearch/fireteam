@@ -1,35 +1,44 @@
 # Introduction
 
-Fireteam is a Python library for adaptive task execution using Claude Code CLI. It automatically estimates task complexity and selects the appropriate execution strategy, running tasks to completion with built-in review loops.
+Fireteam is a CLI tool for autonomous task execution using Claude. Give it a goal, let it run until complete. It automatically estimates task complexity and selects the appropriate execution strategy, looping until reviewers confirm completion.
 
 ## Key Features
 
-- **Adaptive Execution** - Automatically estimates task complexity and selects the best execution mode
+- **Autonomous Execution** - Define a task in PROMPT.md, run `fireteam start`, and walk away
+- **Adaptive Complexity** - Automatically estimates task complexity and selects the best execution mode
 - **Multi-Phase Workflow** - Plan, execute, and review phases for complex tasks
 - **Loop Until Complete** - Continues iterating until reviewers confirm completion (≥95%)
 - **Parallel Reviews** - Complex tasks get 3 parallel reviewers with majority consensus
-- **Simple API** - One function to execute any task: `execute()`
+- **Background Sessions** - Uses tmux for detached execution with live monitoring
 
 ## How It Works
 
-When you call `execute()`, Fireteam:
+When you run `fireteam start` or `fireteam run`:
 
-1. **Estimates complexity** - Analyzes the goal to determine if it's trivial, simple, moderate, or complex
-2. **Selects execution mode** - Maps complexity to the appropriate execution strategy
-3. **Executes the task** - Runs the appropriate phases (plan, execute, review)
-4. **Loops until complete** - For moderate/complex tasks, iterates until completion threshold is met
-5. **Returns results** - Provides success status, output, and completion percentage
+1. **Reads your PROMPT.md** - Loads the task goal and any included files
+2. **Estimates complexity** - Analyzes the goal to determine if it's trivial, simple, moderate, or complex
+3. **Selects execution mode** - Maps complexity to the appropriate execution strategy
+4. **Executes the task** - Runs the appropriate phases (plan, execute, review)
+5. **Loops until complete** - For moderate/complex tasks, iterates until completion threshold is met
 
-```python
-from fireteam import execute
+```bash
+# Create your PROMPT.md
+cat > PROMPT.md << 'EOF'
+# Task
 
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Fix the authentication bug",
-)
+Fix the authentication bug where users can't log in after password reset.
 
-print(f"Success: {result.success}")
-print(f"Completion: {result.completion_percentage}%")
+## Context
+
+@src/auth.py
+@tests/test_auth.py
+EOF
+
+# Start autonomous execution
+fireteam start
+
+# Monitor progress
+fireteam logs fireteam-myproject
 ```
 
 ## Execution Modes
@@ -61,5 +70,5 @@ Fireteam wraps the Claude Code CLI, piggybacking on your existing Claude Code se
 ## Next Steps
 
 - [Quickstart](./quickstart.md) - Get started in 5 minutes
+- [CLI Reference](./cli-runner.md) - Full command documentation
 - [Execution Modes](./concepts/execution-modes.md) - Learn about the different strategies
-- [API Reference](./api/execute.md) - Full API documentation
