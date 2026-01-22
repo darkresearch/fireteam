@@ -266,6 +266,7 @@ async def run_autonomous(
     mode: ExecutionMode | None = None,
     context: str = "",
     max_iterations: int | None = None,
+    edit: bool = False,
 ) -> ExecutionResult:
     """
     Run Fireteam autonomously until completion.
@@ -297,7 +298,7 @@ async def run_autonomous(
         goal=goal,
         goal_file=goal_file,
         project_dir=project_dir,
-        edit=False,  # Can't do interactive edit in tmux context
+        edit=edit,
     )
     goal_text = prompt.render()
 
@@ -359,40 +360,72 @@ def main() -> None:
     subparsers = parser.add_subparsers(dest="command", help="Commands")
 
     # Start command
-    start_parser = subparsers.add_parser("start", help="Start a new autonomous session in tmux")
-    start_parser.add_argument("--project-dir", "-p", default=".", help="Project directory (default: current)")
-    start_parser.add_argument("--goal", "-g", help="Task goal (string)")
-    start_parser.add_argument("--goal-file", "-f", help="Path to goal file (default: auto-detect PROMPT.md)")
-    start_parser.add_argument("--edit", "-e", action="store_true", help="Open editor to write goal")
-    start_parser.add_argument("--mode", "-m", choices=["single_turn", "moderate", "full"], help="Execution mode (default: auto-detect)")
-    start_parser.add_argument("--context", "-c", default="", help="Additional context")
-    start_parser.add_argument("--max-iterations", type=int, help="Max iterations (default: unlimited)")
-    start_parser.add_argument("--session-name", "-s", help="Custom session name")
+    start_parser = subparsers.add_parser(
+        "start",
+        help="Start a background session in tmux",
+        description="""Start autonomous task execution in a detached tmux session.
 
-    # Run command (foreground execution, also used internally by tmux)
-    run_parser = subparsers.add_parser("run", help="Run autonomous execution in foreground")
+Creates a PROMPT.md file in your project directory with your task, then run
+this command. Fireteam will execute until complete. Use 'fireteam attach' to
+watch progress or 'fireteam logs' to check output.""",
+    )
+    start_parser.add_argument("--project-dir", "-p", default=".", help="Project directory (default: current)")
+    start_parser.add_argument("--goal", "-g", help="Task goal as a string")
+    start_parser.add_argument("--goal-file", "-f", help="Path to goal file (default: auto-detect PROMPT.md)")
+    start_parser.add_argument("--mode", "-m", choices=["single_turn", "moderate", "full"], help="Execution mode (default: auto-detect from complexity)")
+    start_parser.add_argument("--context", "-c", default="", help="Additional context to include")
+    start_parser.add_argument("--max-iterations", type=int, help="Maximum iterations before stopping (default: unlimited)")
+    start_parser.add_argument("--session-name", "-s", help="Custom tmux session name (default: fireteam-<project>)")
+
+    # Run command
+    run_parser = subparsers.add_parser(
+        "run",
+        help="Run in foreground (blocking)",
+        description="""Run autonomous task execution in the foreground.
+
+Like 'start' but blocks until complete. Useful for short tasks or debugging.
+Output streams directly to your terminal. Use --edit to open an editor for
+writing your goal interactively.""",
+    )
     run_parser.add_argument("--project-dir", "-p", default=".", help="Project directory (default: current)")
-    run_parser.add_argument("--goal", "-g", help="Task goal (string)")
+    run_parser.add_argument("--goal", "-g", help="Task goal as a string")
     run_parser.add_argument("--goal-file", "-f", help="Path to goal file (default: auto-detect PROMPT.md)")
-    run_parser.add_argument("--mode", "-m", choices=["single_turn", "moderate", "full"], help="Execution mode (default: auto-detect)")
-    run_parser.add_argument("--context", "-c", default="", help="Additional context")
-    run_parser.add_argument("--max-iterations", type=int, help="Max iterations (default: unlimited)")
+    run_parser.add_argument("--edit", "-e", action="store_true", help="Open $EDITOR to write goal interactively")
+    run_parser.add_argument("--mode", "-m", choices=["single_turn", "moderate", "full"], help="Execution mode (default: auto-detect from complexity)")
+    run_parser.add_argument("--context", "-c", default="", help="Additional context to include")
+    run_parser.add_argument("--max-iterations", type=int, help="Maximum iterations before stopping (default: unlimited)")
 
     # List command
-    subparsers.add_parser("list", help="List running sessions")
+    subparsers.add_parser(
+        "list",
+        help="List running sessions",
+        description="Show all active Fireteam tmux sessions with their status, project directory, and goal.",
+    )
 
     # Attach command
-    attach_parser = subparsers.add_parser("attach", help="Attach to a session")
-    attach_parser.add_argument("session_name", help="Session name")
+    attach_parser = subparsers.add_parser(
+        "attach",
+        help="Attach to a session",
+        description="Attach to a running tmux session to watch execution in real-time. Detach with Ctrl+B D.",
+    )
+    attach_parser.add_argument("session_name", help="Session name (e.g., fireteam-myproject)")
 
     # Kill command
-    kill_parser = subparsers.add_parser("kill", help="Kill a session")
-    kill_parser.add_argument("session_name", help="Session name")
+    kill_parser = subparsers.add_parser(
+        "kill",
+        help="Terminate a session",
+        description="Stop a running Fireteam session and clean up its state files.",
+    )
+    kill_parser.add_argument("session_name", help="Session name to terminate")
 
     # Logs command
-    logs_parser = subparsers.add_parser("logs", help="View session logs")
-    logs_parser.add_argument("session_name", help="Session name")
-    logs_parser.add_argument("--lines", "-n", type=int, default=50, help="Number of lines")
+    logs_parser = subparsers.add_parser(
+        "logs",
+        help="View session logs",
+        description="Display recent log output from a Fireteam session. Logs are stored in ~/.fireteam/logs/.",
+    )
+    logs_parser.add_argument("session_name", help="Session name to view logs for")
+    logs_parser.add_argument("--lines", "-n", type=int, default=50, help="Number of lines to show (default: 50)")
 
     args = parser.parse_args()
 
@@ -426,6 +459,7 @@ def main() -> None:
                 mode=mode,
                 context=args.context,
                 max_iterations=args.max_iterations,
+                edit=args.edit,
             ))
         except ValueError as e:
             print(f"Error: {e}")
