@@ -1,10 +1,10 @@
 """Shared pytest fixtures for fireteam tests."""
 
-import pytest
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 
 @pytest.fixture
@@ -62,7 +62,7 @@ def mock_cli_query(mock_cli_result):
 @pytest.fixture
 def mock_execution_result():
     """Create a mock ExecutionResult for testing."""
-    from fireteam.models import ExecutionResult, ExecutionMode
+    from fireteam.models import ExecutionMode, ExecutionResult
     return ExecutionResult(
         success=True,
         mode=ExecutionMode.SINGLE_TURN,

@@ -22,13 +22,11 @@ Example PROMPT.md:
     - Include validation
 """
 
+import glob as globlib
 import os
 import re
-import glob as globlib
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
-
 
 # Pattern for inline file includes: @path/to/file or @path/to/dir/
 INCLUDE_PATTERN = re.compile(r'@([^\s\n]+)')
@@ -192,11 +190,12 @@ class Prompt:
             self.base_dir = Path.cwd()
 
         expanded = self.raw_content
-        included_files = []
+        included_files: list[str] = []
+        base_dir = self.base_dir  # Capture for closure (guaranteed non-None)
 
-        def replace_include(match: re.Match) -> str:
+        def replace_include(match: re.Match[str]) -> str:
             include_path = match.group(1)
-            full_path = self.base_dir / include_path
+            full_path = base_dir / include_path
 
             # Handle different include types
             if "**" in include_path or "*" in include_path:

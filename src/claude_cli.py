@@ -9,14 +9,12 @@ claude-agent-sdk API calls.
 import asyncio
 import json
 import logging
-import subprocess
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import AsyncIterator
+from typing import Any
 
 from .models import PhaseType
-
 
 # Tool permission sets per phase
 PHASE_TOOLS = {
@@ -41,7 +39,7 @@ class CLIResult:
     error: str | None = None
     cost_usd: float = 0.0
     duration_ms: int = 0
-    raw_json: dict = field(default_factory=dict)
+    raw_json: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -50,7 +48,7 @@ class CLISession:
     session_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     is_first_call: bool = True
 
-    def mark_used(self):
+    def mark_used(self) -> None:
         """Mark that this session has been used."""
         self.is_first_call = False
 
@@ -103,7 +101,7 @@ class ClaudeCLI:
             self.session.mark_used()
             return result
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             self.log.error(f"CLI timeout after {timeout_seconds}s")
             return CLIResult(
                 success=False,

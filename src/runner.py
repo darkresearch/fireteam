@@ -21,12 +21,10 @@ from pathlib import Path
 from typing import Literal
 
 from .api import execute
-from .models import ExecutionMode, ExecutionResult
-from .claude_cli import CLISession
 from .circuit_breaker import create_circuit_breaker
-from .rate_limiter import get_rate_limiter
-from .prompt import Prompt, resolve_prompt
-
+from .claude_cli import CLISession
+from .models import ExecutionMode, ExecutionResult
+from .prompt import resolve_prompt
 
 # Session state file location
 STATE_DIR = Path.home() / ".fireteam"
@@ -173,7 +171,6 @@ def start_session(
         project_dir=project_dir,
         edit=False,  # Can't do interactive edit when starting tmux session
     )
-    goal_display = prompt.goal[:100] + "..." if len(prompt.goal) > 100 else prompt.goal
 
     # Create log directory
     LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -211,11 +208,12 @@ def start_session(
         check=True,
     )
 
-    # Save session info
+    # Save session info (use truncated prompt.goal for display)
+    goal_summary = prompt.goal[:200] + "..." if len(prompt.goal) > 200 else prompt.goal
     info = SessionInfo(
         session_name=session_name,
         project_dir=str(project_dir),
-        goal=goal,
+        goal=goal_summary,
         started_at=datetime.now().isoformat(),
         log_file=str(log_file),
         status="running",
@@ -316,7 +314,6 @@ async def run_autonomous(
 
     session = CLISession()
     circuit_breaker = create_circuit_breaker()
-    rate_limiter = get_rate_limiter()
 
     try:
         result = await execute(
@@ -350,7 +347,7 @@ async def run_autonomous(
         raise
 
 
-def main():
+def main() -> None:
     """CLI entry point for the tmux runner."""
     import argparse
 

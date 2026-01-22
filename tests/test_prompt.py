@@ -1,10 +1,10 @@
 """Unit tests for prompt parsing and file inclusion."""
 
-import pytest
 from pathlib import Path
-from unittest.mock import patch
 
-from fireteam.prompt import Prompt, resolve_prompt, _guess_language, _should_skip
+import pytest
+
+from fireteam.prompt import Prompt, _guess_language, _should_skip, resolve_prompt
 
 
 class TestPromptFromString:

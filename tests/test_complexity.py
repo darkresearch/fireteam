@@ -1,11 +1,12 @@
 """Unit tests for complexity estimation."""
 
-import pytest
-from unittest.mock import patch, AsyncMock, MagicMock
+from unittest.mock import patch
 
+import pytest
+
+from fireteam.claude_cli import CLIResult
 from fireteam.complexity import ComplexityLevel, estimate_complexity
 from fireteam.prompts import COMPLEXITY_PROMPT
-from fireteam.claude_cli import CLIResult
 
 
 class TestComplexityLevel:
