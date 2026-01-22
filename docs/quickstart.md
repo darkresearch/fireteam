@@ -1,19 +1,20 @@
----
-title: Quickstart
-description: Get started with Fireteam in 5 minutes
----
+# Quickstart
+
+Get started with Fireteam in 5 minutes.
 
 ## Installation
 
-Install Fireteam using pip:
+Install Fireteam using uv or pip:
 
 ```bash
+uv add fireteam
+# or
 pip install fireteam
 ```
 
-<Info>
-Requires Python 3.10+ and a valid `ANTHROPIC_API_KEY` environment variable.
-</Info>
+**Requirements:**
+- Python 3.12+
+- Claude Code CLI installed
 
 ## Basic Usage
 
@@ -79,15 +80,44 @@ result = await execute(
 )
 ```
 
-### Disable Test Running
+### Limit Iterations
 
-By default, Fireteam runs tests after edits. Disable this if needed:
+By default, Fireteam loops until completion. Set a maximum:
 
 ```python
 result = await execute(
     project_dir="/path/to/project",
-    goal="Add experimental feature",
-    run_tests=False,  # Don't run tests after edits
+    goal="Refactor the user service",
+    max_iterations=10,  # Stop after 10 iterations if not complete
+)
+```
+
+## Using PROMPT.md Files
+
+Instead of passing a goal string, you can use a PROMPT.md file with inline file includes:
+
+```markdown
+# Task
+
+Fix the authentication bug.
+
+## Context
+
+@src/auth.py
+@tests/test_auth.py
+
+## Requirements
+
+- Users should be able to log in after password reset
+- All existing tests must pass
+```
+
+Then execute:
+
+```python
+result = await execute(
+    project_dir="/path/to/project",
+    goal_file="PROMPT.md",  # or auto-detected if present
 )
 ```
 
@@ -105,16 +135,6 @@ complexity = await estimate_complexity(
 
 print(f"Complexity: {complexity}")
 # ComplexityLevel.MODERATE
-
-# Map to execution mode
-if complexity == ComplexityLevel.TRIVIAL:
-    print("Will use SINGLE_TURN mode")
-elif complexity == ComplexityLevel.SIMPLE:
-    print("Will use SIMPLE mode")
-elif complexity == ComplexityLevel.MODERATE:
-    print("Will use MODERATE mode (execute + review)")
-elif complexity == ComplexityLevel.COMPLEX:
-    print("Will use FULL mode (plan + execute + reviews)")
 ```
 
 ## Understanding Results
@@ -126,31 +146,39 @@ result = await execute(project_dir=".", goal="Fix bug")
 
 # Check success
 if result.success:
-    # Task completed successfully
-    print(result.output)  # Execution output
+    print(result.output)              # Execution output
     print(result.completion_percentage)  # 0-100
-    print(result.metadata)  # Additional info (plan, review, etc.)
+    print(result.iterations)          # Number of iterations
+    print(result.metadata)            # Additional info
 else:
-    # Task failed
-    print(result.error)  # Error message
+    print(result.error)               # Error message
 
 # Always available
 print(result.mode)  # ExecutionMode used
 ```
 
+## CLI Runner
+
+For long-running autonomous tasks, use the tmux-based runner:
+
+```bash
+# Start a background session
+python -m fireteam.runner start --project-dir /path/to/project --goal "Complete the feature"
+
+# List running sessions
+python -m fireteam.runner list
+
+# Attach to watch progress
+python -m fireteam.runner attach fireteam-myproject
+
+# View logs
+python -m fireteam.runner logs fireteam-myproject
+```
+
+See [CLI Runner](./cli-runner.md) for more details.
+
 ## Next Steps
 
-<CardGroup cols={2}>
-  <Card title="Execution Modes" icon="diagram-project" href="/concepts/execution-modes">
-    Learn about the different execution strategies
-  </Card>
-  <Card title="Complexity Estimation" icon="brain" href="/concepts/complexity">
-    Understand how tasks are classified
-  </Card>
-  <Card title="Quality Hooks" icon="shield-check" href="/concepts/hooks">
-    Configure test running and quality enforcement
-  </Card>
-  <Card title="API Reference" icon="book" href="/api/execute">
-    Full API documentation
-  </Card>
-</CardGroup>
+- [Execution Modes](./concepts/execution-modes.md) - Learn about the different execution strategies
+- [Complexity Estimation](./concepts/complexity.md) - Understand how tasks are classified
+- [API Reference](./api/execute.md) - Full API documentation

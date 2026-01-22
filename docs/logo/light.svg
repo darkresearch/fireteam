@@ -1,7 +1,0 @@
-<svg width="140" height="32" viewBox="0 0 140 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Fire icon -->
-  <path d="M16 2C16 2 8 8 8 16C8 20.418 11.582 24 16 24C20.418 24 24 20.418 24 16C24 11 19 7 19 7C19 7 22 10 22 14C22 16.761 19.761 19 17 19C14.239 19 12 16.761 12 14C12 10 16 7 16 7V2Z" fill="#FF4500"/>
-
-  <!-- FIRETEAM text -->
-  <text x="32" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#1a1a1a">FIRETEAM</text>
-</svg>
