@@ -1,6 +1,6 @@
 # Fireteam
 
-Adaptive task execution using Claude Agent SDK with complexity-based routing and loop-until-complete behavior.
+Adaptive task execution using Claude Code CLI with complexity-based routing and loop-until-complete behavior.
 
 ## Overview
 
@@ -19,7 +19,7 @@ Fireteam estimates task complexity and routes to the appropriate execution strat
 uv add fireteam
 ```
 
-Requires Python 3.12+ and a valid `ANTHROPIC_API_KEY` environment variable.
+Requires Python 3.12+ and Claude Code CLI installed.
 
 ## Usage
 
@@ -88,7 +88,7 @@ print(f"Estimated complexity: {complexity}")
 ## Execution Modes
 
 ### SINGLE_TURN
-For trivial and simple tasks. Single SDK call, no review loop.
+For trivial and simple tasks. Single CLI call, no review loop.
 
 ### MODERATE
 For moderate tasks requiring validation:
@@ -123,7 +123,6 @@ async def execute(
     goal: str,
     context: str = "",
     mode: ExecutionMode | None = None,  # Auto-detect if None
-    run_tests: bool = True,
     max_iterations: int | None = None,  # None = infinite (default)
 ) -> ExecutionResult
 ```
@@ -158,44 +157,32 @@ Environment variables:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `ANTHROPIC_API_KEY` | (required) | API key for Claude |
 | `FIRETEAM_MAX_ITERATIONS` | (none) | Max loop iterations. Unset = infinite. |
 | `FIRETEAM_LOG_LEVEL` | INFO | Logging verbosity |
-
-## Quality Hooks
-
-Fireteam includes SDK hooks for quality enforcement:
-
-- **QUALITY_HOOKS**: Run tests after edits, block user questions
-- **AUTONOMOUS_HOOKS**: Block all user interaction
-- **DEBUG_HOOKS**: Log all tool usage
-
-```python
-from fireteam import execute
-
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Add feature",
-    run_tests=True,  # Enables QUALITY_HOOKS (default)
-)
-```
 
 ## Project Structure
 
 ```
 fireteam/
 ├── .claude-plugin/
-│   ├── plugin.json      # Claude Code plugin manifest
-│   └── commands/
-│       └── fireteam.md  # /fireteam command definition
+│   └── plugin.json      # Claude Code plugin manifest
+├── commands/
+│   └── fireteam.md      # /fireteam command definition
+├── hooks/
+│   └── hooks.json       # Claude Code hooks configuration
 ├── src/
 │   ├── __init__.py      # Public API exports
 │   ├── api.py           # Core execute() function
 │   ├── models.py        # Data models (ExecutionMode, ExecutionResult, etc.)
 │   ├── loops.py         # Loop implementations (moderate_loop, full_loop)
+│   ├── claude_cli.py    # Claude Code CLI wrapper
 │   ├── complexity.py    # Complexity estimation
+│   ├── circuit_breaker.py # Stuck loop detection
+│   ├── rate_limiter.py  # API call budget management
+│   ├── runner.py        # tmux-based autonomous execution
+│   ├── prompt.py        # PROMPT.md parsing with file includes
 │   ├── config.py        # Configuration
-│   ├── hooks.py         # SDK hooks for quality
+│   ├── claude_hooks/    # Claude Code hook handlers
 │   └── prompts/
 │       ├── __init__.py  # Prompt loader
 │       ├── builder.py   # Prompt building with feedback injection
