@@ -1,8 +1,3 @@
----
-title: estimate_complexity()
-description: Estimate task complexity before execution
----
-
 # estimate_complexity()
 
 Estimates the complexity of a task. Used internally by `execute()` when no mode is specified, but can also be called directly.
@@ -12,19 +7,18 @@ Estimates the complexity of a task. Used internally by `execute()` when no mode 
 ```python
 async def estimate_complexity(
     goal: str,
-    context: str | None = None,
+    context: str = "",
+    project_dir: str | Path | None = None,
 ) -> ComplexityLevel
 ```
 
 ## Parameters
 
-<ParamField path="goal" type="str" required>
-  The task to analyze.
-</ParamField>
-
-<ParamField path="context" type="str | None" default="None">
-  Additional context about the task.
-</ParamField>
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `goal` | `str` | required | The task to analyze |
+| `context` | `str` | `""` | Additional context about the task |
+| `project_dir` | `str \| Path \| None` | `None` | Project directory for codebase exploration |
 
 ## Returns
 
@@ -61,20 +55,31 @@ complexity = await estimate_complexity(
 # Returns: ComplexityLevel.MODERATE
 ```
 
+### With Codebase Exploration
+
+When `project_dir` is provided, Claude can explore the codebase to make a more accurate estimate:
+
+```python
+complexity = await estimate_complexity(
+    goal="Refactor the authentication system",
+    project_dir="/path/to/project",
+)
+# Claude uses Glob, Grep, Read to understand the project
+# Returns: ComplexityLevel.COMPLEX
+```
+
 ### Use Result for Mode Selection
 
 ```python
 from fireteam import estimate_complexity, execute, ExecutionMode, ComplexityLevel
 
-complexity = await estimate_complexity(
-    goal="Implement new feature",
-)
+complexity = await estimate_complexity(goal="Implement new feature")
 
 # Custom mode selection logic
 if complexity == ComplexityLevel.COMPLEX:
     mode = ExecutionMode.FULL
 else:
-    mode = ExecutionMode.SIMPLE
+    mode = ExecutionMode.MODERATE
 
 result = await execute(
     project_dir="/path/to/project",
@@ -86,52 +91,28 @@ result = await execute(
 ## Complexity Guidelines
 
 ### TRIVIAL
-
 - Fix typos
 - Add comments
 - Simple formatting
 
-```python
-await estimate_complexity("Fix typo in README")
-# → ComplexityLevel.TRIVIAL
-```
-
 ### SIMPLE
-
 - Single function implementation
 - Add logging
 - Fix obvious bugs
 
-```python
-await estimate_complexity("Add logging to auth module")
-# → ComplexityLevel.SIMPLE
-```
-
 ### MODERATE
-
 - Refactor a module
 - Add feature with tests
 - Fix complex bug
 
-```python
-await estimate_complexity("Refactor user service")
-# → ComplexityLevel.MODERATE
-```
-
 ### COMPLEX
-
 - Architectural changes
 - New subsystems
 - Major refactoring
 
-```python
-await estimate_complexity("Redesign authentication system")
-# → ComplexityLevel.COMPLEX
-```
-
 ## Implementation Notes
 
-- Uses a single Claude API call with no tools
-- Response is parsed to extract complexity level
-- Defaults to SIMPLE if response is unclear
+- When `project_dir` is provided, Claude uses read-only tools (Glob, Grep, Read) to explore
+- Response is parsed to extract complexity level from the last line
+- Defaults to MODERATE if response is unclear
 - Handles case-insensitive responses
