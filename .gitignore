@@ -43,3 +43,6 @@ logs/
 
 # Benchmark runs
 runs/
+
+# Fireteam job output
+jobs/
