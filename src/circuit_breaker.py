@@ -10,9 +10,9 @@ the loop is not making progress. Tracks:
 
 import hashlib
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable
 
 
 class CircuitState(Enum):
@@ -69,7 +69,7 @@ class CircuitBreaker:
     # Callbacks
     on_warning: Callable[[str], None] | None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.log = logging.getLogger("fireteam.circuit_breaker")
 
     def record_iteration(self, metrics: IterationMetrics) -> None:
@@ -130,7 +130,6 @@ class CircuitBreaker:
 
         # Update state
         if warnings:
-            old_state = self.state
             self.state = CircuitState.OPEN
             self._issue_warnings(warnings, metrics)
         elif self.state == CircuitState.OPEN:
@@ -159,7 +158,7 @@ class CircuitBreaker:
         """Check if circuit is open (problem detected)."""
         return self.state == CircuitState.OPEN
 
-    def get_status(self) -> dict:
+    def get_status(self) -> dict[str, str | int | bool]:
         """Get current circuit breaker status."""
         return {
             "state": self.state.value,

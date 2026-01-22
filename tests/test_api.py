@@ -1,14 +1,15 @@
 """Unit tests for the fireteam API."""
 
-import pytest
 from pathlib import Path
-from unittest.mock import patch, MagicMock, AsyncMock
+from unittest.mock import patch
 
-from fireteam.api import execute, COMPLEXITY_TO_MODE
-from fireteam.models import ExecutionMode, ExecutionResult, _extract_completion, _extract_issues
-from fireteam.prompts import EXECUTOR_PROMPT, REVIEWER_PROMPT, PLANNER_PROMPT
-from fireteam.complexity import ComplexityLevel
+import pytest
+
+from fireteam.api import COMPLEXITY_TO_MODE, execute
 from fireteam.claude_cli import CLIResult
+from fireteam.complexity import ComplexityLevel
+from fireteam.models import ExecutionMode, ExecutionResult, _extract_completion, _extract_issues
+from fireteam.prompts import EXECUTOR_PROMPT, PLANNER_PROMPT, REVIEWER_PROMPT
 
 
 class TestExecutionMode:

@@ -13,10 +13,10 @@ Uses Claude Code CLI for estimation, piggybacking on user's session.
 from enum import Enum
 from pathlib import Path
 
-from .claude_cli import run_cli_query, CLISession
+from . import config
+from .claude_cli import CLISession, run_cli_query
 from .models import PhaseType
 from .prompts import COMPLEXITY_PROMPT
-from . import config
 
 
 class ComplexityLevel(Enum):

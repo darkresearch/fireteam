@@ -9,7 +9,6 @@ import asyncio
 import logging
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
 
 
 @dataclass
@@ -33,7 +32,7 @@ class RateLimiter:
     hour_started: float = field(default_factory=time.time)
     total_calls: int = 0
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.log = logging.getLogger("fireteam.rate_limiter")
         self._lock = asyncio.Lock()
 
@@ -96,7 +95,7 @@ class RateLimiter:
             await asyncio.sleep(wait_seconds)
             self._reset()
 
-    def get_status(self) -> dict:
+    def get_status(self) -> dict[str, int | float | bool]:
         """Get current rate limiter status."""
         return {
             "calls_this_hour": self.calls_this_hour,

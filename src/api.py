@@ -18,13 +18,12 @@ import logging
 from pathlib import Path
 
 from . import config
-from .claude_cli import CLISession
 from .circuit_breaker import CircuitBreaker, create_circuit_breaker
+from .claude_cli import CLISession
 from .complexity import ComplexityLevel, estimate_complexity
-from .loops import single_turn, moderate_loop, full_loop
+from .loops import full_loop, moderate_loop, single_turn
 from .models import ExecutionMode, ExecutionResult, LoopConfig
-from .rate_limiter import RateLimiter, get_rate_limiter
-
+from .rate_limiter import get_rate_limiter
 
 # Map complexity levels to execution modes
 # SIMPLE is now treated as SINGLE_TURN (no separate mode)

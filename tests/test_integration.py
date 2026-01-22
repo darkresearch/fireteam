@@ -4,14 +4,14 @@ These tests verify the full execution flow with mocked CLI calls.
 Run with --run-integration for tests that require Claude Code CLI.
 """
 
+from unittest.mock import patch
+
 import pytest
-from pathlib import Path
-from unittest.mock import patch, MagicMock
 
 from fireteam.api import execute
-from fireteam.models import ExecutionMode, ExecutionResult
-from fireteam.complexity import ComplexityLevel
 from fireteam.claude_cli import CLIResult
+from fireteam.complexity import ComplexityLevel
+from fireteam.models import ExecutionMode
 
 
 class TestComplexityToExecutionFlow:
@@ -245,7 +245,7 @@ class TestFullModeLoop:
                 return CLIResult(success=True, output="Done.", session_id="test")
 
         with patch("fireteam.loops.run_cli_query", mock_cli_query):
-            result = await execute(
+            await execute(
                 project_dir=project_dir,
                 goal="fix bug",
                 mode=ExecutionMode.FULL,

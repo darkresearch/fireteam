@@ -8,7 +8,7 @@ Builds prompts by combining base templates with:
 """
 
 from ..models import PhaseType
-from . import EXECUTOR_PROMPT, REVIEWER_PROMPT, PLANNER_PROMPT
+from . import EXECUTOR_PROMPT, PLANNER_PROMPT, REVIEWER_PROMPT
 
 
 def build_prompt(

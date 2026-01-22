@@ -6,10 +6,11 @@ When fireteam mode is ON:
 2. Invokes fireteam.execute() with the task
 3. Returns the result to Claude Code
 """
-import sys
-import json
 import asyncio
+import json
+import sys
 from pathlib import Path
+from typing import Any
 
 
 def is_fireteam_enabled() -> bool:
@@ -17,16 +18,17 @@ def is_fireteam_enabled() -> bool:
     state_file = Path.home() / ".claude" / "fireteam_state.json"
     if state_file.exists():
         try:
-            state = json.loads(state_file.read_text())
-            return state.get("enabled", False)
-        except (json.JSONDecodeError, IOError):
+            state: dict[str, Any] = json.loads(state_file.read_text())
+            enabled = state.get("enabled", False)
+            return bool(enabled)
+        except (OSError, json.JSONDecodeError):
             return False
     return False
 
 
-async def main():
+async def main() -> None:
     """Main hook entry point."""
-    input_data = json.loads(sys.stdin.read())
+    input_data: dict[str, Any] = json.loads(sys.stdin.read())
 
     if not is_fireteam_enabled():
         # Fireteam mode is OFF - pass through normally
@@ -34,11 +36,11 @@ async def main():
         return
 
     # Fireteam mode is ON - inject orchestration context
-    user_prompt = input_data.get("prompt", "")
-    cwd = input_data.get("cwd", ".")
+    user_prompt: str = input_data.get("prompt", "")
+    cwd: str = input_data.get("cwd", ".")
 
-    # Import and run fireteam
-    from fireteam import execute
+    # Import and run fireteam (use relative import)
+    from ..api import execute
 
     result = await execute(
         project_dir=cwd,
@@ -46,7 +48,7 @@ async def main():
     )
 
     # Return result to Claude Code
-    output = {
+    output: dict[str, Any] = {
         "hookSpecificOutput": {
             "additionalContext": f"Fireteam completed with {result.completion_percentage}% completion.\n\nResult:\n{result.output}",
         }

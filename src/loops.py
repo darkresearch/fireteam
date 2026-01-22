@@ -15,9 +15,8 @@ import re
 from pathlib import Path
 
 from . import config
-from .claude_cli import ClaudeCLI, CLISession, CLIResult, run_cli_query
 from .circuit_breaker import CircuitBreaker, IterationMetrics, create_circuit_breaker
-from .rate_limiter import RateLimiter, get_rate_limiter
+from .claude_cli import CLIResult, CLISession, run_cli_query
 from .models import (
     ExecutionMode,
     ExecutionResult,
@@ -27,6 +26,7 @@ from .models import (
     ReviewResult,
 )
 from .prompts.builder import build_prompt
+from .rate_limiter import RateLimiter, get_rate_limiter
 
 
 async def single_turn(
@@ -180,7 +180,7 @@ async def run_parallel_reviews(
 
     processed: list[ReviewResult] = []
     for i, result in enumerate(results):
-        if isinstance(result, Exception):
+        if isinstance(result, BaseException):
             log.warning(f"Reviewer {i + 1} failed: {result}")
             processed.append(
                 ReviewResult(
@@ -191,6 +191,7 @@ async def run_parallel_reviews(
                 )
             )
         else:
+            # result is ReviewResult after the exception check
             processed.append(result)
 
     return processed
