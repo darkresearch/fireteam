@@ -1,8 +1,57 @@
 # Fireteam
 
-Adaptive task execution using Claude Code CLI with complexity-based routing and loop-until-complete behavior.
+Autonomous task execution with Claude. Give it a goal, let it run until complete.
 
-## Overview
+## Installation
+
+```bash
+# Install as a CLI tool
+pipx install fireteam
+# or
+uv tool install fireteam
+```
+
+Requires Python 3.12+ and [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed.
+
+## Quick Start
+
+1. Create a `PROMPT.md` file in your project:
+
+```markdown
+# Task
+
+Fix the authentication bug where users can't log in after password reset.
+
+## Context
+
+@src/auth.py
+@tests/test_auth.py
+```
+
+2. Run Fireteam:
+
+```bash
+# Start a background session (tmux)
+fireteam start
+
+# Or run in foreground
+fireteam run
+```
+
+3. Monitor progress:
+
+```bash
+# List running sessions
+fireteam list
+
+# Attach to watch live
+fireteam attach fireteam-myproject
+
+# View logs
+fireteam logs fireteam-myproject
+```
+
+## How It Works
 
 Fireteam estimates task complexity and routes to the appropriate execution strategy:
 
@@ -10,146 +59,85 @@ Fireteam estimates task complexity and routes to the appropriate execution strat
 |------------|------|----------|
 | TRIVIAL | SINGLE_TURN | Direct execution, single pass |
 | SIMPLE | SINGLE_TURN | Direct execution, single pass |
-| MODERATE | MODERATE | Execute -> review loop until >95% complete |
-| COMPLEX | FULL | Plan once, then execute -> 3 parallel reviews loop until 2/3 say >95% |
+| MODERATE | MODERATE | Execute → review loop until ≥95% complete |
+| COMPLEX | FULL | Plan once, then execute → 3 parallel reviews until 2/3 say ≥95% |
 
-## Installation
+It loops until the task is complete—no babysitting required.
+
+## CLI Reference
+
+### `fireteam start`
+
+Start a background session in tmux:
 
 ```bash
-uv add fireteam
+fireteam start                           # Use PROMPT.md in current directory
+fireteam start -p /path/to/project       # Specify project directory
+fireteam start -f task.md                # Use specific goal file
+fireteam start -g "Fix the bug"          # Pass goal as string
+fireteam start -m full                   # Force execution mode
+fireteam start --max-iterations 10       # Limit iterations
 ```
 
-Requires Python 3.12+ and Claude Code CLI installed.
+### `fireteam run`
 
-## Usage
+Run in foreground (blocking):
 
-### Basic Usage
-
-```python
-from fireteam import execute
-
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Fix the bug in auth.py",
-    context="Error logs: NullPointerException at line 42",
-)
-
-if result.success:
-    print(f"Completed in {result.iterations} iterations")
-    print(f"Completion: {result.completion_percentage}%")
-else:
-    print(f"Failed: {result.error}")
+```bash
+fireteam run                             # Use PROMPT.md in current directory
+fireteam run -p /path/to/project         # Specify project directory
 ```
 
-### Specify Execution Mode
+### `fireteam list`
 
-```python
-from fireteam import execute, ExecutionMode
+List all running Fireteam sessions.
 
-# Force full mode with planning and parallel reviews
-# Loops infinitely until complete (default)
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Refactor the authentication module",
-    mode=ExecutionMode.FULL,
-)
+### `fireteam attach <session>`
 
-# Or limit iterations if needed
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Refactor the authentication module",
-    mode=ExecutionMode.FULL,
-    max_iterations=10,  # Stop after 10 iterations if not complete
-)
+Attach to a running session to watch progress. Detach with `Ctrl+B D`.
+
+### `fireteam logs <session>`
+
+View session logs:
+
+```bash
+fireteam logs fireteam-myproject         # Last 50 lines
+fireteam logs fireteam-myproject -n 200  # Last 200 lines
 ```
 
-### Complexity Estimation
+### `fireteam kill <session>`
 
-```python
-from fireteam import estimate_complexity, ComplexityLevel
+Terminate a running session.
 
-# Quick estimation (no codebase access)
-complexity = await estimate_complexity(
-    goal="Add logging to the auth module",
-    context="Existing logging in other modules uses Python logging",
-)
+## PROMPT.md Format
 
-# Accurate estimation with codebase exploration
-# Claude uses Glob, Grep, Read to understand the project
-complexity = await estimate_complexity(
-    goal="Refactor the authentication system",
-    project_dir="/path/to/project",
-)
+Fireteam auto-detects `PROMPT.md` (or `fireteam.prompt.md`, `prompt.md`) in your project directory. Use `@` syntax to include files:
 
-print(f"Estimated complexity: {complexity}")
-# ComplexityLevel.MODERATE -> routes to MODERATE mode
+```markdown
+# Task
+
+Refactor the authentication system to use JWT tokens.
+
+## Current Implementation
+
+@src/auth/
+@src/middleware/auth.py
+
+## Requirements
+
+- Replace session-based auth with JWT
+- Add refresh token support
+- Update all tests
+
+## Additional Context
+
+@docs/auth-spec.md
 ```
 
-## Execution Modes
-
-### SINGLE_TURN
-For trivial and simple tasks. Single CLI call, no review loop.
-
-### MODERATE
-For moderate tasks requiring validation:
-```
-while not complete:
-    execute()
-    completion = review()
-    if completion >= 95%:
-        complete = True
-```
-Loops **indefinitely** until a single reviewer says >95% complete. Set `max_iterations` to limit.
-
-### FULL
-For complex tasks requiring planning and consensus:
-```
-plan()  # Once at start
-while not complete:
-    execute()
-    reviews = run_3_parallel_reviewers()
-    if 2 of 3 say >= 95%:
-        complete = True
-```
-Plans once, then loops **indefinitely** until majority (2/3) consensus. Set `max_iterations` to limit.
-
-## API Reference
-
-### `execute()`
-
-```python
-async def execute(
-    project_dir: str | Path,
-    goal: str,
-    context: str = "",
-    mode: ExecutionMode | None = None,  # Auto-detect if None
-    max_iterations: int | None = None,  # None = infinite (default)
-) -> ExecutionResult
-```
-
-### `ExecutionResult`
-
-```python
-@dataclass
-class ExecutionResult:
-    success: bool
-    mode: ExecutionMode
-    output: str | None = None
-    error: str | None = None
-    completion_percentage: int = 0
-    iterations: int = 0
-    metadata: dict = field(default_factory=dict)
-```
-
-### `estimate_complexity()`
-
-```python
-async def estimate_complexity(
-    goal: str,
-    context: str = "",
-    project_dir: str | Path | None = None,  # Enables codebase exploration
-) -> ComplexityLevel
-```
+Include patterns:
+- `@path/to/file.py` - Single file
+- `@path/to/directory/` - All files in directory
+- `@src/**/*.py` - Glob pattern
 
 ## Configuration
 
@@ -157,52 +145,33 @@ Environment variables:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `FIRETEAM_MAX_ITERATIONS` | (none) | Max loop iterations. Unset = infinite. |
+| `FIRETEAM_MAX_ITERATIONS` | unlimited | Max loop iterations |
 | `FIRETEAM_LOG_LEVEL` | INFO | Logging verbosity |
 
-## Project Structure
+## Library Usage
 
+Fireteam can also be used as a Python library:
+
+```python
+from fireteam import execute
+
+result = await execute(
+    project_dir="/path/to/project",
+    goal="Fix the authentication bug",
+)
+
+if result.success:
+    print(f"Completed in {result.iterations} iterations")
 ```
-fireteam/
-├── .claude-plugin/
-│   └── plugin.json      # Claude Code plugin manifest
-├── commands/
-│   └── fireteam.md      # /fireteam command definition
-├── hooks/
-│   └── hooks.json       # Claude Code hooks configuration
-├── src/
-│   ├── __init__.py      # Public API exports
-│   ├── api.py           # Core execute() function
-│   ├── models.py        # Data models (ExecutionMode, ExecutionResult, etc.)
-│   ├── loops.py         # Loop implementations (moderate_loop, full_loop)
-│   ├── claude_cli.py    # Claude Code CLI wrapper
-│   ├── complexity.py    # Complexity estimation
-│   ├── circuit_breaker.py # Stuck loop detection
-│   ├── rate_limiter.py  # API call budget management
-│   ├── runner.py        # tmux-based autonomous execution
-│   ├── prompt.py        # PROMPT.md parsing with file includes
-│   ├── config.py        # Configuration
-│   ├── claude_hooks/    # Claude Code hook handlers
-│   └── prompts/
-│       ├── __init__.py  # Prompt loader
-│       ├── builder.py   # Prompt building with feedback injection
-│       ├── executor.md  # Executor agent prompt
-│       ├── reviewer.md  # Reviewer agent prompt
-│       ├── planner.md   # Planner agent prompt
-│       └── complexity.md # Complexity estimation prompt
-├── tests/
-└── pyproject.toml
-```
+
+See [docs/](./docs/) for full API documentation.
 
 ## Development
 
 ```bash
-# Clone and install dev dependencies
 git clone https://github.com/darkresearch/fireteam
 cd fireteam
 uv sync --extra dev
-
-# Run tests
 uv run pytest tests/ -v
 ```
 

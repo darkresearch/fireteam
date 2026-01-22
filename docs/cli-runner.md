@@ -1,6 +1,6 @@
-# CLI Runner
+# CLI Reference
 
-Fireteam includes a tmux-based runner for long-running autonomous tasks. This allows you to start a task, detach, and come back later to check on progress.
+Fireteam includes a tmux-based runner for autonomous task execution. Start a task, detach, and come back later to check on progress.
 
 ## Requirements
 
@@ -12,24 +12,36 @@ Fireteam includes a tmux-based runner for long-running autonomous tasks. This al
 ### Start a Session
 
 ```bash
-python -m fireteam.runner start \
-    --project-dir /path/to/project \
-    --goal "Complete the feature implementation"
+fireteam start                           # Use PROMPT.md in current directory
+fireteam start -p /path/to/project       # Specify project directory
+fireteam start -f task.md                # Use specific goal file
+fireteam start -g "Fix the bug"          # Pass goal as string
+fireteam start -m full                   # Force execution mode
+fireteam start --max-iterations 10       # Limit iterations
 ```
 
 Options:
-- `--project-dir` - Project directory (required)
-- `--goal` - Task goal string
-- `--goal-file` - Path to PROMPT.md file (alternative to --goal)
-- `--mode` - Execution mode: single_turn, moderate, full (optional)
-- `--context` - Additional context (optional)
-- `--max-iterations` - Maximum iterations (optional)
-- `--session-name` - Custom session name (optional)
+- `-p, --project-dir` - Project directory (default: current directory)
+- `-g, --goal` - Task goal string
+- `-f, --goal-file` - Path to PROMPT.md file (default: auto-detect)
+- `-m, --mode` - Execution mode: single_turn, moderate, full
+- `-c, --context` - Additional context
+- `--max-iterations` - Maximum iterations
+- `-s, --session-name` - Custom session name
+
+### Run in Foreground
+
+```bash
+fireteam run                             # Use PROMPT.md in current directory
+fireteam run -p /path/to/project         # Specify project directory
+```
+
+Runs in the foreground without tmux. Useful for debugging or short tasks.
 
 ### List Sessions
 
 ```bash
-python -m fireteam.runner list
+fireteam list
 ```
 
 Shows all running Fireteam sessions with their status.
@@ -37,7 +49,7 @@ Shows all running Fireteam sessions with their status.
 ### Attach to a Session
 
 ```bash
-python -m fireteam.runner attach fireteam-myproject
+fireteam attach fireteam-myproject
 ```
 
 Attaches to a running session to watch progress in real-time. Press `Ctrl+B D` to detach.
@@ -45,39 +57,24 @@ Attaches to a running session to watch progress in real-time. Press `Ctrl+B D` t
 ### View Logs
 
 ```bash
-python -m fireteam.runner logs fireteam-myproject
-
-# Show more lines
-python -m fireteam.runner logs fireteam-myproject -n 200
-
-# Follow (like tail -f)
-python -m fireteam.runner logs fireteam-myproject -f
+fireteam logs fireteam-myproject         # Last 50 lines
+fireteam logs fireteam-myproject -n 200  # Last 200 lines
 ```
 
 ### Kill a Session
 
 ```bash
-python -m fireteam.runner kill fireteam-myproject
+fireteam kill fireteam-myproject
 ```
 
 Terminates a running session.
-
-### Run Directly (Blocking)
-
-```bash
-python -m fireteam.runner run \
-    --project-dir /path/to/project \
-    --goal "Fix the bug"
-```
-
-Runs in the foreground without tmux. Useful for debugging or short tasks.
 
 ## Session Names
 
 By default, session names are generated from the project directory:
 - `/path/to/myproject` → `fireteam-myproject`
 
-You can specify a custom name with `--session-name`.
+You can specify a custom name with `-s` or `--session-name`.
 
 ## Log Files
 
@@ -90,44 +87,20 @@ Logs are stored in `~/.fireteam/logs/` with timestamps:
 
 Session state is stored in `~/.fireteam/`:
 ```
-~/.fireteam/fireteam-myproject.json   # Session info
-~/.fireteam/fireteam-myproject_prompt.md  # Resolved prompt
+~/.fireteam/fireteam-myproject.json      # Session info
+~/.fireteam/fireteam-myproject_prompt.md # Resolved prompt
 ```
 
 ## Example Workflow
 
 ```bash
-# Start a long-running task
-python -m fireteam.runner start \
-    --project-dir ~/projects/myapp \
-    --goal-file PROMPT.md \
-    --mode full
-
-# Check on it later
-python -m fireteam.runner list
-
-# Watch progress
-python -m fireteam.runner attach fireteam-myapp
-
-# Detach with Ctrl+B D
-
-# Check final logs
-python -m fireteam.runner logs fireteam-myapp
-
-# Clean up
-python -m fireteam.runner kill fireteam-myapp
-```
-
-## Using with PROMPT.md
-
-Create a `PROMPT.md` file with your task and file includes:
-
-```markdown
+# Create your PROMPT.md
+cat > PROMPT.md << 'EOF'
 # Task
 
 Refactor the authentication system to use JWT tokens.
 
-## Current Implementation
+## Context
 
 @src/auth/
 @src/middleware/auth.py
@@ -135,38 +108,31 @@ Refactor the authentication system to use JWT tokens.
 ## Requirements
 
 - Replace session-based auth with JWT
-- Maintain backward compatibility for 1 week
 - Add refresh token support
 - Update all tests
+EOF
+
+# Start the task
+fireteam start -m full
+
+# Check on it later
+fireteam list
+
+# Watch progress
+fireteam attach fireteam-myproject
+
+# Detach with Ctrl+B D
+
+# Check final logs
+fireteam logs fireteam-myproject
+
+# Clean up
+fireteam kill fireteam-myproject
 ```
 
-Then start:
+## Environment Variables
 
-```bash
-python -m fireteam.runner start \
-    --project-dir ~/projects/myapp \
-    --goal-file PROMPT.md
-```
-
-## Programmatic Usage
-
-You can also use the runner functions from Python:
-
-```python
-from fireteam import start_session, list_sessions, attach_session, kill_session
-
-# Start a session
-info = start_session(
-    project_dir="/path/to/project",
-    goal="Complete the feature",
-    mode=ExecutionMode.FULL,
-)
-print(f"Started: {info.session_name}")
-
-# List sessions
-for session in list_sessions():
-    print(f"{session.session_name}: {session.status}")
-
-# Kill a session
-kill_session("fireteam-myproject")
-```
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `FIRETEAM_MAX_ITERATIONS` | unlimited | Max loop iterations |
+| `FIRETEAM_LOG_LEVEL` | INFO | Logging verbosity |

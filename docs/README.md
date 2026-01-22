@@ -1,32 +1,31 @@
 # Fireteam Documentation
 
-Fireteam is a Python library for adaptive task execution using Claude. It automatically estimates task complexity and selects the appropriate execution strategy.
+Fireteam is a CLI tool for autonomous task execution using Claude. Give it a goal, let it run until complete.
 
 ## Contents
 
 - [Introduction](./introduction.md) - Overview and key concepts
 - [Quickstart](./quickstart.md) - Get started in 5 minutes
+- [CLI Reference](./cli-runner.md) - Command-line interface
 - [Concepts](./concepts/) - Deep dives into core concepts
   - [Complexity Estimation](./concepts/complexity.md)
   - [Execution Modes](./concepts/execution-modes.md)
-- [API Reference](./api/) - Full API documentation
+- [API Reference](./api/) - Python library documentation
   - [execute()](./api/execute.md)
   - [estimate_complexity()](./api/estimate-complexity.md)
   - [Types](./api/types.md)
-- [CLI Runner](./cli-runner.md) - tmux-based autonomous execution
 
 ## Quick Example
 
-```python
-from fireteam import execute
+```bash
+# Create a PROMPT.md with your task
+fireteam start
+```
 
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Fix the authentication bug",
-)
+Or run in foreground:
 
-if result.success:
-    print(f"Completed: {result.completion_percentage}%")
+```bash
+fireteam run
 ```
 
 ## Execution Modes
@@ -35,5 +34,5 @@ if result.success:
 |------------|------|----------|
 | TRIVIAL | SINGLE_TURN | Direct execution, single pass |
 | SIMPLE | SINGLE_TURN | Direct execution, single pass |
-| MODERATE | MODERATE | Execute → review loop until >95% complete |
-| COMPLEX | FULL | Plan once, then execute → 3 parallel reviews until 2/3 say >95% |
+| MODERATE | MODERATE | Execute → review loop until ≥95% complete |
+| COMPLEX | FULL | Plan once, then execute → 3 parallel reviews until 2/3 say ≥95% |

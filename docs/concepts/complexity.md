@@ -13,22 +13,19 @@ Fireteam automatically estimates task complexity to select the appropriate execu
 
 ## How It Works
 
-When you call `execute()` without specifying a mode, Fireteam:
+When you run `fireteam start` or `fireteam run` without specifying a mode, Fireteam:
 
 1. Sends your goal and context to Claude
 2. Claude analyzes the scope using read-only tools (Glob, Grep, Read)
 3. Returns a complexity level based on the analysis
 4. Fireteam maps the complexity to an execution mode
 
-```python
-from fireteam import estimate_complexity
+```bash
+# Let Fireteam auto-detect complexity
+fireteam start
 
-complexity = await estimate_complexity(
-    goal="Add user authentication",
-    context="Using FastAPI with existing User model",
-    project_dir="/path/to/project",  # Optional: enables codebase exploration
-)
-# Returns: ComplexityLevel.MODERATE
+# Force a specific mode
+fireteam start -m full
 ```
 
 ## Complexity to Mode Mapping
@@ -74,30 +71,26 @@ complexity = await estimate_complexity(
 
 You can bypass complexity estimation by specifying the mode directly:
 
-```python
-from fireteam import execute, ExecutionMode
-
+```bash
 # Force FULL mode for thorough execution
-result = await execute(
-    project_dir="/path/to/project",
-    goal="Add simple logging",
-    mode=ExecutionMode.FULL,  # Override complexity estimation
-)
+fireteam start -m full
+
+# Force SINGLE_TURN for quick execution
+fireteam start -m single_turn
 ```
 
 ## Codebase Exploration
 
-When `project_dir` is provided to `estimate_complexity()`, Claude can explore the codebase using read-only tools to make a more accurate estimate:
+Fireteam explores the codebase using read-only tools to make accurate complexity estimates. Providing relevant files in your PROMPT.md helps with this:
 
-```python
-# Quick estimation (no codebase access)
-complexity = await estimate_complexity(
-    goal="Add logging to the auth module",
-)
+```markdown
+# Task
 
-# Accurate estimation (with codebase exploration)
-complexity = await estimate_complexity(
-    goal="Add logging to the auth module",
-    project_dir="/path/to/project",
-)
+Add logging to the auth module.
+
+## Context
+
+@src/auth/
 ```
+
+The included files give Claude context for a more accurate complexity assessment.

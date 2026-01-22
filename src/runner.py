@@ -352,31 +352,31 @@ def main() -> None:
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Fireteam autonomous execution runner",
-        prog="python -m fireteam.runner",
+        description="Fireteam - autonomous task execution with Claude",
+        prog="fireteam",
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Commands")
 
     # Start command
-    start_parser = subparsers.add_parser("start", help="Start a new autonomous session")
-    start_parser.add_argument("--project-dir", "-p", required=True, help="Project directory")
+    start_parser = subparsers.add_parser("start", help="Start a new autonomous session in tmux")
+    start_parser.add_argument("--project-dir", "-p", default=".", help="Project directory (default: current)")
     start_parser.add_argument("--goal", "-g", help="Task goal (string)")
-    start_parser.add_argument("--goal-file", "-f", help="Path to goal file (PROMPT.md style)")
+    start_parser.add_argument("--goal-file", "-f", help="Path to goal file (default: auto-detect PROMPT.md)")
     start_parser.add_argument("--edit", "-e", action="store_true", help="Open editor to write goal")
-    start_parser.add_argument("--mode", "-m", choices=["single_turn", "moderate", "full"], help="Execution mode")
+    start_parser.add_argument("--mode", "-m", choices=["single_turn", "moderate", "full"], help="Execution mode (default: auto-detect)")
     start_parser.add_argument("--context", "-c", default="", help="Additional context")
-    start_parser.add_argument("--max-iterations", type=int, help="Max iterations")
+    start_parser.add_argument("--max-iterations", type=int, help="Max iterations (default: unlimited)")
     start_parser.add_argument("--session-name", "-s", help="Custom session name")
 
-    # Run command (called from within tmux)
-    run_parser = subparsers.add_parser("run", help="Run autonomous execution (called from tmux)")
-    run_parser.add_argument("--project-dir", "-p", required=True, help="Project directory")
+    # Run command (foreground execution, also used internally by tmux)
+    run_parser = subparsers.add_parser("run", help="Run autonomous execution in foreground")
+    run_parser.add_argument("--project-dir", "-p", default=".", help="Project directory (default: current)")
     run_parser.add_argument("--goal", "-g", help="Task goal (string)")
-    run_parser.add_argument("--goal-file", "-f", help="Path to goal file (PROMPT.md style)")
-    run_parser.add_argument("--mode", "-m", choices=["single_turn", "moderate", "full"], help="Execution mode")
+    run_parser.add_argument("--goal-file", "-f", help="Path to goal file (default: auto-detect PROMPT.md)")
+    run_parser.add_argument("--mode", "-m", choices=["single_turn", "moderate", "full"], help="Execution mode (default: auto-detect)")
     run_parser.add_argument("--context", "-c", default="", help="Additional context")
-    run_parser.add_argument("--max-iterations", type=int, help="Max iterations")
+    run_parser.add_argument("--max-iterations", type=int, help="Max iterations (default: unlimited)")
 
     # List command
     subparsers.add_parser("list", help="List running sessions")
@@ -410,8 +410,8 @@ def main() -> None:
             )
             print(f"Started session: {info.session_name}")
             print(f"Log file: {info.log_file}")
-            print(f"\nTo attach: python -m fireteam.runner attach {info.session_name}")
-            print(f"To view logs: python -m fireteam.runner logs {info.session_name}")
+            print(f"\nTo attach: fireteam attach {info.session_name}")
+            print(f"To view logs: fireteam logs {info.session_name}")
         except ValueError as e:
             print(f"Error: {e}")
             sys.exit(1)
