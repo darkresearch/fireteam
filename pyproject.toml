@@ -5,13 +5,32 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fireteam"
 version = "0.1.0"
-description = "Multi-phase autonomous task execution with complexity estimation, planning, execution, and review"
+description = "Autonomous task execution with Claude. Give it a goal, let it run until complete."
 readme = "README.md"
+license = "MIT"
 requires-python = ">=3.12"
+authors = [
+    { name = "Dark Research", email = "edgar@darkresearch.ai" }
+]
+keywords = ["claude", "ai", "automation", "cli", "agent"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 dependencies = [
     "claude-agent-sdk>=0.1.4",
     "python-dotenv>=1.0.0",
 ]
+
+[project.urls]
+Homepage = "https://darkresearch.ai"
+Repository = "https://github.com/darkresearch/fireteam"
 
 [project.optional-dependencies]
 dev = [
